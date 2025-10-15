@@ -3,19 +3,57 @@
   flex-direction: column;
   align-items: center;
   justify-items: center;
-  height: 400px;
+  height: 500px;
   width: 400px;
 
   background-color: #BBB;
 
-  margin: 0 auto;
+  margin: 50px auto;
 }
 
-.loginheader{
+.login-header{
   font-size: 1.8rem;
+  margin-top: 10%;
+  margin-bottom: 8%;
 }
 
-.loginform{
+.login-form{
   display: flex;
   flex-direction: column;
+}
+
+.login-label{
+  margin-bottom: 7px;
+  font-size: 1.1rem;
+}
+
+.login-input {
+  font-size: 1.15rem;
+  margin-bottom: 20px;
+}
+
+.login-botao-entrar{
+  margin: 14px 0px;
+  height: 45px;
+  border: none;
+  border-radius: 10px; 
+}
+
+.login-recuperacao-senha{
+  text-decoration: underline;
+  text-align: center;
+  margin: 10px 0px;
+}
+
+.login-divisor{
+  width: 100%;
+}
+
+.login-criar-conta{
+  margin: 0 auto;
+  margin-top: 20px;
+  height: 45px;
+  border: none;
+  border-radius: 10px; 
+  width: 170px;
 }
