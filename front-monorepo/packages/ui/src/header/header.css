@@ -1,0 +1,23 @@
+.header{
+    height: 78px;
+    background-color: #AAA;
+}
+
+.header-lista{
+    list-style-type: none;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.header-link{
+    color: #FFF;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-top: 25px;
+}
+
+.header-link:hover{
+    text-decoration: underline;
+}

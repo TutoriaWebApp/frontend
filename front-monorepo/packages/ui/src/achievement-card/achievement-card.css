@@ -1,0 +1,53 @@
+.achievement-card{
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+}
+
+.achievement-card-img-box{
+    background-color: #CCC;
+    width: 70px;
+    height: 70px;
+    border: 3px solid #fff;
+    box-shadow: rgba(0,0,0,.4) 0 1px 4px;
+}
+
+.achievement-card-img{
+    width: 64px;
+    height: 64px;
+    margin: 3px;
+}
+
+.achievement-card-img-locked{
+    filter: grayscale(100%);
+}
+
+
+.achievement-card-info{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.achievement-title{
+    color: #295468;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 3px;
+}
+
+.achievement-description{
+    color: #585858;
+    margin-bottom: 9px;
+    margin-top: 5px;
+}
+
+.achievement-points{
+    font-weight: bold;
+    color: #0f8203;
+}
+
+.achievement-points-locked{
+    color: #585858;
+}

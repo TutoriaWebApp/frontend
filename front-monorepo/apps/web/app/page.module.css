@@ -3,12 +3,14 @@
   flex-direction: column;
   align-items: center;
   justify-items: center;
-  height: 500px;
+  height: 525px;
   width: 400px;
 
   background-color: #BBB;
 
-  margin: 50px auto;
+  margin: 0px auto;
+
+  margin-top: 10%;
 }
 
 .login-header{
@@ -23,20 +25,24 @@
 }
 
 .login-label{
-  margin-bottom: 7px;
-  font-size: 1.1rem;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
 }
 
 .login-input {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .login-botao-entrar{
-  margin: 14px 0px;
-  height: 45px;
+  margin: 20px 0px;
+  height: 50px;
   border: none;
   border-radius: 10px; 
+  color: #FFF;
+  font-size: 1.2rem;
+  background-color: #2A61BF;
 }
 
 .login-recuperacao-senha{
@@ -52,8 +58,11 @@
 .login-criar-conta{
   margin: 0 auto;
   margin-top: 20px;
-  height: 45px;
+  height: 50px;
   border: none;
   border-radius: 10px; 
   width: 170px;
+  color: #FFF;
+  font-size: 1.1rem;
+  background-color: #EB9C00;
 }
