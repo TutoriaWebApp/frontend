@@ -3,14 +3,14 @@
   flex-direction: column;
   align-items: center;
   justify-items: center;
-  height: 525px;
-  width: 400px;
+  height: 565px;
+  width: 500px;
 
   background-color: #BBB;
 
   margin: 0px auto;
 
-  margin-top: 10%;
+  margin-top: 6%;
 }
 
 .login-header{
@@ -22,6 +22,7 @@
 .login-form{
   display: flex;
   flex-direction: column;
+  width: 60%;
 }
 
 .login-label{
@@ -45,6 +46,11 @@
   background-color: #2A61BF;
 }
 
+.login-error{
+  text-align: center;
+  color: red;
+  margin: 10px 0px;
+}
 .login-recuperacao-senha{
   text-decoration: underline;
   text-align: center;
