@@ -1,76 +1,96 @@
+// page.tsx
+
+"use client"
+
 import "./conquistas.css";
 import AchievementCard from "@repo/ui/achievement-card/achievement-card";
+import { useEffect, useState } from 'react';
 
-// Mock de todas as conquistas disponíveis no banco
-const arrayConquistas = [
-  {
-    id: 1,
-    img: "https://i.imgur.com/s6c86p1.png", 
-    title: "A Primeira de Muitas!",
-    description: "Concluiu sua primeira sessão de tutoria.",
-    points: 10,
-  },
-  {
-    id: 2,
-    img: "https://i.imgur.com/O6qjO8c.png", 
-    title: "Quebrando o gelo!",
-    description: "Mande uma mensagem para um tutor no chat.",
-    points: 10,
-  },
-  {
-    id: 3,
-    img: "https://i.imgur.com/3wS3t2c.png",
-    title: "Bem na fita!",
-    description: "Receba uma avaliação de 4 estrelas ou mais.",
-    points: 10,
-  },
-  {
-    id: 4,
-    img: "https://i.imgur.com/bX6t7hD.png",
-    title: "O Primeiro Passo...",
-    description: "Solicite uma sessão de tutoria.",
-    points: 10,
-  },
-];
+interface Conquista {
+  id: number;
+  urlImagem: string;
+  titulo: string;
+  descricao: string;
+  pontos: number;
+}
 
-// Mock das conquistas que o usuário já obteve 
-const arrayConquistasObtidas = [
-  {
-    id: 4,
-    title: "O Primeiro Passo...",
-    description: "Solicite uma sessão de tutoria.",
-    points: 10,
-  },
-  {
-    id: 1,
-    title: "A Primeira de Muitas!",
-    description: "Concluiu sua primeira sessão de tutoria.",
-    points: 10,
-  },
-];
+interface ConquistaObtida {
+  id: number;
+}
 
 export default function Conquistas() {
-  // Set com IDs das conquistas obtidas para verificaçao rápida e eficiente
-  const idsConquistasObtidas = new Set(arrayConquistasObtidas.map(c => c.id));
+  const [todasAsConquistas, setTodasAsConquistas] = useState<Conquista[]>([]);
+  const [conquistasUsuario, setConquistasUsuario] = useState<ConquistaObtida[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Nenhum token encontrado. Por favor, faça o login.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Executar ambas as requisições em paralelo
+        const [resConquistas, resConsegue] = await Promise.all([
+          fetch('http://localhost:8000/v1/conquistas/', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch('http://localhost:8000/v1/consegue/', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
+
+        if (!resConquistas.ok || !resConsegue.ok) {
+          throw new Error('Falha ao buscar dados. Sua sessão pode ter expirado.');
+        }
+
+        const dataTodasConquistas = await resConquistas.json();
+        const dataConquistasUsuario = await resConsegue.json();
+
+        setTodasAsConquistas(dataTodasConquistas);
+        setConquistasUsuario(dataConquistasUsuario);
+
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []); 
+
+  const idsConquistasObtidas = new Set(conquistasUsuario.map(c => c.id));
+
+  if (loading) {
+    return <div className="achievements-status"><h1>Carregando conquistas...</h1></div>;
+  }
+
+  if (error) {
+    return <div className="achievements-status error"><h1>Erro: {error}</h1></div>;
+  }
 
   return (
     <div className="achievements">
       <h1 className="achievements-header">Conquistas</h1>
       
-      {/* Método .map() para iterar sobre todas as conquistas disponíveis */}
-      {arrayConquistas.map((conquista) => {
+      {todasAsConquistas.map((achievement) => {
+        const estaBloqueada = !idsConquistasObtidas.has(achievement.id);
         
-        // 3. Verificando se o ID da conquista atual está no Set de conquistas obtidas.
-        // Se NÃO estiver, ela está "trancada" (locked = true).
-        const estaBloqueada = !idsConquistasObtidas.has(conquista.id);
-
         return (
           <AchievementCard
-            key={conquista.id}
-            img={conquista.img}
-            title={conquista.title}
-            description={conquista.description}
-            points={conquista.points}
+            key={achievement.id}
+            img={achievement.urlImagem} 
+            title={achievement.titulo}
+            description={achievement.descricao}
+            points={achievement.pontos}
             locked={estaBloqueada} 
           />
         );
