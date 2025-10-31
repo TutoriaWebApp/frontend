@@ -133,6 +133,11 @@
   background-color: #00695c;
 }
 
+.btn-sessao{
+  background-color: #EB9C00;
+  color: white
+}
+
 .btn-mensagem {
   background-color: transparent;
   color: #00796b;
