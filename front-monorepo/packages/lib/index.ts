@@ -1,4 +1,6 @@
-// Exemplo de uma função utilitária
-export const formatarData = (data: Date): string => {
-  return new Intl.DateTimeFormat('pt-BR').format(data);
+import { jwtDecode } from 'jwt-decode';
+
+export const decodificarJWT = (token: string): void => {
+  const decoded = jwtDecode(token);
+  localStorage.setItem("idUsuario", decoded.user_id);
 };

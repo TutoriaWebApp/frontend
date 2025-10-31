@@ -3,6 +3,7 @@
 import styles from "./page.module.css";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
+import { decodificarJWT } from "@repo/lib";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -38,6 +39,7 @@ export default function Login() {
 
       localStorage.setItem("token", data.access);
       localStorage.setItem("refresh", data.refresh);
+      decodificarJWT(data.access);
 
       router.push('/tutores');
     } catch (error: any) {
