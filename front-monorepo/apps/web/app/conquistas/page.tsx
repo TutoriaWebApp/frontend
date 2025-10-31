@@ -15,7 +15,7 @@ interface Conquista {
 }
 
 interface ConquistaObtida {
-  id: number;
+  titulo: string;
 }
 
 export default function Conquistas() {
@@ -37,12 +37,13 @@ export default function Conquistas() {
       }
 
       try {
+        const idUsuario = JSON.parse(localStorage.getItem("idUsuario")!)
         // Executar ambas as requisições em paralelo
         const [resConquistas, resConsegue] = await Promise.all([
-          fetch('http://localhost:8000/v1/conquistas/', {
+          fetch(`http://localhost:8000/v1/conquistas/`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
-          fetch('http://localhost:8000/v1/consegue/', {
+          fetch(`http://localhost:8000/v1/conquistas/usuario/${idUsuario}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
         ]);
@@ -67,7 +68,7 @@ export default function Conquistas() {
     fetchAllData();
   }, []); 
 
-  const idsConquistasObtidas = new Set(conquistasUsuario.map(c => c.id));
+  const conquistasObtidas = new Set(conquistasUsuario.map(c => c.titulo));
 
   if (loading) {
     return <div className="achievements-status"><h1>Carregando conquistas...</h1></div>;
@@ -82,7 +83,7 @@ export default function Conquistas() {
       <h1 className="achievements-header">Conquistas</h1>
       
       {todasAsConquistas.map((achievement) => {
-        const estaBloqueada = !idsConquistasObtidas.has(achievement.id);
+        const estaBloqueada = !conquistasObtidas.has(achievement.titulo);
         
         return (
           <AchievementCard
