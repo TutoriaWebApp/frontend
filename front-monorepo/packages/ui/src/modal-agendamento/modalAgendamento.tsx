@@ -1,18 +1,23 @@
-// ModalAgendamento.tsx
-
 import React, { useEffect, useState } from "react";
 import "./modalAgendamento.css";
 
-// 1. Definir interfaces para a tipagem dos dados
 interface Sessao {
   id: number;
   tutorId: number;
-  dia: string; // "SEG", "TER", etc.
+  dia: string;
   horarioInicio: string;
   horarioFim: string;
 }
 
-// Usamos um Record para agrupar as sessões por dia
+interface Solicitacao {
+  id: number;
+  dataCriacao: string;
+  validade: string;
+  estado: string;
+  usuarioId: number;
+  sessaoId: number;
+}
+
 type SessoesAgrupadas = Record<string, Sessao[]>;
 
 interface ModalProps {
@@ -21,43 +26,58 @@ interface ModalProps {
 }
 
 const ModalAgendamento: React.FC<ModalProps> = ({ tutorId, onClose }) => {
-  const [sessoesAgrupadas, setSessoesAgrupadas] = useState<SessoesAgrupadas>(
-    {}
-  );
+  const [sessoesAgrupadas, setSessoesAgrupadas] = useState<SessoesAgrupadas>({});
   const [activeTab, setActiveTab] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAndProcessSessoes = async () => {
+    const fetchAllData = async () => {
       setLoading(true);
       setError(null);
 
       const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Nenhum token encontrado. Por favor, faça o login.");
+      const idUserString = localStorage.getItem("idUsuario"); 
+
+      if (!token || !idUserString) {
+        setError("Usuário não autenticado. Por favor, faça o login.");
         setLoading(false);
         return;
       }
 
-      try {
-        const response = await fetch(`http://localhost:8000/v1/sessoes/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const currentUserId = parseInt(idUserString, 10);
 
-        if (!response.ok) {
-          throw new Error("Falha ao buscar dados das sessões.");
+      try {
+        const [resSessoes, resSolicitacoes] = await Promise.all([
+          fetch(`http://localhost:8000/v1/sessoes/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://localhost:8000/v1/solicitacao/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        if (!resSessoes.ok || !resSolicitacoes.ok) {
+          throw new Error("Falha ao buscar dados das sessões ou solicitações.");
         }
 
-        const todasAsSessoes: Sessao[] = await response.json();
+        const todasAsSessoes: Sessao[] = await resSessoes.json();
+        const todasAsSolicitacoes: Solicitacao[] =
+          await resSolicitacoes.json();
 
-        // 2. Filtrar sessões APENAS para o tutorId recebido
-        const sessoesDoTutor = todasAsSessoes.filter(
-          (sessao) => sessao.tutorId === tutorId
+        const sessoesSolicitadasPeloUsuario = new Set(
+          todasAsSolicitacoes
+            .filter((sol) => sol.usuarioId === currentUserId)
+            .map((sol) => sol.sessaoId)
         );
 
-        // 3. Agrupar as sessões filtradas por dia
-        const grupos: SessoesAgrupadas = sessoesDoTutor.reduce(
+        const sessoesDisponiveis = todasAsSessoes.filter(
+          (sessao) =>
+            sessao.tutorId === tutorId &&
+            !sessoesSolicitadasPeloUsuario.has(sessao.id)
+        );
+
+        const grupos: SessoesAgrupadas = sessoesDisponiveis.reduce(
           (acc, sessao) => {
             const dia = sessao.dia;
             if (!acc[dia]) {
@@ -71,7 +91,6 @@ const ModalAgendamento: React.FC<ModalProps> = ({ tutorId, onClose }) => {
 
         setSessoesAgrupadas(grupos);
 
-        // Define a primeira aba como ativa, se houver alguma
         const diasDisponiveis = Object.keys(grupos);
         if (diasDisponiveis.length > 0) {
           setActiveTab(diasDisponiveis[0]!);
@@ -83,11 +102,10 @@ const ModalAgendamento: React.FC<ModalProps> = ({ tutorId, onClose }) => {
       }
     };
 
-    fetchAndProcessSessoes();
-  }, [tutorId]);
+    fetchAllData();
+  }, [tutorId]); 
 
-const makeSolicitation = async (sessaoId: number) => {
-    // 1. Pega o ID do usuário e o token do localStorage
+  const makeSolicitation = async (sessaoId: number) => {
     const idUserString = localStorage.getItem("idUsuario");
     const token = localStorage.getItem("token");
 
@@ -97,31 +115,58 @@ const makeSolicitation = async (sessaoId: number) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/v1/consegue/add/", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          "usuarioId": parseInt(idUserString, 10),
-          "conquistaId": 1
-        }),
-      });
+      const resSolicitacao = await fetch(
+        "http://localhost:8000/v1/solicitacao/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            sessaoId: sessaoId,
+          }),
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (!resSolicitacao.ok) {
+        const errorData = await resSolicitacao.json();
         throw new Error(errorData.detail || "Falha ao solicitar a sessão.");
-      } else {
-        alert(`Sessão ${sessaoId} solicitada com sucesso!`);
-        alert(`Conquista "O primeiro passo!" desbloqueada!`);
-        onClose(); 
       }
+
+      alert(`Solicitação de sessão feita com sucesso!`);
+
+      try {
+        const resConquista = await fetch(
+          "http://localhost:8000/v1/consegue/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              usuarioId: parseInt(idUserString, 10),
+              conquistaId: 1,
+            }),
+          }
+        );
+
+        if (resConquista.ok) {
+          alert(`Conquista "O primeiro passo!" desbloqueada!`);
+        } else {
+          console.warn("Não foi possível desbloquear a conquista.");
+        }
+      } catch (conquistaError) {
+        console.warn("Erro ao tentar desbloquear conquista:", conquistaError);
+      }
+
+      onClose();
     } catch (err: any) {
       setError(err.message);
-      alert(`Erro: ${err.message}`); 
+      alert(`Erro: ${err.message}`);
     }
-};
+  };
 
   const dias = Object.keys(sessoesAgrupadas);
 
@@ -170,7 +215,7 @@ const makeSolicitation = async (sessaoId: number) => {
                 </div>
               </>
             ) : (
-              <p>Nenhum horário de sessão encontrado para este tutor.</p>
+              <p>Nenhum horário disponível encontrado para este tutor.</p>
             ))}
         </main>
       </div>
