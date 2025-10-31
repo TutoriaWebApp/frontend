@@ -12,11 +12,6 @@ export default function Header() {
             </Link>
           </li>
           <li className="header-link">
-            <Link href={`/perfil`}>
-              Perfil
-            </Link>
-          </li>
-          <li className="header-link">
             <Link href={`/conquistas`}>
               Conquistas
             </Link>
