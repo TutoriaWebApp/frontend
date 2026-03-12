@@ -1,28 +1,18 @@
 
 import React from "react";
-import Image, { type ImageProps } from "next/image";
-import styles from "./page.module.css";
+import Image from "next/image";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import type { Metadata } from "next";
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
+export const metadata: Metadata = {
+  title: "Tutoria Web - Aprenda, ensine, evolua!",
+  description: "Se conecte com tutores e aprendizes para aprender e ensinar, conseguir conquistas e níveis e aprender de forma gamificada!",
 };
 
 export default function Home(): React.ReactNode {
   return (
-    <div className="bg-primary-foreground">
-      <main className={styles.main}>
+    <div className="bg-primary-foreground [grid-area:content]">
+      {/* <main className={styles.main}>
         <ThemeImage
           className={styles.logo}
           srcLight="turborepo-dark.svg"
@@ -94,7 +84,7 @@ export default function Home(): React.ReactNode {
           />
           Go to turborepo.dev →
         </a>
-      </footer>
+      </footer> */}
     </div>
   );
 }

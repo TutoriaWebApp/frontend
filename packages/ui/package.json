@@ -4,7 +4,8 @@
   "private": true,
   "exports": {
     "./*": "./src/*.tsx",
-    "./styles": "./src/styles/globals.css"
+    "./styles": "./src/styles/globals.css",
+    "./header": "./header/Header.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
