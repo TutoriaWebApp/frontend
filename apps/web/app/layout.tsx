@@ -1,6 +1,5 @@
 import React from "react";
 
-import localFont from "next/font/local";
 import "./normalize.css"
 import "./grid.css"
 import "@repo/ui/styles";
@@ -8,15 +7,7 @@ import "./globals.css";
 
 //Header
 import Header from "@repo/ui/header/Header";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-});
+import Footer from "@repo/ui/footer/Footer";
 
 export default function RootLayout({
   children,
@@ -25,9 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body>
         <Header/>
         {children}
+        <Footer/>
       </body>
     </html>
   );

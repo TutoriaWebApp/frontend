@@ -1,44 +1,55 @@
 import React from "react";
-import Link from "next/link"
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
+  const loggedIn = true;
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Perfil", href: "/perfil" },
+    { name: "Conquistas", href: "/conquistas" },
+    { name: "Buscar Tutores", href: "/buscar" },
+    { name: "Solicitações", href: "/solicitacoes" },
+    { name: "Chat", href: "/chat" },
+  ];
+
   return (
-    <header className="flex flex-row [grid-area:header] bg-surface-card">
-        <h1>Tutoria Web</h1>
-        <nav className="flex flex-row">
+    <header
+      className="[grid-area:header] bg-surface-card flex flex-row
+    items-center justify-between border-b border-slate-200 sticky top-0"
+    >
+      <Link href="/" className="flex items-center ml-6">
+        <Image alt="Tutor e Aprendiz se conectando por telas" src="/logo.svg" width="50" height="50" />
+        <h1 className=" ml-2 text-brand-secondary font-bold text-2xl">TutoriaWeb</h1>
+      </Link>
+      <nav></nav>
+      {loggedIn && (
+        <nav>
           <ul>
-            <li>
-              <Link href={"/"}>
-                Home
+            {navLinks.map((link, index) => (
+              <Link key={index} href={link.href}>
+                <li
+                  className="
+                    inline 
+                    p-4
+                    pl-6
+                    pr-6
+                    text-slate-600 
+                    hover:text-brand-primary 
+                    hover:font-bold
+                    hover:bg-gray-200
+                    hover:rounded-xl
+                    transition-all
+                    "
+                >
+                  {link.name}
+                </li>
               </Link>
-            </li>
-            <li>
-              <Link href={"/perfil"}>
-                Perfil
-              </Link>
-            </li>
-            <li>
-              <Link href={"/buscar"}>
-                Perfil
-              </Link>
-            </li>
-            <li>
-              <Link href={"/conquistas"}>
-                Conquistas
-              </Link>
-            </li>
-            <li>
-              <Link href={"/solicitacoes"}>
-                Conquistas
-              </Link>
-            </li>
-            <li>
-              <Link href={"/chat"}>
-                Chat
-              </Link>
-            </li>
+            ))}
           </ul>
         </nav>
+      )}
     </header>
   );
 }

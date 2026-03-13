@@ -5,7 +5,8 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./styles": "./src/styles/globals.css",
-    "./header": "./header/Header.tsx"
+    "./header": "./src/header/Header.tsx",
+    "./footer": "./src/footer/Footer.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -21,10 +22,14 @@
     "eslint": "^9.39.1",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "next": "16.1.6"
   },
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
+  },
+  "peerDependencies": {
+    "next": "16.1.6"
   }
 }

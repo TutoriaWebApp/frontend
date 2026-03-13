@@ -1,90 +1,66 @@
+"use client";
 
 import React from "react";
 import Image from "next/image";
+import { useState } from "react";
+import Link from "next/link";
 
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Tutoria Web - Aprenda, ensine, evolua!",
-  description: "Se conecte com tutores e aprendizes para aprender e ensinar, conseguir conquistas e níveis e aprender de forma gamificada!",
-};
+// export const metadata: Metadata = {
+//   title: "TutoriaWeb - Aprenda, ensine, evolua!",
+//   description:
+//     "Se conecte com tutores e aprendizes para aprender e ensinar, conseguir conquistas e níveis e aprender de forma gamificada!",
+// };
 
 export default function Home(): React.ReactNode {
-  return (
-    <div className="bg-primary-foreground [grid-area:content]">
-      {/* <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  return (
+    <div className="bg-white [grid-area:content] flex justify-around">
+      <div>
+        <span>Aprendendo melhor juntos!</span>
+        <Image
+          src="/login-students.png"
+          alt="Tutor e aprendiz estudando matemática"
+          width={50}
+          height={50}
+        />
+      </div>
+      <div className="bg-slate-50 border border-slate-200 shadow-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <label className="flex flex-col">
+            <span className="font-semibold">E-mail</span>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-white border-black"
             />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer> */}
+          </label>
+          <label className="flex flex-col font-semibold">
+            <span>Senha</span>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <span> Erro: Credenciais inválidas.</span>
+          <button>Entrar</button>
+          <Link href={"esqueci-senha"} className="text-brand-primary hover:font-bold transition-all">
+            Esqueceu sua senha?
+          </Link>
+          <button>Criar nova conta</button>          
+        </form>
+      </div>
     </div>
   );
 }
