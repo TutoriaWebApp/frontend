@@ -7,7 +7,7 @@ import "@repo/ui/styles";
 import "./globals.css";
 
 //Header
-import "@repo/ui/header"
+import Header from "@repo/ui/header/Header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        Header
+        <Header/>
         {children}
       </body>
     </html>
