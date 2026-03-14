@@ -7,7 +7,9 @@
     "./styles": "./src/styles/globals.css",
     "./header": "./src/Header/Header.tsx",
     "./footer": "./src/Footer/Footer.tsx",
-    "./loginForm": "./src/LoginForm/LoginForm.tsx"
+    "./loginForm": "./src/LoginForm/LoginForm.tsx",
+    "./forgotPasswordForm": "./src/ForgotPasswordForm/ForgotPasswordForm.tsx",
+    "./notification": "./src/contexts/NotificationContext.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

@@ -16,9 +16,9 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-slate-50 border-t border-slate-200 pt-12 pb-8 px-8 mt-auto font-inter">
+    <footer className="bg-slate-50 border-t border-slate-200 pt-12 pb-8 px-8 mt-auto">
       <div className="max-w-7xl mx-auto grid grid-cols-3 gap-12">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300">
             <Image src={"/logo.svg"} alt="Logo" width={30} height={30} />
             <span className="font-black text-xl text-slate-900 tracking-tight font-medium font-montserrat">

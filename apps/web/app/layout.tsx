@@ -5,13 +5,15 @@ import "./grid.css"
 import "@repo/ui/styles";
 import "./globals.css";
 
-//Header
 import Header from "@repo/ui/Header/Header";
 import Footer from "@repo/ui/Footer/Footer";
+
+import { NotificationContextProvider } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 
 import type { Metadata } from "next";
 
 import {Montserrat, Quicksand, Inter} from "next/font/google"
+
 
 export const metadata: Metadata = {
   title: "TutoriaWeb - Aprenda, ensine, evolua!",
@@ -30,10 +32,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" className={`${inter.variable} ${montserrat.variable} ${quicksand.variable}`}>
-      <body>
-        <Header/>
-        {children}
-        <Footer/>
+      <body className="font-inter">
+        <NotificationContextProvider>
+          <Header/>
+          {children}
+          <Footer/>
+        </NotificationContextProvider>
       </body>
     </html>
   );

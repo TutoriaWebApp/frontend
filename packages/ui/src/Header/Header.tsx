@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Header() {
-  const loggedIn = false;
+  const loggedIn = true;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -47,7 +47,6 @@ export default function Header() {
                     hover:bg-gray-200
                     hover:rounded-xl
                     transition-all
-                    font-inter
                     "
                 >
                   {link.name}
