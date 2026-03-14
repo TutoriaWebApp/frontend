@@ -21,6 +21,11 @@ export default {
       },
       boxShadow: {
         'portfolio': '0 4px 14px 0 rgba(0, 0, 0, 0.05)',
+      },
+      fontFamily: {
+        montserrat: ["var(--font-montserrat)"],
+        quicksand: ["var(--font-quicksand)"],
+        inter: ["var(--font-inter)"],
       }
     },
   },

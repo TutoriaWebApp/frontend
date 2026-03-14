@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Header() {
-  const loggedIn = true;
+  const loggedIn = false;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -17,13 +17,19 @@ export default function Header() {
   return (
     <header
       className="[grid-area:header] bg-surface-card flex flex-row
-    items-center justify-between border-b border-slate-200 sticky top-0"
+    items-center justify-between border-b border-slate-200 sticky top-0 z-10"
     >
       <Link href="/" className="flex items-center ml-6">
-        <Image alt="Tutor e Aprendiz se conectando por telas" src="/logo.svg" width="50" height="50" />
-        <h1 className=" ml-2 text-brand-secondary font-bold text-2xl">TutoriaWeb</h1>
+        <Image
+          alt="Tutor e Aprendiz se conectando por telas"
+          src="/logo.svg"
+          width="50"
+          height="50"
+        />
+        <h1 className=" ml-2 text-brand-secondary font-medium font-montserrat text-2xl">
+          Tutoria<span className="text-brand-primary">Web</span>
+        </h1>
       </Link>
-      <nav></nav>
       {loggedIn && (
         <nav>
           <ul>
@@ -41,6 +47,7 @@ export default function Header() {
                     hover:bg-gray-200
                     hover:rounded-xl
                     transition-all
+                    font-inter
                     "
                 >
                   {link.name}
