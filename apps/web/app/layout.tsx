@@ -6,8 +6,8 @@ import "@repo/ui/styles";
 import "./globals.css";
 
 //Header
-import Header from "@repo/ui/header/Header";
-import Footer from "@repo/ui/footer/Footer";
+import Header from "@repo/ui/Header/Header";
+import Footer from "@repo/ui/Footer/Footer";
 
 import type { Metadata } from "next";
 

@@ -5,8 +5,9 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./styles": "./src/styles/globals.css",
-    "./header": "./src/header/Header.tsx",
-    "./footer": "./src/footer/Footer.tsx"
+    "./header": "./src/Header/Header.tsx",
+    "./footer": "./src/Footer/Footer.tsx",
+    "./loginForm": "./src/LoginForm/LoginForm.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
