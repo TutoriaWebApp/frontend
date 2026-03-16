@@ -60,7 +60,9 @@ export default function LoginForm(): React.ReactNode {
             Esqueceu sua senha?
           </Link>
           <button className="bg-emerald-600 hover:bg-emerald-800 w-3/5 self-center rounded-md text-white font-semibold h-[40px] transition-all mb-6 mt-4">
-            Criar nova conta
+            <Link href={"/criar-conta"}>
+              Criar nova conta
+            </Link>
           </button>
         </form>
       </div>
