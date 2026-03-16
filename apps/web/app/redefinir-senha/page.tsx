@@ -17,8 +17,8 @@ export default function ForgotPassword(): React.ReactNode {
     all: false,
   });
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState<boolean>(false);
-
+  const [showConfirmNewPassword, setShowConfirmNewPassword] =
+    useState<boolean>(false);
 
   const router = useRouter();
 
@@ -106,7 +106,10 @@ export default function ForgotPassword(): React.ReactNode {
                   placeholder="Digite a nova senha"
                 />
               </label>
-              <div onClick={() => setShowNewPassword(!showNewPassword)} className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8">
+              <div
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
+              >
                 <VisibilityIcon className="mr-1" />
                 Mostrar
               </div>
@@ -165,7 +168,12 @@ export default function ForgotPassword(): React.ReactNode {
                   placeholder="Digite a nova senha novamente"
                 />
               </label>
-              <div onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)} className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8">
+              <div
+                onClick={() =>
+                  setShowConfirmNewPassword(!showConfirmNewPassword)
+                }
+                className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
+              >
                 <VisibilityIcon className="mr-1" />
                 Mostrar
               </div>
