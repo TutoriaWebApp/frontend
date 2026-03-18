@@ -47,6 +47,7 @@ export default function Header() {
                     hover:bg-gray-200
                     hover:rounded-xl
                     transition-all
+                    2xl:text-xl
                     "
                 >
                   {link.name}

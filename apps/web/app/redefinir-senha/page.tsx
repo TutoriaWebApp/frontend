@@ -62,16 +62,23 @@ export default function ForgotPassword(): React.ReactNode {
       <div
         className="
          bg-white 
-         m-auto 
-         mt-10 
-         mb-0
+         mx-auto
+         relative
+         top-[15%]
          rounded-3xl
-         border border-slate-200
-         shadow-xl shadow-slate-200/50
+         border 
+         border-slate-200
+         shadow-xl
+       shadow-slate-200/50
          w-fit
         "
       >
-        <div className="flex flex-col items-center mb-4">
+        <div className="
+          flex
+          flex-col
+          items-center
+          mb-4
+          ">
           <h2 className="font-quicksand text-2xl font-bold m-5">
             Redefinição de Senha
           </h2>

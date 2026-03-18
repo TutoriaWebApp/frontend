@@ -16,36 +16,122 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-slate-50 border-t border-slate-200 pt-12 pb-8 px-8 mt-auto">
-      <div className="max-w-7xl mx-auto grid grid-cols-3 gap-12">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-            <Image src={"/logo.svg"} alt="Logo" width={30} height={30} />
-            <span className="font-black text-xl text-slate-900 tracking-tight font-medium font-montserrat">
+    <footer className="
+      bg-slate-50 
+      border-t 
+      border-slate-200 
+      pt-12 
+      pb-8 
+      px-8 
+      mt-auto
+      flex
+      flex-col
+      gap-6
+    ">
+      <div className="
+        max-w-7xl 
+        mx-auto 
+        grid 
+        grid-cols-3
+        gap-12
+        2xl:gap-64
+        ">
+        <div className="
+          flex 
+          flex-col 
+          gap-2
+          2xl:w-[400px]
+        ">
+          <div className="
+            flex 
+            items-center 
+            gap-2 
+            opacity-80
+            grayscale 
+            hover:grayscale-0 
+            hover:opacity-100 
+            transition-all 
+            duration-300
+          ">
+            <Image 
+              src={"/logo.svg"} 
+              alt="Logo" 
+              width={30}
+              height={30}
+              className="2xl:w-[45px]" 
+            />
+            <span className="
+              font- 
+              text-xl 
+              text-slate-900 
+              tracking-tight 
+              font-medium 
+              font-montserrat
+              2xl:text-2xl
+            ">
               Tutoria<span className="text-brand-primary">Web</span>
             </span>
           </div>
-          <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
+          <p className="
+            text-slate-500 
+            text-sm 
+            leading-relaxed
+            2xl:text-base
+          ">
             Plataforma gamificada focada no encontro de tutores com aprendizes.
           </p>
         </div>
 
-        <div>
-          <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest mb-4">
+        <div className="
+          flex 
+          flex-col 
+          gap-4
+          mb-4
+          justify-center
+          2xl:w-[600px]
+          2xl:gap-4
+          2xl:mb-[0px]
+          ">
+          <h4 className="
+            text-slate-900 
+            font-bold 
+            text-sm 
+            uppercase 
+            tracking-widest
+            2xl:text-base 
+            "
+          >
             Desenvolvido por
           </h4>
-          <ul className="text-slate-600 text-sm space-y-2">
+          <ul className="
+            text-slate-600 
+            text-sm 
+            space-y-2
+            2xl:text-base
+            
+          ">
             <li>Lucas de Lima Spinosa dos Santos</li>
             <li>Rodrigo Carvalho dos Santos</li>
-            <li className="pt-2 text-slate-400 italic"></li>
           </ul>
         </div>
 
-        <div>
-          <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest mb-2">
+        <div className="
+          flex 
+          flex-col 
+          gap-4
+          justify-center
+          ">
+          <h4 className="
+            text-slate-900 
+            font-bold 
+            text-sm 
+            uppercase 
+            tracking-widest
+            2xl:text-base 
+          ">
             Contato
           </h4>
-          <div className="flex gap-4 mt-3 mb-2">
+          <div className="flex gap-4">
             {contactLinksLucas.map((link, index) => (
               <a key={index} href={link.href} target="_blank">
                 <Image
@@ -53,8 +139,15 @@ export default function Footer() {
                   alt={link.alt}
                   width={25}
                   height={25}
-                  className="opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                />
+                  className="
+                    opacity-80 
+                    grayscale 
+                    hover:grayscale-0 
+                    hover:opacity-100 
+                    transition-all 
+                    duration-300
+                    2xl:w-[28px]
+                  "/>
               </a>
             ))}
           </div>
@@ -66,16 +159,36 @@ export default function Footer() {
                   alt={link.alt}
                   width={25}
                   height={25}
-                  className="opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                />
+                  className="
+                    opacity-80 
+                    grayscale 
+                    hover:grayscale-0 
+                    hover:opacity-100 
+                    transition-all 
+                    duration-300
+                    2xl:w-[28px]
+                  "/>
               </a>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-200 flex justify-center items-center">
-        <p className="text-slate-400 text-xs text-center">
+      <div className="
+        w-full
+        mx-auto 
+        border-t 
+        border-slate-200 
+        flex 
+        justify-center 
+        items-center">
+        <p className="
+          text-slate-400 
+          text-xs 
+          text-center
+          mt-8
+          2xl:text-sm
+        ">
           &copy; {currentYear} TutoriaWeb. Todos os direitos reservados.
         </p>
       </div>

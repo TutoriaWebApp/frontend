@@ -27,24 +27,36 @@ export default function ForgotPassword(): React.ReactNode {
   };
 
   return (
-    <div className="bg-slate-50">
+    <div className="
+    bg-slate-50
+    ">
       <div
         className="
-         bg-white 
-         m-auto 
-         mt-10 
-         mb-0
+         bg-white
+         relative
+         top-[20%]
+         mx-auto 
          rounded-3xl
-         border border-slate-200
-         shadow-xl shadow-slate-200/50
+         border
+       border-slate-200
+         shadow-xl
+       shadow-slate-200/50
          w-[520px]
-        "
-      >
-        <div className="flex flex-col items-center mb-4">
-          <h2 className="font-quicksand text-2xl font-bold m-5">
+         2xl:w-[640px]
+        ">
+        <div className="
+          flex
+          flex-col
+          mb-4
+        ">
+          <h2 className="font-quicksand text-2xl font-bold m-5 text-center">
             Recuperação de Senha
           </h2>
-          <span className="mb-5 text-slate-500">
+          <span className="
+            mb-5 
+          text-slate-500
+            text-center
+          ">
             Informe seu e-mail para receber um link de redefinição de senha.
           </span>
         </div>
@@ -53,12 +65,23 @@ export default function ForgotPassword(): React.ReactNode {
           bg-white
           w-full
           rounded-3xl
-          shadow-xl shadow-slate-200/50
+          shadow-xl
+        shadow-slate-200/50
           pb-6
           "
         >
-          <form onSubmit={handleSubmit} className="flex flex-col">
-            <label className="flex flex-col mb-8 pl-6">
+          <form onSubmit={handleSubmit} className="
+            flex 
+            flex-col
+            gap-8
+          ">
+            <label className="f
+              flex 
+              flex-col 
+              pl-6
+              2xl:pl-10
+              gap-2
+            ">
               <span className="font-semibold mb-2">E-mail</span>
               <input
                 type="email"
@@ -73,7 +96,8 @@ export default function ForgotPassword(): React.ReactNode {
                 leading-7
                 border-2
                 border-slate-300
-                          "
+                2xl:w-[560px]
+                "
                 placeholder="Digite o seu e-mail"
               />
             </label>
@@ -87,8 +111,9 @@ export default function ForgotPassword(): React.ReactNode {
               font-semibold
               h-[40px]
               transition-all
-              m-auto
+              mx-auto
               mb-5
+              2xl:w-[560px]
               "
             >
               Enviar link de redefinição
@@ -96,9 +121,17 @@ export default function ForgotPassword(): React.ReactNode {
           </form>
           <Link
             href={"/"}
-            className="p-4 pb-0 flex items-center text-brand-primary hover:font-bold hover:underline transition-all"
-          >
-            <ArrowBackIcon className="mr-1" />
+            className="
+              p-4 
+              pb-0 
+              flex 
+              items-center
+            text-brand-primary 
+              hover:font-bold 
+              hover:underline 
+              transition-all
+          ">
+            <ArrowBackIcon className="mr-1"/>
             <span>Voltar para o Login</span>
           </Link>
         </div>
