@@ -76,18 +76,30 @@ export default function CreateAccount(): React.ReactNode {
     <div className="bg-slate-50">
       <div
         className="
-         bg-white 
-         m-auto 
-         mt-10 
-         mb-0
+         bg-white
+         relative
+         top-[9%] 
+         mx-auto 
          rounded-3xl
-         border border-slate-200
-         shadow-xl shadow-slate-200/50
+         border 
+         border-slate-200
+         shadow-xl 
+         shadow-slate-200/50
          w-[calc(100%-33%)]
         "
       >
-        <div className="flex flex-col items-center mb-4">
-          <h2 className="font-quicksand text-2xl font-bold m-5">Criar Conta</h2>
+        <div className="
+          flex 
+          flex-col 
+          items-center 
+        ">
+          <h2 className="
+            font-quicksand 
+            text-2xl 
+            font-bold 
+            text-center
+            m-5
+          ">Criar Conta</h2>
         </div>
         {/* Barra de Progresso */}
         <div className="w-full px-12 py-8">
@@ -160,104 +172,166 @@ export default function CreateAccount(): React.ReactNode {
           <>
             <div
               className="
-                       bg-white
-                        w-full
-                        rounded-3xl
-                        shadow-xl shadow-slate-200/50
-                        pb-6
+              bg-white
+                w-full
+               rounded-3xl
+               shadow-xl shadow-slate-200/50
+               pb-6
             "
             >
-              <form onSubmit={handleSubmit} className="grid grid-cols-2">
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">Nome</span>
+              <form onSubmit={handleSubmit} className="
+                grid 
+                grid-cols-2
+                gap-6
+              ">
+                <div className="
+                  flex 
+                  items-center
+                ">
+                  <label className="
+                    flex 
+                    flex-col 
+                    pl-6
+                    w-full
+                    gap-2
+                  ">
+                    <span className="
+                      font-semibold 
+                    ">Nome</span>
                     <input
                       type="text"
                       name="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
+                      bg-white  
+                        w-full
+                      text-slate-900
+                        rounded-md
+                        leading-7
+                        border-2
+                      border-slate-300
                   "
                       required
                       placeholder="Digite seu nome e sobrenome"
                     />
                   </label>
                 </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">E-mail</span>
+                <div className="
+                  flex 
+                  items-center
+                ">
+                  <label className="
+                    flex 
+                    flex-col 
+                    pl-6
+                    w-full
+                    gap-2
+                  ">
+                    <span className="
+                      font-semibold
+                    ">E-mail</span>
                     <input
                       type="text"
                       name="email"
                       value={name}
                       onChange={(e) => setEmail(e.target.value)}
                       className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
+                      bg-white  
+                        w-[calc(100%-4%)]
+                      text-slate-900
+                        rounded-md
+                        leading-7
+                        border-2
+                      border-slate-300
+                    "
                       required
                       placeholder="Digite seu e-mail"
                     />
                   </label>
                 </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6">
-                    <span className="font-semibold mb-2">Senha</span>
+                <div className="
+                  flex 
+                  items-center
+                ">
+                  <label className="
+                    flex 
+                    flex-col 
+                    pl-6
+                    w-full
+                    gap-2
+                  ">
+                    <span className="
+                      font-semibold
+                    ">Senha</span>
                     <input
                       type={showNewPassword ? "text" : "password"}
                       name="password"
                       value={newPassword}
                       onChange={(e) => checkPassword(e.target.value)}
                       className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
+                        bg-white  
+                        w-full
+                      text-slate-900
+                        rounded-md
+                        leading-7
+                        border-2
+                        border-slate-300
+                      "
                       required
                       placeholder="Digite uma senha"
                     />
                   </label>
                   <div
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
+                    className="
+                      flex 
+                      items-center 
+                      border-2 
+                      border-slate-300 
+                      bg-white 
+                      rounded-md 
+                      h-[2rem] 
+                      pr-2 
+                      pl-2 
+                      mt-8 
+                      cursor-pointer
+                    "
                   >
-                    <VisibilityIcon className="mr-1" />
+                    <VisibilityIcon className="
+                      mr-1
+                    "/>
                     Mostrar
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6">
-                    <span className="font-semibold mb-2">Confirme a senha</span>
+                <div className="
+                  flex 
+                  items-center
+                ">
+                  <label className="
+                    flex 
+                    flex-col 
+                    pl-6
+                    w-full
+                    gap-2
+                  ">
+                    <span className="
+                      font-semibold
+                    ">Confirme a senha</span>
                     <input
                       type={showConfirmNewPassword ? "text" : "password"}
                       name="password"
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
                       className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
+                      bg-white  
+                        w-full
+                      text-slate-900
+                        rounded-md
+                        leading-7
+                        border-2
+                      border-slate-300
+                      "
                       required
                       placeholder="Digite a nova senha novamente"
                     />
@@ -266,13 +340,30 @@ export default function CreateAccount(): React.ReactNode {
                     onClick={() =>
                       setShowConfirmNewPassword(!showConfirmNewPassword)
                     }
-                    className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-8 mt-8 cursor-pointer"
-                  >
+                    className="
+                      flex 
+                      items-center 
+                      border-2 
+                      border-slate-300 
+                      bg-white 
+                      rounded-md 
+                      h-[2rem] 
+                      pr-2 
+                      pl-2 
+                      mr-5 
+                      mt-8 
+                      cursor-pointer
+                    ">
                     <VisibilityIcon className="mr-1" />
                     Mostrar
                   </div>
                 </div>
-                <div className="mb-6 pl-6 mt-4 flex flex-col">
+                <div className="
+                  mb-6 
+                  pl-6 
+                  flex 
+                  flex-col
+                ">
                   <span
                     className={
                       requirements.all ? "text-green-500" : "text-rose-500"
@@ -307,23 +398,39 @@ export default function CreateAccount(): React.ReactNode {
                   </ul>
                 </div>
                 {newPassword != confirmNewPassword && (
-                  <div className="mt-6 text-rose-500 pl-6">
+                  <div className="
+                    text-rose-500 
+                    pl-6
+                  ">
                     <span>As senhas devem ser iguais.</span>
                   </div>
                 )}
                 {newPassword == confirmNewPassword && <div></div>}
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">Estado</span>
+                <div className="
+                  flex 
+                  items-center
+                ">
+                  <label className="
+                    flex 
+                    flex-col 
+                    pl-6 
+                    mb-4
+                    w-full
+                    gap-2
+                  ">
+                    <span className="
+                      font-semibold
+                    ">Estado</span>
                     <select
                       name="state"
-                      className="                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  py-1
-                  border-2
-                  border-slate-300"
+                      className="
+                      bg-white  
+                        w-full
+                      text-slate-900
+                        rounded-md
+                        py-1
+                        border-2
+                      border-slate-300"
                       onChange={(e) => setState(e.target.value)}
                       required
                       value={state}
@@ -335,19 +442,31 @@ export default function CreateAccount(): React.ReactNode {
                     </select>
                   </label>
                 </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">Cidade</span>
+                <div className="
+                  flex 
+                  items-center
+                ">
+                  <label className="
+                    flex 
+                    flex-col 
+                    pl-6 
+                    mb-4
+                    w-full
+                    gap-2
+                  ">
+                    <span className="
+                      font-semibold
+                    ">Cidade</span>
                     <select
                       name="state"
                       className={`${state != "" ? "bg-white" : "bg-gray-300"}  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  py-1
-                  border-2
-                border-slate-300
-=                  `}
+                        w-[calc(100%-6%)]
+                      text-slate-900
+                        rounded-md
+                        py-1
+                        border-2
+                      border-slate-300
+                    `}
                       disabled={state != "" ? false : true}
                       required
                       value={city}
