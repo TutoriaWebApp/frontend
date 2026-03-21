@@ -1,0 +1,34 @@
+import { BackendResponse, AuthResult } from "./types/auth";
+
+export async function LogIn(username: string, password: string): Promise<AuthResult> {
+  const baseURL = process.env.backendBaseURL;
+
+  try {
+    const response = await fetch(`${baseURL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      // credentials: 'include', //Se chamar no cliente, sem ser Server Action
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+
+    return {
+      success: response.ok,
+      status: response.status,
+      data: data as BackendResponse,
+      headers: response.headers // Headers para o Server Action ler o Set-Cookie
+    };
+
+  } catch (error) {
+    console.error("Auth Service Error:", error);
+    return {
+      success: false,
+      status: 500,
+      data: { mensagem: "Não foi possível conectar ao servidor de autenticação." },
+    };
+  }
+}

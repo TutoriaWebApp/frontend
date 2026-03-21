@@ -2,15 +2,15 @@
   "name": "@repo/services",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "scripts": {
-    "lint": "eslint .",
-    "check-types": "tsc --noEmit"
+  "type": "module",
+  "exports": {
+    "./auth": "./src/auth.ts",
+    "./authAction": "./src/actions/auth.ts"
   },
   "devDependencies": {
-    "@repo/config": "workspace:*",
-    "@repo/config": "workspace:*",
-    "typescript": "5.9.2"
+    "@types/node": "^22.19.15"
+  },
+  "peerDependencies": {
+    "next": "16.1.6"
   }
 }
