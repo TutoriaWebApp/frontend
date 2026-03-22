@@ -4,13 +4,14 @@ export async function LogIn(username: string, password: string): Promise<AuthRes
   const baseURL = process.env.backendBaseURL;
 
   try {
+    console.log(`${baseURL}/login}`);
     const response = await fetch(`${baseURL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      // credentials: 'include', //Se chamar no cliente, sem ser Server Action
+      credentials: 'include', //Se chamar no cliente, sem ser Server Action
       body: JSON.stringify({ username, password }),
     });
 

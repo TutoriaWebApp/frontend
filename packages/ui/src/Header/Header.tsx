@@ -1,9 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
-  const loggedIn = true;
+  const pathname = usePathname();
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -13,6 +17,19 @@ export default function Header() {
     { name: "Solicitações", href: "/solicitacoes" },
     { name: "Chat", href: "/chat" },
   ];
+
+  const notLoggedInLinks = ["/", "/esqueci-senha", "/redefinir-senha", "/criar-conta"];
+
+  useEffect(() => {
+    console.log(pathname)
+    if(notLoggedInLinks.includes(pathname)){
+      setLoggedIn(false);
+    }
+    else{
+      setLoggedIn(true);
+    }
+    console.log(loggedIn)
+  }, [pathname]);
 
   return (
     <header

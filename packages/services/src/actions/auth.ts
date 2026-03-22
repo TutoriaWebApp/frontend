@@ -20,12 +20,39 @@ export async function LogInAction(
 
     if (result.success) {
       const cookieStore = await cookies();
-      const setCookie = result.headers?.get("set-cookie");
 
-      if (setCookie) {
-        // O Next.js repassa o cookie do Django pro navegador aqui
-        console.log("Cookie de sessão capturado");
-      }
+      const rawCookies = result.headers?.getSetCookie() || [];
+
+      rawCookies.forEach((cookieString) => {
+        const [nameValue, ...parts] = cookieString.split(";");
+        const [name, value] = nameValue.split("=");
+
+        if (name && value) {
+          const options: any = {
+            httpOnly: true,
+            path: "/",
+            secure: process.env.NODE_ENV === "production", // Apenas HTTPS em produção
+            sameSite: "lax",
+          };
+
+          parts.forEach((part) => {
+            const [key, val] = part.trim().split("=");
+            const lowerKey = key.toLowerCase();
+
+            if (lowerKey === "max-age") {
+              options.maxAge = parseInt(val); 
+            } else if (lowerKey === "expires") {
+              options.expires = new Date(val);
+            } else if (lowerKey === "path") {
+              options.path = val;
+            } else if (lowerKey === "samesite") {
+              options.sameSite = val.toLowerCase();
+            }
+          });
+
+          cookieStore.set(name.trim(), value.trim(), options);
+        }
+      });
 
       return { success: true, message: "Sucesso!" };
     }
@@ -37,11 +64,11 @@ export async function LogInAction(
       password: password,
     };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: "Erro de conexão com o servidor.",
       email: username,
-      password: password 
+      password: password,
     };
   }
 }
