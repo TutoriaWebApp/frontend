@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+import { LogOutAction } from "@repo/services/authAction";
+
 export default function Header() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -71,6 +73,25 @@ export default function Header() {
                 </li>
               </Link>
             ))}
+            <li
+             className="
+                inline 
+                p-4
+                pl-6
+                pr-6
+              text-slate-600 
+              hover:text-brand-primary 
+                hover:font-bold
+              hover:bg-gray-200
+                hover:rounded-xl
+                transition-all
+                2xl:text-xl
+                cursor-pointer
+              "
+              onClick={LogOutAction}
+            >
+              Sair
+            </li>
           </ul>
         </nav>
       )}

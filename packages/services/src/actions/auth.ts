@@ -3,6 +3,7 @@
 import { LogIn, RequestPasswordReset } from "../auth";
 import { ActionState, AuthResult, PasswordResetRequestResult } from "../types/auth";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function LogInAction(
   prevState: ActionState | null,
@@ -102,4 +103,27 @@ export async function RequestPasswordResetAction(
       email: email,
     };
   }
+}
+
+export async function LogOutAction() {
+  const cookieStore = await cookies();
+
+  try {
+    const baseURL = process.env.backendBaseURL;
+    await fetch(`${baseURL}/logout/`, { 
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao avisar sobre o logout:", error);
+  }
+
+  // 2. Limpar os cookies no Navegador (Obrigatório)
+  cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
+
+  // 3. Mandar o usuário de volta para o início
+  redirect("/");
 }

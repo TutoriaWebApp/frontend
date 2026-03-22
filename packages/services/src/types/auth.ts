@@ -21,7 +21,6 @@ export interface PasswordResetRequestResult {
   success: boolean;
   status: number;
   data: BackendResponse;
-  headers?: Headers; 
 }
 
 
