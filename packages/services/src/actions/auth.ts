@@ -1,7 +1,7 @@
 "use server";
 
-import { LogIn } from "../auth";
-import { ActionState, AuthResult } from "../types/auth";
+import { LogIn, RequestPasswordReset } from "../auth";
+import { ActionState, AuthResult, PasswordResetRequestResult } from "../types/auth";
 import { cookies } from "next/headers";
 
 export async function LogInAction(
@@ -69,6 +69,37 @@ export async function LogInAction(
       message: "Erro de conexão com o servidor.",
       email: username,
       password: password,
+    };
+  }
+}
+
+export async function RequestPasswordResetAction(
+  prevState: ActionState | null,
+  formData: FormData,
+): Promise<ActionState> {
+  const email = formData.get("email") as string;
+
+  if (!email) {
+    return { success: false, message: "Preencha o campo de e-mail." };
+  }
+
+  try {
+    const result: PasswordResetRequestResult = await RequestPasswordReset(email.trim());
+
+    if (result.success) {
+      return { success: true, message: result.data.mensagem };
+    }
+
+    return {
+      success: false,
+      message: result.data?.mensagem,
+      email: email,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Erro de conexão com o servidor.",
+      email: email,
     };
   }
 }

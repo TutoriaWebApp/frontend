@@ -1,10 +1,9 @@
-import { BackendResponse, AuthResult } from "./types/auth";
+import { BackendResponse, AuthResult, PasswordResetRequestResult } from "./types/auth";
 
 export async function LogIn(username: string, password: string): Promise<AuthResult> {
   const baseURL = process.env.backendBaseURL;
 
   try {
-    console.log(`${baseURL}/login}`);
     const response = await fetch(`${baseURL}/login`, {
       method: 'POST',
       headers: {
@@ -25,11 +24,42 @@ export async function LogIn(username: string, password: string): Promise<AuthRes
     };
 
   } catch (error) {
-    console.error("Auth Service Error:", error);
+    console.error("Password Reset Request Service Error:", error);
     return {
       success: false,
       status: 500,
-      data: { mensagem: "Não foi possível conectar ao servidor de autenticação." },
+      data: { mensagem: "Não foi possível conectar ao servidor." },
+    };
+  }
+}
+
+export async function RequestPasswordReset(email: string): Promise<PasswordResetRequestResult> {
+  const baseURL = process.env.backendBaseURL;
+
+  try {
+    const response = await fetch(`${baseURL}/reset-password/request`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    return {
+      success: response.ok,
+      status: response.status,
+      data: data as BackendResponse,
+    };
+
+  } catch (error) {
+    console.error("Password Reset Request Service Error:", error);
+    return {
+      success: false,
+      status: 500,
+      data: { mensagem: "Não foi possível conectar ao servidor." },
     };
   }
 }

@@ -8,13 +8,20 @@ export interface BackendResponse {
 }
 
 /**
- * Interface para o retorno da requisição
+ * Interface para o retorno da requisição de autenticação
  */
 export interface AuthResult {
   success: boolean;
   status: number;
   data: BackendResponse;
-  headers?: Headers; // Necessário para capturar os cookies do Django no servidor
+  headers?: Headers; 
+}
+
+export interface PasswordResetRequestResult {
+  success: boolean;
+  status: number;
+  data: BackendResponse;
+  headers?: Headers; 
 }
 
 
