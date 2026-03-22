@@ -7,6 +7,7 @@ import "./globals.css";
 
 import Header from "@repo/ui/Header/Header";
 import Footer from "@repo/ui/Footer/Footer";
+import CookieBanner from "@repo/ui/CookieBanner/CookieBanner";
 
 import { NotificationContextProvider } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
         <NotificationContextProvider>
           <Header/>
           {children}
+          <CookieBanner/>
           <Footer/>
         </NotificationContextProvider>
       </body>

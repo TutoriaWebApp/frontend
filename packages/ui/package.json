@@ -5,6 +5,7 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./styles": "./src/styles/globals.css",
+    "./cookieBanner": "./src/CookieBanner/CookieBanner.tsx",
     "./header": "./src/Header/Header.tsx",
     "./footer": "./src/Footer/Footer.tsx",
     "./loginForm": "./src/LoginForm/LoginForm.tsx",
