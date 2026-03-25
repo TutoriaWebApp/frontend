@@ -23,6 +23,11 @@ export interface PasswordResetRequestResult {
   data: BackendResponse;
 }
 
+export interface PasswordResetResult {
+  success: boolean;
+  status: number;
+  data: BackendResponse;
+}
 
 export type ActionState = {
   success: boolean | null;
@@ -30,3 +35,8 @@ export type ActionState = {
   email?: string;
   password?: string;
 };
+
+export interface PasswordResetResultResponse {
+  success: boolean;
+  message: string;
+}

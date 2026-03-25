@@ -9,9 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
-import {validateJwt} from "@repo/lib/jwtAux"
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
+
+import { PasswordResetAction } from "@repo/services/authAction";
 
 const registerSchema = z
   .object({
@@ -29,15 +30,10 @@ const registerSchema = z
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "As senhas devem ser iguais.",
-    path: ["passwordConfirm"], 
+    path: ["passwordConfirm"],
   });
 
 type RegisterData = z.infer<typeof registerSchema>;
-
-const onSubmit = async (data: RegisterData) => {
-  console.log("Dados validados:", data);
-  // Aqui chamarias a tua Server Action ou API
-};
 
 export default function ForgotPassword(): React.ReactNode {
   const {
@@ -46,8 +42,13 @@ export default function ForgotPassword(): React.ReactNode {
     formState: { errors },
   } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
+
+  const params = useParams();
+
+  const uid = params.uid;
+  const token = params.token;
 
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] =
@@ -57,23 +58,26 @@ export default function ForgotPassword(): React.ReactNode {
 
   const { showNotification } = useContext(NotificationContext);
 
-  // const handleSubmit = (e: any) => {
-  //   e.preventDefault();
+  const onSubmit = async (data: RegisterData) => {
+    7;
+    const uidStr = Array.isArray(uid) ? uid[0] : uid;
+    const tokenStr = Array.isArray(token) ? token[0] : token;
 
-  //   if (newPassword != confirmNewPassword) {
-  //     showNotification("As senhas nos dois campos devem ser iguais!", "error");
-  //     return;
-  //   } else if (newPassword == "" || confirmNewPassword == "") {
-  //     showNotification("Informe a senha nos dois campos!", "error");
-  //     return;
-  //   } else if (!requirements.all) {
-  //     showNotification("A senha não atende à todos os critérios!", "error");
-  //     return;
-  //   } else {
-  //     showNotification("Senha redefinida com sucesso!", "success");
-  //     router.push("/");
-  //   }
-  // };
+    if (!uidStr || !tokenStr) {
+      showNotification("Link de redefinição inválido. Verifique seu e-mail.", "error");
+      return;
+    }
+
+    const response = await PasswordResetAction(uidStr, tokenStr, data.password);
+
+    if(response.success){
+      showNotification(response.message, "success");
+      router.push('/')
+    }
+    else{
+      showNotification(response.message, "error");
+    }
+  };
 
   return (
     <div className="bg-slate-50">
@@ -142,7 +146,7 @@ export default function ForgotPassword(): React.ReactNode {
             </div>
             <div className="mb-6 pl-6 mt-4 flex flex-col">
               {errors.password && (
-                <span className="text-rose-500 text-sm mt-1">
+                <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                   {errors.password.message}
                 </span>
               )}
@@ -179,7 +183,7 @@ export default function ForgotPassword(): React.ReactNode {
             </div>
             <div className="pl-6 mt-4 flex flex-col">
               {errors.passwordConfirm && (
-                <span className="text-rose-500 text-sm mt-1">
+                <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                   {errors.passwordConfirm.message}
                 </span>
               )}

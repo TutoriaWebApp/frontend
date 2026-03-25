@@ -1,7 +1,13 @@
 "use server";
 
-import { LogIn, RequestPasswordReset } from "../auth";
-import { ActionState, AuthResult, PasswordResetRequestResult } from "../types/auth";
+import { LogIn, RequestPasswordReset, PasswordReset } from "../auth";
+import {
+  ActionState,
+  AuthResult,
+  PasswordResetRequestResult,
+  PasswordResetResult,
+  PasswordResetResultResponse,
+} from "../types/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -41,7 +47,7 @@ export async function LogInAction(
             const lowerKey = key.toLowerCase();
 
             if (lowerKey === "max-age") {
-              options.maxAge = parseInt(val); 
+              options.maxAge = parseInt(val);
             } else if (lowerKey === "expires") {
               options.expires = new Date(val);
             } else if (lowerKey === "path") {
@@ -85,7 +91,9 @@ export async function RequestPasswordResetAction(
   }
 
   try {
-    const result: PasswordResetRequestResult = await RequestPasswordReset(email.trim());
+    const result: PasswordResetRequestResult = await RequestPasswordReset(
+      email.trim(),
+    );
 
     if (result.success) {
       return { success: true, message: result.data.mensagem };
@@ -110,11 +118,11 @@ export async function LogOutAction() {
 
   try {
     const baseURL = process.env.backendBaseURL;
-    await fetch(`${baseURL}/logout/`, { 
+    await fetch(`${baseURL}/logout/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      }
+      },
     });
   } catch (error) {
     console.error("Erro ao avisar sobre o logout:", error);
@@ -126,4 +134,32 @@ export async function LogOutAction() {
 
   // 3. Mandar o usuário de volta para o início
   redirect("/");
+}
+
+export async function PasswordResetAction(
+  uid: string,
+  token: string,
+  newPassword: string,
+): Promise<PasswordResetResultResponse> {
+  try {
+    const result: PasswordResetResult = await PasswordReset(
+      uid,
+      token,
+      newPassword,
+    );
+
+    if (result.success) {
+      return { success: true, message: result.data.mensagem };
+    }
+
+    return {
+      success: false,
+      message: result.data?.mensagem,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Erro de conexão com o servidor.",
+    };
+  }
 }
