@@ -12,7 +12,7 @@ export default function Header() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   const navLinks = [
-    { name: "Home", href: "/" },
+    { name: "Home", href: "/dashboard" },
     { name: "Perfil", href: "/perfil" },
     { name: "Conquistas", href: "/conquistas" },
     { name: "Buscar Tutores", href: "/buscar" },
