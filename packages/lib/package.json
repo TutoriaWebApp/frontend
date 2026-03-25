@@ -2,6 +2,10 @@
   "name": "@repo/lib",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    "./*": "./src/*.tsx",
+    "./jwtAux": "./src/jwtAux.ts"
+  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
@@ -11,5 +15,8 @@
   "devDependencies": {
     "@repo/config": "workspace:*",
     "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0"
   }
 }
