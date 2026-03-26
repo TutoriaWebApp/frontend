@@ -1,75 +1,143 @@
 "use client";
 
-import React from "react";
-
-import { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+
+import { GetStates } from "@repo/services/states";
+import { StateResult } from "../../../../packages/services/src/types/states";
+import { GetCities } from "@repo/services/cities";
+import { CityResult } from "../../../../packages/services/src/types/cities";
+
+
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import Link from "next/link";
+import { ClipLoader } from "react-spinners";
+
+const registerSchema = z
+  .object({
+    nomePerfil: z
+      .string()
+      .min(1, "É obrigatório informar seu nome.")
+      .max(100, "O nome só pode conter até 100 caracteres."),
+
+    email: z
+      .email({ message: "E-mail inválido." })
+      .min(1, "É obrigatório informar seu e-mail")
+      .max(254, "O e-mail só pode conter até 254 caracteres"),
+
+    password: z
+      .string()
+      .min(10, "A senha deve possuir 10 ou mais caracteres.")
+      .max(256, "A senha só pode possuir até 256 caracteres.")
+      .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
+      .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+
+    passwordConfirm: z
+      .string()
+      .min(10, "A senha deve possuir 10 ou mais caracteres.")
+      .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
+      .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+    estado: z.string().min(1, "É obrigatório informar seu estado."),
+    cidade: z.string().min(1, "É obrigatório infomar sua cidade"),
+    aniversario: z.nullable(
+      z.coerce
+        .date("Insira uma data válida.")
+        .max(new Date(), "A data não pode ser futura."),
+    ),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "As senhas devem ser iguais.",
+    path: ["passwordConfirm"],
+  });
+
+type RegisterData = z.infer<typeof registerSchema>;
 
 export default function CreateAccount(): React.ReactNode {
-  //Dados Pessoais
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useForm<RegisterData>({
+    resolver: zodResolver(registerSchema),
+    mode: "onChange",
+  });
+
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] =
     useState<boolean>(false);
-  const [requirements, setRequirements] = useState({
-    length: false,
-    special: false,
-    number: false,
-    all: false,
-  });
-  const [state, setState] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-
-  //Perfil
-
-  //Perfil de Tutor
-
   const [step, setStep] = useState<number>(1);
+  const [states, setStates] = useState<StateResult[]>([]);
+  const [cities, setCities] = useState<CityResult[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const selectedEstado = watch("estado", "");
 
   const router = useRouter();
-
   const { showNotification } = useContext(NotificationContext);
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+  useEffect(() => {
+    async function fetchStates() {
+      setLoading(true);
 
-    if (newPassword != confirmNewPassword) {
-      showNotification("As senhas nos dois campos devem ser iguais!", "error");
-      return;
-    } else if (newPassword == "" || confirmNewPassword == "") {
-      showNotification("Informe a senha nos dois campos!", "error");
-      return;
-    } else if (!requirements.all) {
-      showNotification("A senha não atende à todos os critérios!", "error");
-      return;
-    } else {
-      showNotification("Senha redefinida com sucesso!", "success");
-      router.push("/");
+      const res = await GetStates();
+
+      if (typeof res === "string") {
+        showNotification(res, "error");
+        return;
+      }
+      
+      setStates(res);
+
+      setLoading(false);
     }
-  };
+    fetchStates();
+  }, []);
 
-  const checkPassword = (password: string) => {
-    const isLengthOk = /.{10,}/.test(password);
-    const isSpecialOk = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const isNumberOk = /[0-9]/.test(password);
+  useEffect(() => {
+    async function fetchCities() {
+      const res = await GetCities(selectedEstado);
 
-    setNewPassword(password);
+      if (typeof res === "string") {
+        showNotification(res, "error");
+        return;
+      }
 
-    setRequirements({
-      length: isLengthOk,
-      special: isSpecialOk,
-      number: isNumberOk,
-      all: isLengthOk && isSpecialOk && isNumberOk,
-    });
+      setCities(res);
+
+      setLoading(false);
+    }
+    fetchCities();
+  }, [selectedEstado]);
+
+
+  const handleAdvanceStep = async () => {
+    const isValid = await trigger([
+      "nomePerfil",
+      "email",
+      "password",
+      "passwordConfirm",
+      "estado",
+      "cidade",
+    ]);
+
+    if (isValid) {
+      setStep(2);
+    } else {
+      showNotification(
+        "Preencha todos os campos obrigatórios corretamente.",
+        "error",
+      );
+    }
   };
 
   return (
@@ -78,7 +146,6 @@ export default function CreateAccount(): React.ReactNode {
         className="
          bg-white
          relative
-         top-[9%] 
          mx-auto 
          rounded-3xl
          border 
@@ -88,18 +155,24 @@ export default function CreateAccount(): React.ReactNode {
          w-[calc(100%-33%)]
         "
       >
-        <div className="
+        <div
+          className="
           flex 
           flex-col 
           items-center 
-        ">
-          <h2 className="
+        "
+        >
+          <h2
+            className="
             font-quicksand 
             text-2xl 
             font-bold 
             text-center
             m-5
-          ">Criar Conta</h2>
+          "
+          >
+            Criar Conta
+          </h2>
         </div>
         {/* Barra de Progresso */}
         <div className="w-full px-12 py-8">
@@ -168,7 +241,7 @@ export default function CreateAccount(): React.ReactNode {
             </div>
           </div>
         </div>
-        {step == 1 && (
+        {!loading && step == 1 && (
           <>
             <div
               className="
@@ -179,30 +252,38 @@ export default function CreateAccount(): React.ReactNode {
                pb-6
             "
             >
-              <form onSubmit={handleSubmit} className="
+              <form
+                className="
                 grid 
                 grid-cols-2
                 gap-6
-              ">
-                <div className="
+              "
+              >
+                <div
+                  className="
                   flex 
                   items-center
-                ">
-                  <label className="
+                "
+                >
+                  <label
+                    className="
                     flex 
                     flex-col 
                     pl-6
                     w-full
                     gap-2
-                  ">
-                    <span className="
+                  "
+                  >
+                    <span
+                      className="
                       font-semibold 
-                    ">Nome</span>
+                    "
+                    >
+                      Nome<span className="text-rose-500">*</span>
+                    </span>
                     <input
                       type="text"
-                      name="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      {...register("nomePerfil")}
                       className="
                       bg-white  
                         w-full
@@ -212,30 +293,35 @@ export default function CreateAccount(): React.ReactNode {
                         border-2
                       border-slate-300
                   "
-                      required
                       placeholder="Digite seu nome e sobrenome"
                     />
                   </label>
                 </div>
-                <div className="
+                <div
+                  className="
                   flex 
                   items-center
-                ">
-                  <label className="
+                "
+                >
+                  <label
+                    className="
                     flex 
                     flex-col 
                     pl-6
                     w-full
                     gap-2
-                  ">
-                    <span className="
+                  "
+                  >
+                    <span
+                      className="
                       font-semibold
-                    ">E-mail</span>
+                    "
+                    >
+                      E-mail<span className="text-rose-500">*</span>
+                    </span>
                     <input
-                      type="text"
-                      name="email"
-                      value={name}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                      {...register("email")}
                       className="
                       bg-white  
                         w-[calc(100%-4%)]
@@ -250,25 +336,54 @@ export default function CreateAccount(): React.ReactNode {
                     />
                   </label>
                 </div>
-                <div className="
+                <div
+                  className="
+                  mb-6 
+                  pl-6 
+                "
+                >
+                  {errors.nomePerfil && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.nomePerfil.message}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="
+                  pl-6 
+                "
+                >
+                  {errors.email && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.email.message}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="
                   flex 
                   items-center
-                ">
-                  <label className="
+                "
+                >
+                  <label
+                    className="
                     flex 
                     flex-col 
                     pl-6
                     w-full
                     gap-2
-                  ">
-                    <span className="
+                  "
+                  >
+                    <span
+                      className="
                       font-semibold
-                    ">Senha</span>
+                    "
+                    >
+                      Senha<span className="text-rose-500">*</span>
+                    </span>
                     <input
                       type={showNewPassword ? "text" : "password"}
-                      name="password"
-                      value={newPassword}
-                      onChange={(e) => checkPassword(e.target.value)}
+                      {...register("password")}
                       className="
                         bg-white  
                         w-full
@@ -278,7 +393,6 @@ export default function CreateAccount(): React.ReactNode {
                         border-2
                         border-slate-300
                       "
-                      required
                       placeholder="Digite uma senha"
                     />
                   </label>
@@ -298,41 +412,48 @@ export default function CreateAccount(): React.ReactNode {
                       cursor-pointer
                     "
                   >
-                    <VisibilityIcon className="
+                    <VisibilityIcon
+                      className="
                       mr-1
-                    "/>
+                    "
+                    />
                     Mostrar
                   </div>
                 </div>
-                <div className="
+                <div
+                  className="
                   flex 
                   items-center
-                ">
-                  <label className="
+                "
+                >
+                  <label
+                    className="
                     flex 
                     flex-col 
                     pl-6
                     w-full
                     gap-2
-                  ">
-                    <span className="
+                  "
+                  >
+                    <span
+                      className="
                       font-semibold
-                    ">Confirme a senha</span>
+                    "
+                    >
+                      Confirme a senha<span className="text-rose-500">*</span>
+                    </span>
                     <input
                       type={showConfirmNewPassword ? "text" : "password"}
-                      name="password"
-                      value={confirmNewPassword}
-                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      {...register("passwordConfirm")}
                       className="
                       bg-white  
                         w-full
                       text-slate-900
-                        rounded-md
-                        leading-7
-                        border-2
+                      rounded-md
+                      leading-7
+                      border-2
                       border-slate-300
                       "
-                      required
                       placeholder="Digite a nova senha novamente"
                     />
                   </label>
@@ -353,133 +474,221 @@ export default function CreateAccount(): React.ReactNode {
                       mr-5 
                       mt-8 
                       cursor-pointer
-                    ">
+                    "
+                  >
                     <VisibilityIcon className="mr-1" />
                     Mostrar
                   </div>
                 </div>
-                <div className="
+                <div
+                  className="
                   mb-6 
                   pl-6 
-                  flex 
-                  flex-col
-                ">
-                  <span
-                    className={
-                      requirements.all ? "text-green-500" : "text-rose-500"
-                    }
-                  >
-                    A senha deve possuir:
-                  </span>
-                  <ul className="list-disc pl-4">
-                    <li
-                      className={
-                        requirements.length ? "text-green-500" : "text-rose-500"
-                      }
-                    >
-                      <span>10 ou mais caracteres;</span>
-                    </li>
-                    <li
-                      className={
-                        requirements.special
-                          ? "text-green-500"
-                          : "text-rose-500"
-                      }
-                    >
-                      <span>1 caractere especial;</span>
-                    </li>
-                    <li
-                      className={
-                        requirements.number ? "text-green-500" : "text-rose-500"
-                      }
-                    >
-                      <span>1 número.</span>
-                    </li>
-                  </ul>
+                  "
+                >
+                  {errors.password && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.password.message}
+                    </span>
+                  )}
                 </div>
-                {newPassword != confirmNewPassword && (
-                  <div className="
-                    text-rose-500 
-                    pl-6
-                  ">
-                    <span>As senhas devem ser iguais.</span>
-                  </div>
-                )}
-                {newPassword == confirmNewPassword && <div></div>}
-                <div className="
+                <div
+                  className="
+                  pl-6 
+                  "
+                >
+                  {errors.passwordConfirm && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.passwordConfirm.message}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="
                   flex 
                   items-center
-                ">
-                  <label className="
+                "
+                >
+                  <label
+                    className="
                     flex 
                     flex-col 
                     pl-6 
                     mb-4
                     w-full
                     gap-2
-                  ">
-                    <span className="
+                    "
+                  >
+                    <span
+                      className="
                       font-semibold
-                    ">Estado</span>
+                      "
+                    >
+                      Estado<span className="text-rose-500">*</span>
+                    </span>
                     <select
-                      name="state"
+                      {...register("estado")}
                       className="
                       bg-white  
-                        w-full
+                      w-full
                       text-slate-900
-                        rounded-md
-                        py-1
+                      rounded-md
+                      py-1
                         border-2
-                      border-slate-300"
-                      onChange={(e) => setState(e.target.value)}
-                      required
-                      value={state}
+                        border-slate-300"
+                      defaultValue={""}
                     >
                       <option value="" disabled hidden>
                         Selecione uma opção
                       </option>
-                      <option value="Maranhão">Rio Grande do Norte</option>
+                      {states?.map((state) => (
+                        <option key={state.id} value={state.sigla}>
+                          {state.nome}
+                        </option>
+                      ))}
                     </select>
                   </label>
                 </div>
-                <div className="
+                <div
+                  className="
                   flex 
                   items-center
-                ">
-                  <label className="
+                  "
+                >
+                  <label
+                    className="
                     flex 
                     flex-col 
                     pl-6 
                     mb-4
                     w-full
                     gap-2
-                  ">
-                    <span className="
+                    "
+                  >
+                    <span
+                      className="
                       font-semibold
-                    ">Cidade</span>
+                      "
+                    >
+                      Cidade<span className="text-rose-500">*</span>
+                    </span>
                     <select
-                      name="state"
-                      className={`${state != "" ? "bg-white" : "bg-gray-300"}  
-                        w-[calc(100%-6%)]
+                      {...register("cidade")}
+                      className={`${selectedEstado != "" ? "bg-white" : "bg-gray-300"}  
+                      w-[calc(100%-6%)]
                       text-slate-900
-                        rounded-md
-                        py-1
-                        border-2
+                      rounded-md
+                      py-1
+                      border-2
                       border-slate-300
-                    `}
-                      disabled={state != "" ? false : true}
-                      required
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
+                      `}
+                      disabled={selectedEstado != "" && cities.length > 0 ? false : true}
+                      defaultValue={""}
                     >
                       <option value="" disabled hidden>
                         Selecione uma opção
                       </option>
-                      <option value="Maranhão">
-                        Vila Bela da Santíssima Trindade
-                      </option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.nome}>{city.nome}</option>
+                      ))} 
                     </select>
                   </label>
+                </div>
+                <div
+                  className="
+                  mb-6 
+                  pl-6 
+                  "
+                >
+                  {errors.estado && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.estado.message}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="
+                  pl-6 
+                  "
+                >
+                  {errors.cidade && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.cidade.message}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="
+                  flex 
+                  items-center
+                  "
+                >
+                  <label
+                    className="
+                    flex 
+                    flex-col 
+                    pl-6 
+                    mb-4
+                    w-full
+                    gap-2
+                    "
+                  >
+                    <span
+                      className="
+                      font-semibold
+                      "
+                    >
+                      Foto de Perfil<span className="text-rose-500">*</span>
+                    </span>
+                    <input type="file" name="" />
+                  </label>
+                </div>
+                <div
+                  className="
+                  flex 
+                  items-center
+                  "
+                >
+                  <label
+                    className="
+                    flex 
+                    pl-6 
+                    w-full
+                    gap-2
+                    "
+                  >
+                    <span
+                      className="
+                      font-semibold
+                      "
+                    >
+                      Data de Aniversário
+                    </span>
+                    - <input type="date" {...register("aniversario")} />
+                  </label>
+                </div>
+                <div
+                  className="
+                  mb-6 
+                  pl-6 
+                  "
+                >
+                  {errors.estado && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.estado.message}
+                    </span>
+                  )}
+                </div>
+                <div
+                  className="
+                  pl-6
+                "
+                >
+                  {errors.aniversario && (
+                    <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                      {errors.aniversario.message}
+                    </span>
+                  )}
                 </div>
               </form>
               <div className="flex justify-between p-4">
@@ -492,7 +701,7 @@ export default function CreateAccount(): React.ReactNode {
                 </Link>
                 <div
                   className="p-4 pb-0 flex items-center text-brand-primary hover:font-bold transition-all cursor-pointer"
-                  onClick={() => setStep(2)}
+                  onClick={handleAdvanceStep}
                 >
                   <span>Avançar</span>
                   <ArrowForwardIcon className="ml-1" />
@@ -501,232 +710,26 @@ export default function CreateAccount(): React.ReactNode {
             </div>
           </>
         )}
+        {loading && (
+          <ClipLoader
+            color="#64748b"
+            className="relative left-[47%]"
+            size={120}
+          />
+        )}
         {step == 2 && (
           <>
             {/*Barra de Progresso*/}
             <div></div>
             <div
               className="
-                       bg-white
-                        w-full
-                        rounded-3xl
-                        shadow-xl shadow-slate-200/50
-                        pb-6
-            "
-            >
-              <form onSubmit={handleSubmit} className="grid grid-cols-2">
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">aaaaa</span>
-                    <input
-                      type="text"
-                      name="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
-                      required
-                      placeholder="Digite seu nome e sobrenome"
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">E-mail</span>
-                    <input
-                      type="text"
-                      name="email"
-                      value={name}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
-                      required
-                      placeholder="Digite seu e-mail"
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6">
-                    <span className="font-semibold mb-2">Senha</span>
-                    <input
-                      type={showNewPassword ? "text" : "password"}
-                      name="password"
-                      value={newPassword}
-                      onChange={(e) => checkPassword(e.target.value)}
-                      className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
-                      required
-                      placeholder="Digite uma senha"
-                    />
-                  </label>
-                  <div
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
-                  >
-                    <VisibilityIcon className="mr-1" />
-                    Mostrar
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6">
-                    <span className="font-semibold mb-2">Confirme a senha</span>
-                    <input
-                      type={showConfirmNewPassword ? "text" : "password"}
-                      name="password"
-                      value={confirmNewPassword}
-                      onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      className="
-                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  leading-7
-                  border-2
-                  border-slate-300
-                  "
-                      required
-                      placeholder="Digite a nova senha novamente"
-                    />
-                  </label>
-                  <div
-                    onClick={() =>
-                      setShowConfirmNewPassword(!showConfirmNewPassword)
-                    }
-                    className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-8 mt-8 cursor-pointer"
-                  >
-                    <VisibilityIcon className="mr-1" />
-                    Mostrar
-                  </div>
-                </div>
-                <div className="mb-6 pl-6 mt-4 flex flex-col">
-                  <span
-                    className={
-                      requirements.all ? "text-green-500" : "text-rose-500"
-                    }
-                  >
-                    A senha deve possuir:
-                  </span>
-                  <ul className="list-disc pl-4">
-                    <li
-                      className={
-                        requirements.length ? "text-green-500" : "text-rose-500"
-                      }
-                    >
-                      <span>10 ou mais caracteres;</span>
-                    </li>
-                    <li
-                      className={
-                        requirements.special
-                          ? "text-green-500"
-                          : "text-rose-500"
-                      }
-                    >
-                      <span>1 caractere especial;</span>
-                    </li>
-                    <li
-                      className={
-                        requirements.number ? "text-green-500" : "text-rose-500"
-                      }
-                    >
-                      <span>1 número.</span>
-                    </li>
-                  </ul>
-                </div>
-                {newPassword != confirmNewPassword && (
-                  <div className="mt-6 text-rose-500 pl-6">
-                    <span>As senhas devem ser iguais.</span>
-                  </div>
-                )}
-                {newPassword == confirmNewPassword && <div></div>}
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">Estado</span>
-                    <select
-                      name="state"
-                      className="                  bg-white  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  py-1
-                  border-2
-                  border-slate-300"
-                      onChange={(e) => setState(e.target.value)}
-                      required
-                      value={state}
-                    >
-                      <option value="" disabled hidden>
-                        Selecione uma opção
-                      </option>
-                      <option value="Maranhão">Rio Grande do Norte</option>
-                    </select>
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <label className="flex flex-col pl-6 mb-4">
-                    <span className="font-semibold mb-2">Cidade</span>
-                    <select
-                      name="state"
-                      className={`${state != "" ? "bg-white" : "bg-gray-300"}  
-                  w-[470px]
-                  text-slate-900
-                  rounded-md
-                  py-1
-                  border-2
-                border-slate-300
-=                  `}
-                      disabled={state != "" ? false : true}
-                      required
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                    >
-                      <option value="" disabled hidden>
-                        Selecione uma opção
-                      </option>
-                      <option value="Maranhão">
-                        Vila Bela da Santíssima Trindade
-                      </option>
-                    </select>
-                  </label>
-                </div>
-              </form>
-              <div className="flex justify-between p-4">
-                <div
-                  className="p-4 pb-0 flex items-center text-brand-primary hover:font-bold transition-all cursor-pointer"
-                  onClick={() => setStep(1)}
-                >
-                  <ArrowBackIcon className="mr-1" />
-                  <span>Voltar</span>
-                </div>
-                <div
-                  className="p-4 pb-0 flex items-center text-brand-primary hover:font-bold transition-all cursor-pointer"
-                  onClick={() => setStep(3)}
-                >
-                  <span>Avançar</span>
-                  <ArrowForwardIcon className="ml-1" />
-                </div>
-              </div>
-            </div>
+              bg-white
+              w-full
+              rounded-3xl
+              shadow-xl shadow-slate-200/50
+              pb-6
+              "
+            ></div>
           </>
         )}
       </div>
