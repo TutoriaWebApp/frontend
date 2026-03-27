@@ -2,36 +2,61 @@
 
 import React from "react";
 
-import { useActionState, useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import Link from "next/link";
+
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 
 import { RequestPasswordResetAction } from "@repo/services/authAction";
 
-import Link from "next/link";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+const forgotPasswordSchema = z.object({
+  email: z
+    .email("Insira um e-mail válido.")
+    .min(1, "O e-mail é obrigatório.")
+    .max(254, "O e-mail é longo demais."),
+});
+
+type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword(): React.ReactNode {
   const router = useRouter();
 
   const { showNotification } = useContext(NotificationContext);
 
-  const [state, formAction, isPending] = useActionState(
-    RequestPasswordResetAction,
-    {
-      success: null,
-      message: "",
-      email: "",
-    },
-  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotPasswordData>({
+    mode: "onChange",
+    resolver: zodResolver(forgotPasswordSchema),
+  });
 
-  useEffect(() => {
-    if (state.success) {
-      showNotification(state.message, "success");
+  const onSubmit = async (data: ForgotPasswordData) => {
+    const formData = new FormData();
+    formData.append("email", data.email);
 
+    const result = await RequestPasswordResetAction(null, formData);
+
+    if (result.success) {
+      showNotification(
+        result.message || "Link enviado com sucesso!",
+        "success",
+      );
       router.push("/");
+    } else {
+      showNotification(
+        result.message || "Erro ao solicitar redefinição.",
+        "error",
+      );
     }
-  }, [state]);
+  };
 
   return (
     <div
@@ -86,7 +111,7 @@ export default function ForgotPassword(): React.ReactNode {
           "
         >
           <form
-            action={formAction}
+            onSubmit={handleSubmit(onSubmit)}
             className="
             flex 
             flex-col
@@ -105,7 +130,7 @@ export default function ForgotPassword(): React.ReactNode {
               <span className="font-semibold mb-2">E-mail</span>
               <input
                 type="email"
-                name="email"
+                {...register("email")}
                 className="
                 bg-white  
                 w-[470px]
@@ -117,18 +142,12 @@ export default function ForgotPassword(): React.ReactNode {
                 2xl:w-[560px]
                 "
                 placeholder="Digite o seu e-mail"
-                defaultValue={state.email}
-                required
+                defaultValue={""}
               />
             </label>
-            {state.success === false && (
-              <span
-                className="
-              pl-6 
-              text-rose-500
-            "
-              >
-                {state.message}
+            {errors.email && (
+              <span className="text-rose-500 md:text-sm 2xl:text-base pl-6 2xl:pl-10">
+                {errors.email.message}
               </span>
             )}
             <button
@@ -145,9 +164,9 @@ export default function ForgotPassword(): React.ReactNode {
               mb-5
               2xl:w-[560px]
               "
-              disabled={isPending}
+              disabled={isSubmitting}
             >
-              Enviar link de redefinição
+              {isSubmitting ? "Enviando..." : "Enviar link de redefinição"}
             </button>{" "}
           </form>
           <Link

@@ -1,28 +1,54 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 import { LogInAction } from "../../../services/src/actions/auth";
 
 import { ClipLoader } from "react-spinners";
 
+const loginSchema = z.object({
+  username: z.email("E-mail inválido").min(1, "O e-mail é obrigatório"),
+  password: z.string().min(1, "A senha é obrigatória"),
+});
+
+type LoginData = z.infer<typeof loginSchema>;
+
 export default function LoginForm(): React.ReactNode {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const [state, formAction, isPending] = useActionState(LogInAction, {
-    success: null,
-    message: "",
-    username: "",
-    password: ""
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginData>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange"
   });
 
-  useEffect(() => {
-    if (state.success) {
-      router.push("/dashboard");
-    }
-  }, [state, router]);
+  const onSubmit = async (data: LoginData) => {
+    setServerError(null);
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("username", data.username);
+      formData.append("password", data.password);
+
+      const result = await LogInAction(null, formData);
+
+      if (result.success) {
+        router.push("/dashboard");
+      } else {
+        setServerError(result.message);
+      }
+    });
+  };
 
   return (
     <>
@@ -77,7 +103,7 @@ export default function LoginForm(): React.ReactNode {
       "
           >
             <form
-              action={formAction}
+              onSubmit={handleSubmit(onSubmit)}
               className="
           flex 
           flex-col
@@ -101,7 +127,7 @@ export default function LoginForm(): React.ReactNode {
                 </span>
                 <input
                   type="email"
-                  name="username"
+                  {...register("username")}
                   className="
                 bg-white 
                 border-blue
@@ -115,9 +141,13 @@ export default function LoginForm(): React.ReactNode {
                 2xl:w-[367px]
                 "
                   placeholder="Digite o seu e-mail"
-                  defaultValue={state.email}
-                  required
+                  defaultValue={""}
                 />
+                {errors.username && (
+                  <span className="text-rose-500 md:text-sm 2xl:text-base pl-6">
+                    {errors.username.message}
+                  </span>
+                )}
               </label>
               <label
                 className="
@@ -137,7 +167,7 @@ export default function LoginForm(): React.ReactNode {
                 </span>
                 <input
                   type="password"
-                  name="password"
+                  {...register("password")}
                   className="
                 bg-white 
                 border-blue 
@@ -150,21 +180,15 @@ export default function LoginForm(): React.ReactNode {
                 border-slate-300
                 2xl:w-[367px]"
                   placeholder="Digite a sua senha"
-                  defaultValue={state.password}
-                  required
+                  defaultValue={""}
                 />
               </label>
-              {state.success === false && (
-                <span
-                  className="
-              ml-6 
-              mb-4 
-              text-rose-500
-            "
-                >
-                  {state.message}
-                </span>
-              )}
+                {errors.password && (
+                  <span className="text-rose-500 md:text-sm 2xl:text-base pl-6">
+                    {errors.password.message}
+                  </span>
+                )}
+
               <button
                 className="
               bg-indigo-600 
@@ -185,6 +209,11 @@ export default function LoginForm(): React.ReactNode {
               >
                 Entrar
               </button>
+              {serverError && (
+                <span className="text-rose-500 font-medium text-center">
+                  {serverError}
+                </span>
+              )}
               <div
                 className="
             self-center 
