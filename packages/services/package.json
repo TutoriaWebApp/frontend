@@ -7,7 +7,8 @@
     "./auth": "./src/auth.ts",
     "./authAction": "./src/actions/auth.ts",
     "./states": "./src/states.ts",
-    "./cities": "./src/cities.ts"
+    "./cities": "./src/cities.ts",
+    "./user": "./src/actions/user.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15"
