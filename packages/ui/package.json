@@ -9,7 +9,8 @@
     "./header": "./src/Header/Header.tsx",
     "./footer": "./src/Footer/Footer.tsx",
     "./loginForm": "./src/LoginForm/LoginForm.tsx",
-    "./notification": "./src/contexts/NotificationContext.tsx"
+    "./notification": "./src/contexts/NotificationContext.tsx",
+    "./imageUpload": "./src/ImageUpload/ImageUpload.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

@@ -14,8 +14,6 @@ export async function GetCities(UF: string): Promise<CityResult[] | string> {
         concatArray = concatArray.concat(element);
     }
 
-    console.log(data);
-
     return data;
 
   } catch (error) {

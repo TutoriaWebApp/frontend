@@ -23,14 +23,12 @@ export default function Header() {
   const notLoggedInLinks = ["/", "/esqueci-senha", "/redefinir-senha", "/criar-conta"];
 
   useEffect(() => {
-    console.log(pathname)
     if(notLoggedInLinks.includes(pathname)){
       setLoggedIn(false);
     }
     else{
       setLoggedIn(true);
     }
-    console.log(loggedIn)
   }, [pathname]);
 
   return (

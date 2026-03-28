@@ -61,7 +61,6 @@ export default function ForgotPassword(): React.ReactNode {
   const { showNotification } = useContext(NotificationContext);
 
   const onSubmit = async (data: RegisterData) => {
-    7;
     const uidStr = Array.isArray(uid) ? uid[0] : uid;
     const tokenStr = Array.isArray(token) ? token[0] : token;
 
