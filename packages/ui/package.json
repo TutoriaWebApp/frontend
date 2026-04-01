@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
+    "@repo/services": "workspace:*",
     "@repo/lib": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.4",

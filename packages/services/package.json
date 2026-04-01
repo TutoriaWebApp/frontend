@@ -11,7 +11,12 @@
     "./user": "./src/actions/user.ts"
   },
   "devDependencies": {
-    "@types/node": "^22.19.15"
+    "@types/node": "^22.19.15",
+    "@repo/lib": "workspace:*"
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0",
+    "@repo/lib": "workspace:*"
   },
   "peerDependencies": {
     "next": "16.1.6"

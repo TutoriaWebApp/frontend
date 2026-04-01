@@ -5,8 +5,6 @@ import {
   PasswordResetResult,
 } from "./types/auth";
 
-import { cookies } from "next/headers";
-
 export async function LogIn(
   username: string,
   password: string,
