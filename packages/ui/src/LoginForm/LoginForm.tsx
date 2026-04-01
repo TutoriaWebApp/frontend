@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useSessionExpired } from "../contexts/SessionExpiredContext/SessionExpiredContext";
 import { useSearchParams } from "next/navigation";
+import { isTokenExpired } from "@repo/lib/jwtAux";
 
 import { LogInAction } from "../../../services/src/actions/auth";
 
@@ -20,21 +21,36 @@ const loginSchema = z.object({
 
 type LoginData = z.infer<typeof loginSchema>;
 
-
-export default function LoginForm(): React.ReactNode {
+export default function LoginForm({
+  access_token,
+  refresh_token,
+}: {
+  access_token: string | undefined;
+  refresh_token: string | undefined;
+}): React.ReactNode {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
-  
+
   const searchParams = useSearchParams();
   const sessionExpired = useSessionExpired();
-  
+
   useEffect(() => {
     if (searchParams.get("session") === "expired") {
       sessionExpired.triggerSessionExpired();
     }
   }, [searchParams]);
-  
+
+  useEffect(() => {
+    const checkToken = async (access_token: string | undefined, refresh_token: string | undefined) => {
+      if (!isTokenExpired(access_token) || !isTokenExpired(refresh_token)) { 
+        router.push("/dashboard");
+      }
+    };
+
+    checkToken(access_token, refresh_token);
+  }, []);
+
   const {
     register,
     handleSubmit,

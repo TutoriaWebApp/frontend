@@ -1,12 +1,20 @@
 import React from "react";
 import Image from "next/image";
 
+import { cookies } from "next/headers";
+
 import LoginForm from "@repo/ui/LoginForm/LoginForm";
 
-export default function Home(): React.ReactNode {
+export default async function Home(){
+  const cookieStore = await cookies();
+
+  const accessToken = cookieStore.get("access_token")?.value;
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+
   return (
     <>
-      <div className="
+      <div
+        className="
         flex 
         flex-col 
         md:flex-row 
@@ -16,8 +24,10 @@ export default function Home(): React.ReactNode {
         justify-center
         p-4
         2xl:p-16
-      ">
-        <div className="
+      "
+      >
+        <div
+          className="
           flex-1 
           flex 
           flex-col 
@@ -27,24 +37,29 @@ export default function Home(): React.ReactNode {
           h-full
           gap-8
           2xl:gap-16
-        ">
-          <h2 className="
+        "
+        >
+          <h2
+            className="
             text-2xl 
             text-center 
             font-quicksand
             2xl:text-3xl
-            ">
+            "
+          >
             Aprendendo melhor juntos!
           </h2>
 
-          <div className="
+          <div
+            className="
             relative 
             w-full 
             h-[300px] 
             sm:h-[400px] 
             lg:h-[500px]
             2xl:h-[600px]
-          ">
+          "
+          >
             <Image
               src="/login-students.jpg"
               alt="Estudantes aprendendo"
@@ -54,7 +69,7 @@ export default function Home(): React.ReactNode {
             />
           </div>
         </div>
-        <LoginForm/>
+        <LoginForm access_token={accessToken} refresh_token={refreshToken}/>
       </div>
     </>
   );
