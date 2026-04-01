@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
+    "@repo/lib": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.4",
     "@types/react-dom": "19.2.3",
@@ -31,6 +32,7 @@
   },
   "dependencies": {
     "@repo/services": "workspace:*",
+    "@repo/lib": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "@emotion/react": "^11.14.0",

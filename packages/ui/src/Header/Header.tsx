@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 
 import { LogOutAction } from "@repo/services/authAction";
 
+import {notLoggedInRoutes} from "@repo/lib/authRoutes";
+
 export default function Header() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -20,10 +22,8 @@ export default function Header() {
     { name: "Chat", href: "/chat" },
   ];
 
-  const notLoggedInLinks = ["/", "/esqueci-senha", "/redefinir-senha", "/criar-conta"];
-
   useEffect(() => {
-    if(notLoggedInLinks.includes(pathname)){
+    if(notLoggedInRoutes.includes(pathname)){
       setLoggedIn(false);
     }
     else{
