@@ -1,16 +1,25 @@
-import { BackendResponse, AuthResult, PasswordResetRequestResult, PasswordResetResult} from "./types/auth";
+import {
+  BackendResponse,
+  AuthResult,
+  PasswordResetRequestResult,
+  PasswordResetResult,
+} from "./types/auth";
 
-export async function LogIn(username: string, password: string): Promise<AuthResult> {
+import { cookies } from "next/headers";
+
+export async function LogIn(
+  username: string,
+  password: string,
+): Promise<AuthResult> {
   const baseURL = process.env.backendBaseURL;
 
   try {
     const response = await fetch(`${baseURL}/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      credentials: 'include', //Se chamar no cliente, sem ser Server Action
       body: JSON.stringify({ username, password }),
     });
 
@@ -20,9 +29,8 @@ export async function LogIn(username: string, password: string): Promise<AuthRes
       success: response.ok,
       status: response.status,
       data: data as BackendResponse,
-      headers: response.headers // Headers para o Server Action ler o Set-Cookie
+      headers: response.headers, // Headers para o Server Action ler o Set-Cookie
     };
-
   } catch (error) {
     console.error("Password Reset Request Service Error:", error);
     return {
@@ -33,15 +41,17 @@ export async function LogIn(username: string, password: string): Promise<AuthRes
   }
 }
 
-export async function RequestPasswordReset(email: string): Promise<PasswordResetRequestResult> {
+export async function RequestPasswordReset(
+  email: string,
+): Promise<PasswordResetRequestResult> {
   const baseURL = process.env.backendBaseURL;
 
   try {
     const response = await fetch(`${baseURL}/reset-password/request`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ email }),
     });
@@ -53,7 +63,6 @@ export async function RequestPasswordReset(email: string): Promise<PasswordReset
       status: response.status,
       data: data as BackendResponse,
     };
-
   } catch (error) {
     console.error("Password Reset Request Service Error:", error);
     return {
@@ -64,15 +73,19 @@ export async function RequestPasswordReset(email: string): Promise<PasswordReset
   }
 }
 
-export async function PasswordReset(uid: string, token: string, new_password: string): Promise<PasswordResetResult> {
+export async function PasswordReset(
+  uid: string,
+  token: string,
+  new_password: string,
+): Promise<PasswordResetResult> {
   const baseURL = process.env.backendBaseURL;
 
   try {
     const response = await fetch(`${baseURL}/reset-password/confirm`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ uid, token, new_password }),
     });
@@ -84,7 +97,6 @@ export async function PasswordReset(uid: string, token: string, new_password: st
       status: response.status,
       data: data as BackendResponse,
     };
-
   } catch (error) {
     console.error("Password Reset Service Error:", error);
     return {

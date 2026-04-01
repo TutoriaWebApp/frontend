@@ -15,7 +15,7 @@ export const NotificationContext = createContext<NotificationContextData>(
   {} as NotificationContextData,
 );
 
-export const NotificationContextProvider = ({ children }) => {
+export const NotificationContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState<

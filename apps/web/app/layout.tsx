@@ -1,7 +1,7 @@
 import React from "react";
 
-import "./normalize.css"
-import "./grid.css"
+import "./normalize.css";
+import "./grid.css";
 import "@repo/ui/styles";
 import "./globals.css";
 
@@ -10,11 +10,11 @@ import Footer from "@repo/ui/Footer/Footer";
 import CookieBanner from "@repo/ui/CookieBanner/CookieBanner";
 
 import { NotificationContextProvider } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+import { SessionExpiredContextProvider } from "@repo/ui/contexts/SessionExpiredContext/SessionExpiredContext";
 
 import type { Metadata } from "next";
 
-import {Montserrat, Quicksand, Inter} from "next/font/google"
-
+import { Montserrat, Quicksand, Inter } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "TutoriaWeb - Aprenda, ensine, evolua!",
@@ -22,9 +22,15 @@ export const metadata: Metadata = {
     "Se conecte com tutores e aprendizes para aprender e ensinar, conseguir conquistas e níveis e aprender de forma gamificada!",
 };
 
-const montserrat = Montserrat({subsets: ["latin"], variable: "--font-montserrat"})
-const quicksand = Quicksand({subsets: ["latin"], variable: "--font-quicksand"})
-const inter = Inter({subsets: ["latin"], variable: "--font-inter"})
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+});
+const quicksand = Quicksand({
+  subsets: ["latin"],
+  variable: "--font-quicksand",
+});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export default function RootLayout({
   children,
@@ -32,14 +38,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br" className={`${inter.variable} ${montserrat.variable} ${quicksand.variable}`}>
+    <html
+      lang="pt-br"
+      className={`${inter.variable} ${montserrat.variable} ${quicksand.variable}`}
+    >
       <body className="font-inter">
-        <NotificationContextProvider>
-          <Header/>
-          {children}
-          <CookieBanner/>
-          <Footer/>
-        </NotificationContextProvider>
+        <SessionExpiredContextProvider>
+          <NotificationContextProvider>
+            <Header />
+            {children}
+            <CookieBanner />
+            <Footer />
+          </NotificationContextProvider>
+        </SessionExpiredContextProvider>
       </body>
     </html>
   );

@@ -80,6 +80,27 @@ export async function LogInAction(
   }
 }
 
+export async function LogOutAction() {
+  const cookieStore = await cookies();
+
+  try {
+    const baseURL = process.env.backendBaseURL;
+    await fetch(`${baseURL}/logout/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    console.error("Erro tentar o logout:", error);
+  }
+
+  cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
+
+  redirect("/");
+}
+
 export async function RequestPasswordResetAction(
   prevState: ActionState | null,
   formData: FormData,
@@ -113,28 +134,6 @@ export async function RequestPasswordResetAction(
   }
 }
 
-export async function LogOutAction() {
-  const cookieStore = await cookies();
-
-  try {
-    const baseURL = process.env.backendBaseURL;
-    await fetch(`${baseURL}/logout/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (error) {
-    console.error("Erro ao avisar sobre o logout:", error);
-  }
-
-  // 2. Limpar os cookies no Navegador (Obrigatório)
-  cookieStore.delete("access_token");
-  cookieStore.delete("refresh_token");
-
-  // 3. Mandar o usuário de volta para o início
-  redirect("/");
-}
 
 export async function PasswordResetAction(
   uid: string,

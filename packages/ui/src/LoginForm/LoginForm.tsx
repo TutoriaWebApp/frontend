@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useSessionExpired } from "../contexts/SessionExpiredContext/SessionExpiredContext";
+import { useSearchParams } from "next/navigation";
 
 import { LogInAction } from "../../../services/src/actions/auth";
 
@@ -18,18 +20,28 @@ const loginSchema = z.object({
 
 type LoginData = z.infer<typeof loginSchema>;
 
+
 export default function LoginForm(): React.ReactNode {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
-
+  
+  const searchParams = useSearchParams();
+  const sessionExpired = useSessionExpired();
+  
+  useEffect(() => {
+    if (searchParams.get("session") === "expired") {
+      sessionExpired.triggerSessionExpired();
+    }
+  }, [searchParams]);
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
   const onSubmit = async (data: LoginData) => {
@@ -161,7 +173,7 @@ export default function LoginForm(): React.ReactNode {
               font-semibold 
               mt-4 
               ml-6
-            "
+              "
                 >
                   Senha
                 </span>
@@ -183,11 +195,11 @@ export default function LoginForm(): React.ReactNode {
                   defaultValue={""}
                 />
               </label>
-                {errors.password && (
-                  <span className="text-rose-500 md:text-sm 2xl:text-base pl-6">
-                    {errors.password.message}
-                  </span>
-                )}
+              {errors.password && (
+                <span className="text-rose-500 md:text-sm 2xl:text-base pl-6">
+                  {errors.password.message}
+                </span>
+              )}
 
               <button
                 className="
