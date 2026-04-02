@@ -1,45 +1,46 @@
-import { cookies } from "next/headers";
-import { isTokenExpired } from './jwtAux';
-
-interface reqParamsData{
-    method: string,
-    headers?: {},
-    body?: string
+interface reqParamsData {
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  headers?: {};
+  body?: string;
 }
 
-interface authRequestResponseData{
-    success: boolean;
-    status: number;
-    data: {mensagem: string};
+interface authRequestResponseData {
+  success: boolean;
+  status: number;
+  data: any;
 }
 
-export const authRequestWrapper =  async(URL: string, reqParams: reqParamsData, requestName: string): Promise<authRequestResponseData> => {
-    const cookieStore = await cookies();
+export const authRequestWrapper = async <T>(
+  URL: string,
+  reqParams: reqParamsData,
+  requestName: string,
+): Promise<authRequestResponseData> => {
+  try {
+    const response = await fetch(URL, {
+      ...reqParams,
+      credentials: "include",
+    });
 
-    const accessToken = cookieStore.get('access_token')?.value;
+    const data = await response.json();
 
-    if(!accessToken || isTokenExpired(accessToken)) {
-        return {success: false, status: 401, data:{mensagem: "Token inexistente ou inválido."}};
+    if (response.status === 401) {
+      return {
+        success: false,
+        status: 401,
+        data,
+      };
     }
-
-    try{
-        const response = await fetch(URL, {
-            ...reqParams,
-            credentials: 'include'
-        });
-
-        const data = await response.json();
-
-        if(response.ok){
-            return {success: true, status: response.status, data};
-        }
-        else{
-            return {success: false, status: response.status, data};
-        }
-
+    if (response.ok) {
+      return { success: true, status: response.status, data };
+    } else {
+      return { success: false, status: response.status, data };
     }
-    catch(error){
-        console.error(`${requestName} Request Service Error:`, error);
-        return {success: false, status: 500, data: {mensagem: "Não foi possível conectar ao servidor!"}};
-    }
-}
+  } catch (error) {
+    console.error(`${requestName} Request Service Error:`, error);
+    return {
+      success: false,
+      status: 500,
+      data: { mensagem: "Não foi possível conectar ao servidor!" },
+    };
+  }
+};
