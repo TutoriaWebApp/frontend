@@ -7,11 +7,16 @@ import { usePathname } from "next/navigation";
 
 import { LogOutAction } from "@repo/services/authAction";
 
-import {loggedInRoutes} from "@repo/lib/authRoutes";
-
 export default function Header() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+  const notLoggedInRoutes = [
+    "/",
+    "/criar-conta",
+    "/esqueci-senha",
+    "/redefinir-senha",
+  ];
 
   const navLinks = [
     { name: "Home", href: "/dashboard" },
@@ -23,10 +28,9 @@ export default function Header() {
   ];
 
   useEffect(() => {
-    if(!loggedInRoutes.includes(pathname)){
+    if (notLoggedInRoutes.includes(pathname)) {
       setLoggedIn(false);
-    }
-    else{
+    } else {
       setLoggedIn(true);
     }
   }, [pathname]);
@@ -72,7 +76,7 @@ export default function Header() {
               </Link>
             ))}
             <li
-             className="
+              className="
                 inline 
                 p-4
                 pl-6

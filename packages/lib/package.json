@@ -5,7 +5,6 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./jwtAux": "./src/jwtAux.ts",
-    "./authRoutes": "./src/authRoutes.ts",
     "./authRequestWrapper": "./src/authRequestWrapper.ts"
   },
   "main": "./src/index.ts",
