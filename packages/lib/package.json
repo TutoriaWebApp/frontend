@@ -5,7 +5,9 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./jwtAux": "./src/jwtAux.ts",
-    "./authRequestWrapper": "./src/authRequestWrapper.ts"
+    "./authRequestWrapper": "./src/authRequestWrapper.ts",
+    "./userLevel": "./src/userLevel.ts",
+    "./userTitle": "./src/userTitle.ts"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
