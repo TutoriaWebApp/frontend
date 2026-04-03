@@ -33,14 +33,12 @@ export async function CreateAccount(
     return {
       success: false,
       status: 500,
-      data: { message: "Não foi possível conectar ao servidor." },
+      data: { mensagem: "Não foi possível conectar ao servidor." },
     };
   }
 }
 
-export async function GetUserData(): Promise<
-  UserDataSuccessResult | UserDataFailResult | undefined
-> {
+export async function GetUserData(): Promise<UserDataSuccessResult | UserDataFailResult> {
   const URL = `${process.env.backendBaseURL}/perfil`;
   const cookieStore = await cookies();
 
@@ -60,15 +58,15 @@ export async function GetUserData(): Promise<
 
   if (res.success) {
     const userData: UserDataSuccessResult = {
-      success: res.success,
+      success: true,
+      status: res.status,
       data: res.data,
     };
     return userData;
   } else {
     const failedRequest: UserDataFailResult = {
-      success: res.success,
+      success: false,
       status: res.status,
-      data: res.data,
     };
     return failedRequest;
   }

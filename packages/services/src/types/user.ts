@@ -14,9 +14,7 @@ export interface CreateUserResult {
   message: string;
 }
 
-export interface UserDataSuccessResult {
-  success: boolean;
-  data: {
+export interface UserData{
     email: string;
     nomePerfil: string;
     estado: string;
@@ -24,11 +22,15 @@ export interface UserDataSuccessResult {
     aniversario: string;
     pontuacao: number;
     fotoURL: string;
-  };
+}
+
+export interface UserDataSuccessResult {
+  success: true;
+  status: number;
+  data: UserData;
 }
 
 export interface UserDataFailResult {
-  success: boolean;
+  success: false;
   status: number;
-  data: BackendResponse;
 }

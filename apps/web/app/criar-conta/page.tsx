@@ -22,7 +22,7 @@ import { ClipLoader } from "react-spinners";
 
 import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
 
-import { CreateAccountAction } from "@repo/services/user";
+import { CreateAccountAction } from "@repo/services/userAction";
 
 const registerSchema = z
   .object({

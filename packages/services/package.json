@@ -8,7 +8,10 @@
     "./authAction": "./src/actions/auth.ts",
     "./states": "./src/states.ts",
     "./cities": "./src/cities.ts",
-    "./user": "./src/actions/user.ts"
+    "./userAction": "./src/actions/user.ts",
+    "./user": "./src/user.ts",
+    "./userTypes": "./src/types/user.ts",
+    "./authTypes": "./src/types/auth.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",

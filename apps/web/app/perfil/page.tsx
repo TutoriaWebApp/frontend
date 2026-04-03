@@ -1,18 +1,30 @@
 import React from "react";
-import { GetUserData } from "../../../../packages/services/src/user";
 
-export default function Dashboard() {
-  const fetchUserData = async () => {
-    const results = await GetUserData();
+import { GetUserData } from "@repo/services/user";
 
-    console.log(results);
-  };
+import { UserData } from "@repo/services/userTypes";
 
-  fetchUserData();
+import { redirect } from "next/navigation";
+
+import { Grade } from "@mui/icons-material";
+
+import ReviewSection from "@repo/ui/ReviewSection/ReviewSection";
+
+export default async function ProfilePage() {
+  let userData: UserData | boolean = false;
+
+  const results = await GetUserData();
+
+  if (!results.success) {
+    if (results.status === 401) {
+      redirect("/?session=expired");
+    }
+  } else {
+    userData = results.data;
+  }
 
   return (
-    <div>
-      <p>perfil</p>
-    </div>
+    <>
+    </>
   );
 }
