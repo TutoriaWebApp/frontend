@@ -11,7 +11,8 @@
     "./loginForm": "./src/LoginForm/LoginForm.tsx",
     "./notification": "./src/contexts/NotificationContext.tsx",
     "./imageUpload": "./src/ImageUpload/ImageUpload.tsx",
-    "./reviewSection": "./src/ReviewSection/ReviewSection.tsx"
+    "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
+    "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

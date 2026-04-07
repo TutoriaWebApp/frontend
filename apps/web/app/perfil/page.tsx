@@ -10,7 +10,8 @@ import { redirect } from "next/navigation";
 
 import { Grade } from "@mui/icons-material";
 
-import ReviewSection from "@repo/ui/ReviewSection/ReviewSection";
+import { ReviewSection } from "@repo/ui/ReviewSection/ReviewSection";
+import {EditProfileButton} from "@repo/ui/EditProfileButton/EditProfileButton"
 
 export default async function ProfilePage() {
   let userData: UserData | boolean = false;
@@ -154,20 +155,7 @@ export default async function ProfilePage() {
 
               {/* Botões de Ação */}
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <button className="
-                  bg-brand-primary 
-                  hover:bg-indigo-800 
-                  text-white 
-                  font-bold 
-                  py-2.5 
-                  px-6 
-                  rounded-xl 
-                  transition-all 
-                  shadow-lg 
-                  shadow-brand-primary/20
-                ">
-                  Editar Perfil
-                </button>
+                <EditProfileButton/>
               </div>
             </div>
           </section>
@@ -235,6 +223,78 @@ export default async function ProfilePage() {
               ))}
             </div>
           </section>
+
+          {/* Seção Especialidades */}
+          <section className="
+            bg-white 
+            rounded-3xl 
+            p-8 
+            border 
+            border-slate-200 
+            shadow-sm
+          ">
+            <h2 className="
+              text-xl 
+              font-bold 
+              text-slate-800 
+              mb-6 
+            ">
+              Especialidades
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {/* Tags de exemplo */}
+              {[
+                "Matemática",
+                "Física",
+                "Programação",
+                "UI Design",
+                "Algoritmos",
+              ].map((area) => (
+                <span
+                  key={area}
+                  className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
+                >
+                  {area}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* Seção de Disponibilidades */}
+          <section className="
+            bg-white 
+            rounded-3xl 
+            p-8 
+            border 
+            border-slate-200 
+            shadow-sm
+          ">
+            <h2 className="
+              text-xl 
+              font-bold 
+              text-slate-800 
+              mb-6 
+            ">
+              Disponibilidade
+            </h2>
+            {/* <div className="flex flex-wrap gap-3">
+              {[
+                "Matemática",
+                "Física",
+                "Programação",
+                "UI Design",
+                "Algoritmos",
+              ].map((area) => (
+                <span
+                  key={area}
+                  className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
+                >
+                  {area}
+                </span>
+              ))}
+            </div> */}
+          </section>
+          <ReviewSection/>
         </main>
       </div>
     }
