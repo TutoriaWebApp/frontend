@@ -11,7 +11,8 @@ import { redirect } from "next/navigation";
 import { Grade } from "@mui/icons-material";
 
 import { ReviewSection } from "@repo/ui/ReviewSection/ReviewSection";
-import {EditProfileButton} from "@repo/ui/EditProfileButton/EditProfileButton"
+import { EditProfileButton } from "@repo/ui/EditProfileButton/EditProfileButton";
+import { AvailabilitySection } from "@repo/ui/Availability/AvailabilitySection";
 
 export default async function ProfilePage() {
   let userData: UserData | boolean = false;
@@ -29,28 +30,35 @@ export default async function ProfilePage() {
   return (
     <>
       {!userData && <h1>Não foi possível obter os dados de perfil.</h1>}
-      {userData && 
-      <div className="
+      {userData && (
+        <div
+          className="
       bg-slate-50 
-      ">
-        <main className="
+      "
+        >
+          <main
+            className="
           max-w-5xl 
           mx-auto 
           px-4 
           pt-8 
           space-y-6
-        ">
-          {/* Seção de Cabeçalho do Perfil */}
-          <section className="
+        "
+          >
+            {/* Seção de Dados Pessoais */}
+            <section
+              className="
             bg-white 
             rounded-3xl 
             p-8 
             border 
             border-slate-200 
             shadow-sm
-          ">
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="
+          "
+            >
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div
+                  className="
                 w-32 
                 h-32 
                 md:w-40 
@@ -65,239 +73,242 @@ export default async function ProfilePage() {
                 items-center 
                 justify-center
               "
-              >
-                <img src={userData.fotoURL} alt="Foto do Perfil" className="
+                >
+                  <img
+                    src={userData.fotoURL}
+                    alt="Foto do Perfil"
+                    className="
                   w-full
                   rounded-2xl
-                "/>
-              </div>
+                "
+                  />
+                </div>
 
-              {/* Informações Principais */}
-              <div className="
+                {/* Informações Principais */}
+                <div
+                  className="
                 flex-1 
                 space-y-4
-              ">
-                <div className="
+              "
+                >
+                  <div
+                    className="
                   flex 
                   flex-col 
                   gap-3
-                ">
-                  <h1 className="
+                "
+                  >
+                    <h1
+                      className="
                     text-3xl 
                     font-bold 
                     text-slate-800
-                  ">
-                    {userData.nomePerfil}
-                  </h1>
-                  <p className="
+                  "
+                    >
+                      {userData.nomePerfil}
+                    </h1>
+                    <p
+                      className="
                     text-slate-500 
                     font-medium
-                  ">
-                    {userData.cidade} - {userData.estado}
-                  </p>
-                  <p className="
+                  "
+                    >
+                      {userData.cidade} - {userData.estado}
+                    </p>
+                    <p
+                      className="
                     text-brand-primary 
                     md:text-sm 
                     font-semibold 
                     mt-1
                     2xl:text-base
-                  ">
-                    Nível {userLevel(userData.pontuacao)} - {userTitle(userLevel(userData.pontuacao))}
-                  </p>
-                </div>
+                  "
+                    >
+                      Nível {userLevel(userData.pontuacao)} -{" "}
+                      {userTitle(userLevel(userData.pontuacao))}
+                    </p>
+                  </div>
 
-                {/* Resumo de Avaliações */}
-                <div className="
+                  {/* Resumo de Avaliações */}
+                  <div
+                    className="
                   grid 
                   grid-cols-2
-                ">
-                  <div className="
+                "
+                  >
+                    <div
+                      className="
                     flex 
                     gap-1
                   text-slate-600
                     items-center
-                  ">
-                    <Grade
-                      className="text-amber-400"
-                      sx={{ fontSize: 20 }}
-                    />
-                    <span className="
+                  "
+                    >
+                      <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
+                      <span
+                        className="
                       md:text-sm 
                       font-medium 
                       2xl:text-base
-                    ">
-                      4.7 como <em className="text-slate-800 not-italic font-bold">Tutor</em>{" "}
-                      (123 avaliações)
-                    </span>
-                  </div>
-                  <div className="
+                    "
+                      >
+                        4.7 como{" "}
+                        <em className="text-slate-800 not-italic font-bold">
+                          Tutor
+                        </em>{" "}
+                        (123 avaliações)
+                      </span>
+                    </div>
+                    <div
+                      className="
                     flex 
                     items-center 
                     gap-1
                     text-slate-600
-                  ">
-                    <Grade
-                      className="text-amber-400"
-                      sx={{ fontSize: 20 }}
-                    />
-                    <span className="
+                  "
+                    >
+                      <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
+                      <span
+                        className="
                       md:text-sm 
                       font-medium
                       2xl:text-base
-                    ">
-                      4.9 como{" "}
-                      <em className="text-slate-800 not-italic font-bold">Aprendiz</em> (45
-                      avaliações)
-                    </span>
+                    "
+                      >
+                        4.9 como{" "}
+                        <em className="text-slate-800 not-italic font-bold">
+                          Aprendiz
+                        </em>{" "}
+                        (45 avaliações)
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Botões de Ação */}
-              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <EditProfileButton/>
+                {/* Botões de Ação */}
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                  <EditProfileButton />
+                </div>
               </div>
-            </div>
-          </section>
-
-          {/* Seção Sobre Mim */}
-          <section className="
-            bg-white 
-            rounded-3xl 
-            p-8 
-            border 
-            border-slate-200 
-            shadow-sm
-          ">
-            <h2 className="
+              <h2
+                className="
               text-xl 
               font-bold 
               text-slate-800 
-              mb-4 
-            ">
-              Sobre Mim
-            </h2>
-            <p className="
+              mb-4
+              mt-8
+            "
+              >
+                Sobre Mim
+              </h2>
+              <p
+                className="
               text-slate-600 
               leading-relaxed 
-            ">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </p>
-          </section>
+            "
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut aliquip ex ea commodo consequat.
+              </p>
+            </section>
 
-          {/* Seção Áreas de Conhecimento */}
-          <section className="
+            {/* Seção Áreas de Conhecimento e Especialidades */}
+            <section
+              className="
             bg-white 
             rounded-3xl 
             p-8 
             border 
             border-slate-200 
             shadow-sm
-          ">
-            <h2 className="
+          "
+            >
+              <h2
+                className="
               text-xl 
               font-bold 
               text-slate-800 
               mb-6 
-            ">
-              Áreas de Conhecimento
-            </h2>
-            <div className="flex flex-wrap gap-3">
-              {/* Tags de exemplo */}
-              {[
-                "Matemática",
-                "Física",
-                "Programação",
-                "UI Design",
-                "Algoritmos",
-              ].map((area) => (
-                <span
-                  key={area}
-                  className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
-                >
-                  {area}
-                </span>
-              ))}
-            </div>
-          </section>
+            "
+              >
+                Áreas de Conhecimento
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {/* Tags de exemplo */}
+                {[
+                  "Matemática",
+                  "Física",
+                  "Programação",
+                  "UI Design",
+                  "Algoritmos",
+                ].map((area) => (
+                  <span
+                    key={area}
+                    className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
+                  >
+                    {area}
+                  </span>
+                ))}
+              </div>
+              <h2
+                className="
+              text-xl 
+              font-bold 
+              text-slate-800 
+              mb-6
+              mt-8 
+            "
+              >
+                Especialidades
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {/* Tags de exemplo */}
+                {[
+                  "Matemática",
+                  "Física",
+                  "Programação",
+                  "UI Design",
+                  "Algoritmos",
+                ].map((area) => (
+                  <span
+                    key={area}
+                    className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
+                  >
+                    {area}
+                  </span>
+                ))}
+              </div>
+            </section>
 
-          {/* Seção Especialidades */}
-          <section className="
+            {/* Seção de Disponibilidades */}
+            <section
+              className="
             bg-white 
             rounded-3xl 
             p-8 
             border 
             border-slate-200 
             shadow-sm
-          ">
-            <h2 className="
+          "
+            >
+              <h2
+                className="
               text-xl 
               font-bold 
               text-slate-800 
               mb-6 
-            ">
-              Especialidades
-            </h2>
-            <div className="flex flex-wrap gap-3">
-              {/* Tags de exemplo */}
-              {[
-                "Matemática",
-                "Física",
-                "Programação",
-                "UI Design",
-                "Algoritmos",
-              ].map((area) => (
-                <span
-                  key={area}
-                  className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
-                >
-                  {area}
-                </span>
-              ))}
-            </div>
-          </section>
-
-          {/* Seção de Disponibilidades */}
-          <section className="
-            bg-white 
-            rounded-3xl 
-            p-8 
-            border 
-            border-slate-200 
-            shadow-sm
-          ">
-            <h2 className="
-              text-xl 
-              font-bold 
-              text-slate-800 
-              mb-6 
-            ">
-              Disponibilidade
-            </h2>
-            {/* <div className="flex flex-wrap gap-3">
-              {[
-                "Matemática",
-                "Física",
-                "Programação",
-                "UI Design",
-                "Algoritmos",
-              ].map((area) => (
-                <span
-                  key={area}
-                  className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
-                >
-                  {area}
-                </span>
-              ))}
-            </div> */}
-          </section>
-          <ReviewSection/>
-        </main>
-      </div>
-    }
+            "
+              >
+                Disponibilidade
+              </h2>
+                <AvailabilitySection/>
+            </section>
+            <ReviewSection />
+          </main>
+        </div>
+      )}
     </>
   );
 }

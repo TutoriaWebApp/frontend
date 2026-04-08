@@ -12,7 +12,8 @@
     "./notification": "./src/contexts/NotificationContext.tsx",
     "./imageUpload": "./src/ImageUpload/ImageUpload.tsx",
     "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
-    "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx"
+    "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
+    "./availabilitySection": "./src/Availability/AvailabilitySection.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

@@ -73,7 +73,7 @@ export function ReviewSection() {
         <ReviewFilter />
       </div>
 
-      <div className="min-h-[300px]">
+      <div className="min-h-[220px]">
         <ReviewCard
           name="Exemplo de User" 
           rating={3} 
