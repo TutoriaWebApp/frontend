@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { DaySelector } from "./DaySelector/DaySelector";
 import { TimePicker } from "./TimePicker/TimePicker";
+import { ScheduleModal } from "../ScheduleModal/ScheduleModal";
 
-export function AvailabilitySection() {
+interface AvailabilitySectionProps{
+  ownProfile: boolean;
+}
+
+export function AvailabilitySection({ownProfile}: AvailabilitySectionProps) {
   // Exemplo de estrutura de dados do Django
   const [availabilityData] = useState([
     { name: "Domingo", isAvailable: false, slots: [] },
@@ -29,10 +34,22 @@ export function AvailabilitySection() {
   // Encontra os horários do dia clicado
   const currentDayData = availabilityData.find(d => d.name === selectedDayName);
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
+
   return (
+    <>
     <section>
       
-      <div className="border-2 border-slate-50 rounded-2xl p-6 bg-slate-50/30">
+      <div className="
+        border-2 
+        border-slate-50
+        rounded-2xl 
+        p-6 
+        bg-slate-50/30
+      ">
 
         {/* Componente de Dias */}
         <DaySelector 
@@ -42,22 +59,60 @@ export function AvailabilitySection() {
         />
 
         {/* Componente de Horários e Botão de Ação */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mt-10">
+        <div className="
+          flex 
+          flex-col 
+          md:flex-row 
+          justify-between 
+          items-start 
+          md:items-end 
+          gap-8 
+          mt-10
+        ">
           <div className="flex-1">
-            <p className="text-xs font-bold text-slate-800 mb-4 underline decoration-cyan-400 underline-offset-8 uppercase tracking-widest">
+            <p className="
+              text-xs 
+              font-bold 
+              text-slate-800 
+              mb-4 
+              underline 
+              decoration-cyan-400 
+              underline-offset-8 
+              uppercase 
+              tracking-widest
+            ">
               Horários Disponíveis:
             </p>
             <TimePicker slots={currentDayData?.slots || []} />
           </div>
 
+          {!ownProfile &&
+          
           <button 
-            type="button"
-            className="w-full md:w-auto bg-brand-primary hover:bg-brand-primary/90 text-white font-bold py-4 px-10 rounded-xl transition-all shadow-lg shadow-brand-primary/20 hover:-translate-y-1 active:translate-y-0"
+          type="button"
+            className="
+              w-full 
+              md:w-auto 
+              bg-brand-primary 
+              hover:bg-indigo-800  
+              text-white 
+              font-bold 
+              py-3 
+              px-8 
+              rounded-xl 
+              transition-all 
+              shadow-lg 
+              shadow-brand-primary/20 
+            "
+            onClick={openModal}
           >
             Solicitar Sessão
           </button>
+        }
         </div>
       </div>
     </section>
+    <ScheduleModal isOpen={modalIsOpen} onClose={closeModal}/>
+    </>
   );
 }

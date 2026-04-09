@@ -10,9 +10,9 @@ import { redirect } from "next/navigation";
 
 import { Grade } from "@mui/icons-material";
 
-import { ReviewSection } from "@repo/ui/ReviewSection/ReviewSection";
-import { EditProfileButton } from "@repo/ui/EditProfileButton/EditProfileButton";
-import { AvailabilitySection } from "@repo/ui/Availability/AvailabilitySection";
+import { ReviewSection } from "@repo/ui/reviewSection";
+import { EditProfileButton } from "@repo/ui/editProfileButton";
+import { AvailabilitySection } from "@repo/ui/availabilitySection";
 
 export default async function ProfilePage() {
   let userData: UserData | boolean = false;
@@ -303,7 +303,7 @@ export default async function ProfilePage() {
               >
                 Disponibilidade
               </h2>
-                <AvailabilitySection/>
+                <AvailabilitySection ownProfile={true}/>
             </section>
             <ReviewSection />
           </main>

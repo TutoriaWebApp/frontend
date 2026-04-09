@@ -15,8 +15,10 @@ export function SessionExpiredModal({ isOpen }: SessionExpiredModalProps) {
   const sessionExpired = useSessionExpired();
   const router = useRouter();
 
-  
-  if (!isOpen) return null;
+  //Fechando a modal
+  if(!isOpen){
+    return null;
+  } 
   
   const handleLoginRedirect = () => {
     sessionExpired.closeSessionExpired();
