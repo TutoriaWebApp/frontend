@@ -10,7 +10,7 @@ interface authRequestResponseData {
   data: any;
 }
 
-export const authRequestWrapper = async <T>(
+export const authRequestWrapper = async (
   URL: string,
   reqParams: reqParamsData,
   requestName: string,

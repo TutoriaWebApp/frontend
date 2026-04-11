@@ -1,5 +1,5 @@
 export interface BackendResponse {
-  mensagem: string;
+  message: string;
   [key: string]: any;
 }
 
@@ -33,4 +33,10 @@ export interface UserDataSuccessResult {
 export interface UserDataFailResult {
   success: false;
   status: number;
+}
+
+export interface ChangePasswordResult {
+  success: boolean;
+  status: number;
+  data: BackendResponse;
 }

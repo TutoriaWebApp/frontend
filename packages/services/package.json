@@ -9,7 +9,8 @@
     "./states": "./src/states.ts",
     "./cities": "./src/cities.ts",
     "./userAction": "./src/actions/user.ts",
-    "./user": "./src/user.ts",
+    "./userServer": "./src/userServer.ts",
+    "./userClient": "./src/userClient.ts",
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts"
   },

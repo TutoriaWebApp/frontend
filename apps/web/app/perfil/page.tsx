@@ -1,6 +1,6 @@
 import React from "react";
 
-import { GetUserData } from "@repo/services/user";
+import { GetUserData } from "@repo/services/userServer";
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
 
