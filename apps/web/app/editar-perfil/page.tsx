@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { ClipLoader } from "react-spinners";
 
 import { GetUserDataClient } from "@repo/services/userClient";
@@ -15,12 +15,89 @@ import { Grade } from "@mui/icons-material";
 
 import { ChangePasswordModal } from "@repo/ui/changePasswordModal";
 
+import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+import { GetStates } from "@repo/services/states";
+import { StateResult } from "../../../../packages/services/src/types/states";
+import { GetCities } from "@repo/services/cities";
+import { CityResult } from "../../../../packages/services/src/types/cities";
+
+import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
+
+const registerSchema = z.object({
+  nomePerfil: z
+    .string()
+    .min(1, "Seu perfil deve ter um nome.")
+    .max(100, "O nome só pode conter até 100 caracteres."),
+  estado: z.string().min(1, "É obrigatório informar seu estado."),
+  cidade: z.string().min(1, "É obrigatório infomar sua cidade"),
+  aniversario: z
+    .string()
+    .refine(
+      (stringDate) => {
+        if (!stringDate) {
+          return true;
+        }
+
+        const date = new Date(stringDate);
+
+        return !isNaN(date.getTime());
+      },
+      { message: "Data inválida." },
+    )
+    .refine(
+      (stringDate) => {
+        if (!stringDate) {
+          return true;
+        }
+        const date = new Date(stringDate);
+
+        const currentDate = new Date();
+
+        return date <= currentDate;
+      },
+      { message: "A data não pode ser futura." },
+    )
+    .nullable(),
+  foto: z
+    .any()
+    .refine((file) => file instanceof File, "A foto de perfil é obrigatória."),
+  passwordConfirm: z
+    .string()
+    .min(10, "A senha deve possuir 10 ou mais caracteres.")
+    .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
+    .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+});
+
+type RegisterData = z.infer<typeof registerSchema>;
+
 export default function EditProfilePage() {
+  const methods = useForm<RegisterData>({
+    resolver: zodResolver(registerSchema),
+    mode: "onChange",
+  });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = methods;
+
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState<boolean>(false);
-
   const [changePasswordModalIsOpen, setChangePasswordModalIsOpen] =
     useState(false);
+  const [states, setStates] = useState<StateResult[]>([]);
+  const [cities, setCities] = useState<CityResult[]>([]);
+
+  const selectedEstado = watch("estado", "");
+
+  const { showNotification } = useContext(NotificationContext);
 
   const openChangePasswordModal = () => setChangePasswordModalIsOpen(true);
   const closeChangePasswordModal = () => setChangePasswordModalIsOpen(false);
@@ -43,6 +120,40 @@ export default function EditProfilePage() {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    async function fetchStates() {
+      setLoading(true);
+
+      const res = await GetStates();
+
+      if (typeof res === "string") {
+        showNotification(res, "error");
+        return;
+      }
+
+      setStates(res);
+
+      setLoading(false);
+    }
+    fetchStates();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCities() {
+      const res = await GetCities(selectedEstado);
+
+      if (typeof res === "string") {
+        showNotification(res, "error");
+        return;
+      }
+
+      setCities(res);
+
+      setLoading(false);
+    }
+    fetchCities();
+  }, [selectedEstado]);
+
   return (
     <>
       {loading && (
@@ -56,23 +167,23 @@ export default function EditProfilePage() {
         <h1>Não foi possível obter os dados de perfil.</h1>
       )}
       {!loading && userData && (
-        <div
-          className="
+        <FormProvider {...methods}>
+          <div
+            className="
             bg-slate-50 
         "
-        >
-          <main
-            className="
+          >
+            <main
+              className="
                 max-w-5xl 
                 mx-auto 
                 px-4 
                 pt-8 
-                space-y-6
             "
-          >
-            {/* Seção de Dados Pessoais */}
-            <section
-              className="
+            >
+              {/* Seção de Dados Pessoais */}
+              <section
+                className="
                         bg-white 
                         rounded-3xl 
                         p-8 
@@ -80,10 +191,10 @@ export default function EditProfilePage() {
                         border-slate-200 
                         shadow-sm
                       "
-            >
-              <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div
-                  className="
+              >
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  <div
+                    className="
                             w-32 
                             h-32 
                             md:w-40 
@@ -98,158 +209,379 @@ export default function EditProfilePage() {
                             items-center 
                             justify-center
                           "
-                >
-                  <img
-                    src={userData.fotoURL}
-                    alt="Foto do Perfil"
-                    className="
+                  >
+                    <img
+                      src={userData.fotoURL}
+                      alt="Foto do Perfil"
+                      className="
                               w-full
                               rounded-2xl
                             "
-                  />
-                </div>
+                    />
+                  </div>
 
-                {/* Informações Principais */}
-                <div
-                  className="
+                  {/* Informações Principais */}
+                  <div
+                    className="
                             flex-1 
                             space-y-4
                           "
-                >
-                  <div
-                    className="
+                  >
+                    <div
+                      className="
                               flex 
                               flex-col 
                               gap-3
                             "
-                  >
-                    <h1
-                      className="
+                    >
+                      <h1
+                        className="
                                 text-3xl 
                                 font-bold 
                                 text-slate-800
                               "
-                    >
-                      {userData.nomePerfil}
-                    </h1>
-                    <p
-                      className="
+                      >
+                        {userData.nomePerfil}
+                      </h1>
+                      <p
+                        className="
                                 text-slate-500 
                                 font-medium
                               "
-                    >
-                      {userData.cidade} - {userData.estado}
-                    </p>
-                    <p
-                      className="
+                      >
+                        {userData.cidade} - {userData.estado}
+                      </p>
+                      <p
+                        className="
                                 text-brand-primary 
                                 md:text-sm 
                                 font-semibold 
                                 mt-1
                                 2xl:text-base
                               "
-                    >
-                      Nível {userLevel(userData.pontuacao)} -{" "}
-                      {userTitle(userLevel(userData.pontuacao))}
-                    </p>
-                  </div>
+                      >
+                        Nível {userLevel(userData.pontuacao)} -{" "}
+                        {userTitle(userLevel(userData.pontuacao))}
+                      </p>
+                    </div>
 
-                  {/* Resumo de Avaliações */}
-                  <div
-                    className="
+                    {/* Resumo de Avaliações */}
+                    <div
+                      className="
                               grid 
                               grid-cols-2
                             "
-                  >
-                    <div
-                      className="
+                    >
+                      <div
+                        className="
                                 flex 
                                 gap-1
                               text-slate-600
                                 items-center
                               "
-                    >
-                      <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
-                      <span
-                        className="
+                      >
+                        <Grade
+                          className="text-amber-400"
+                          sx={{ fontSize: 20 }}
+                        />
+                        <span
+                          className="
                                   md:text-sm 
                                   font-medium 
                                   2xl:text-base
                                 "
-                      >
-                        4.7 como{" "}
-                        <em className="text-slate-800 not-italic font-bold">
-                          Tutor
-                        </em>{" "}
-                        (123 avaliações)
-                      </span>
-                    </div>
-                    <div
-                      className="
+                        >
+                          4.7 como{" "}
+                          <em className="text-slate-800 not-italic font-bold">
+                            Tutor
+                          </em>{" "}
+                          (123 avaliações)
+                        </span>
+                      </div>
+                      <div
+                        className="
                                 flex 
                                 items-center 
                                 gap-1
                                 text-slate-600
                               "
-                    >
-                      <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
-                      <span
-                        className="
+                      >
+                        <Grade
+                          className="text-amber-400"
+                          sx={{ fontSize: 20 }}
+                        />
+                        <span
+                          className="
                                   md:text-sm 
                                   font-medium
                                   2xl:text-base
                                 "
-                      >
-                        4.9 como{" "}
-                        <em className="text-slate-800 not-italic font-bold">
-                          Aprendiz
-                        </em>{" "}
-                        (45 avaliações)
-                      </span>
+                        >
+                          4.9 como{" "}
+                          <em className="text-slate-800 not-italic font-bold">
+                            Aprendiz
+                          </em>{" "}
+                          (45 avaliações)
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
 
-            {/* Seção de Edição de Informações Pessoais*/}
-            <section
-              className="
+              {/* Seção de Edição de Informações Pessoais*/}
+              <div
+                className="
               bg-white 
               rounded-3xl 
               p-8 
               border 
               border-slate-200 
               shadow-sm
-              "
-            >
-              <h2
-                className="
-                    text-3xl 
-                    font-bold 
-                   text-slate-800 
-                    mb-6
-                    text-center 
+              mt-6
               "
               >
-                Editar Perfil
-              </h2>
-              <h3
-                className="
-                          text-xl 
-                          font-bold 
-                          text-slate-800 
-                          mb-6
-                          border-b-2
-                          pb-2
-                        "
-              >
-                Informações Pessoais
-              </h3>
-              <button onClick={openChangePasswordModal}>Alterar Senha</button>
-            </section>
-          </main>
-        </div>
+                <h2
+                  className="
+                  text-3xl 
+                  font-bold 
+                  text-slate-800 
+                  mb-6
+                  text-center 
+              "
+                >
+                  Editar Perfil
+                </h2>
+                <h3
+                  className="
+                  text-xl 
+                  font-bold 
+                text-slate-800 
+                  mb-6
+                  border-b-2
+                  pb-2
+              "
+                >
+                  Informações Pessoais
+                </h3>
+                <section>
+                  <ImageUpload
+                    name="foto"
+                    label="Foto de Perfil"
+                    required={true}
+                  />
+                  <label
+                    className="
+                  flex 
+                  flex-col 
+                  w-full
+                  gap-2
+              "
+                  >
+                    <span
+                      className="
+                    font-semibold 
+                "
+                    >
+                      Nome<span className="text-rose-500">*</span>
+                    </span>
+                    <input
+                      type="text"
+                      {...register("nomePerfil")}
+                      className="
+                      bg-white  
+                        w-full
+                      text-slate-900
+                        rounded-md
+                        leading-7
+                        border-2
+                      border-slate-300
+                  "
+                      placeholder="Digite seu nome e sobrenome"
+                    />
+                  </label>
+                  <div
+                    className="
+                mt-6
+                mb-6 
+              "
+                  >
+                    {errors.nomePerfil && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.nomePerfil.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                flex 
+                items-center
+              "
+                  >
+                    <label
+                      className="
+                flex 
+                flex-col 
+                mb-4
+                w-full
+                gap-2
+              "
+                    >
+                      <span className="font-semibold">
+                        Estado<span className="text-rose-500">*</span>
+                      </span>
+                      <select
+                        {...register("estado")}
+                        className="
+                        bg-white  
+                          w-full
+                        text-slate-900
+                          rounded-md
+                          py-1
+                          border-2
+                          border-slate-300"
+                        defaultValue={""}
+                      >
+                        <option value="" disabled hidden>
+                          Selecione uma opção
+                        </option>
+                        {states?.map((state) => (
+                          <option key={state.id} value={state.sigla}>
+                            {state.nome}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div
+                    className="
+                  flex 
+                  items-center
+                 "
+                  >
+                    <label
+                      className="
+                      flex 
+                      flex-col 
+                      w-full
+                      gap-2
+                    "
+                    >
+                      <span className="font-semibold">
+                        Cidade<span className="text-rose-500">*</span>
+                      </span>
+                      <select
+                        {...register("cidade")}
+                        className={`${selectedEstado != "" ? "bg-white" : "bg-gray-300"}  
+                        w-full
+                        text-slate-900
+                          rounded-md
+                          py-1
+                          border-2
+                        border-slate-300
+                      `}
+                        disabled={
+                          selectedEstado != "" && cities.length > 0
+                            ? false
+                            : true
+                        }
+                        defaultValue={""}
+                      >
+                        <option value="" disabled hidden>
+                          Selecione uma opção
+                        </option>
+                        {cities.map((city) => (
+                          <option key={city.id} value={city.nome}>
+                            {city.nome}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div
+                    className="
+                    mt-6
+                    mb-6 
+                  "
+                  >
+                    {errors.cidade && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.cidade.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                  flex 
+                  items-center
+                 "
+                  >
+                    <label
+                      className="
+                      flex 
+                      flex-col 
+                      mb-4
+                      w-full
+                      gap-2
+                    "
+                    >
+                      <span className="font-semibold">Sobre Mim</span>
+                      <textarea
+                        rows={6}
+                        className="
+                      bg-white  
+                        w-full
+                      text-slate-900
+                        rounded-md
+                        leading-7
+                        border-2
+                      border-slate-300
+                        overflow-y-scroll
+                        resize-none
+                    "
+                      />
+                    </label>
+                  </div>
+                  <button
+                    className="
+                    bg-brand-primary 
+                    hover:bg-indigo-800 
+                    text-white 
+                      font-bold 
+                      py-2.5 
+                      px-6 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                    shadow-brand-primary/20
+                      mt-4
+                      mb-4
+                      relative
+                      left-[80%]
+                  "
+                    onClick={openChangePasswordModal}
+                  >
+                    Alterar Senha
+                  </button>
+                </section>
+                <section className="mt-10">
+                  <h3
+                    className="
+                      text-xl 
+                      font-bold 
+                    text-slate-800 
+                      mb-6
+                      border-b-2
+                      pb-2
+                  "
+                  >
+                    Áreas de Interesse como Aprendiz
+                  </h3>
+                </section>
+              </div>
+            </main>
+          </div>
+        </FormProvider>
       )}
       <ChangePasswordModal
         isOpen={changePasswordModalIsOpen}

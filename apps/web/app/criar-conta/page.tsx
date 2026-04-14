@@ -669,9 +669,9 @@ export default function CreateAccountPage(): React.ReactNode {
                   pl-6 
                   "
                   >
-                    {errors.estado && (
+                    {errors.cidade && (
                       <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
-                        {errors.estado.message}
+                        {errors.cidade.message}
                       </span>
                     )}
                   </div>
