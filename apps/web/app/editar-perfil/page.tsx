@@ -12,6 +12,7 @@ import { UserData } from "@repo/services/userTypes";
 import { redirect } from "next/navigation";
 
 import { Grade } from "@mui/icons-material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { ChangePasswordModal } from "@repo/ui/changePasswordModal";
 
@@ -27,6 +28,9 @@ import { GetCities } from "@repo/services/cities";
 import { CityResult } from "../../../../packages/services/src/types/cities";
 
 import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
+
+import { AvailabilitySection } from "@repo/ui/Availability/AvailabilitySection";
+import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -339,6 +343,10 @@ export default function EditProfilePage() {
               border-slate-200 
               shadow-sm
               mt-6
+              flex
+              flex-col
+              md:gap-4
+              2xl:gap-10
               "
               >
                 <h2
@@ -564,7 +572,7 @@ export default function EditProfilePage() {
                     Alterar Senha
                   </button>
                 </section>
-                <section className="mt-10">
+                <section>
                   <h3
                     className="
                       text-xl 
@@ -577,6 +585,162 @@ export default function EditProfilePage() {
                   >
                     Áreas de Interesse como Aprendiz
                   </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {/* Tags de exemplo */}
+                    {[
+                      "Matemática",
+                      "Física",
+                      "Programação",
+                      "UI Design",
+                      "Algoritmos",
+                    ].map((area) => (
+                      <div
+                        key={area}
+                        className="
+                        flex 
+                        items-center
+                        bg-slate-100 
+                        px-4 
+                        py-2 
+                        rounded-full
+                        gap-2
+                      "
+                      >
+                        <span
+                          className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                        "
+                        >
+                          {area}
+                        </span>
+                        <DeleteIcon
+                          className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <section>
+                  <h3
+                    className="
+                      text-xl 
+                      font-bold 
+                    text-slate-800 
+                      mb-6
+                      mt-8
+                      border-b-2
+                      pb-2
+                  "
+                  >
+                    Perfil como Tutor
+                  </h3>
+                  <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
+                    Áreas de Tutoria
+                  </h4>
+                  <div className="flex flex-wrap gap-3">
+                    {/* Tags de exemplo */}
+                    {[
+                      "Matemática",
+                      "Física",
+                      "Programação",
+                      "UI Design",
+                      "Algoritmos",
+                    ].map((area) => (
+                      <div
+                        key={area}
+                        className="
+                        flex 
+                        items-center
+                        bg-slate-100 
+                        px-4 
+                        py-2 
+                        rounded-full
+                        gap-2
+                      "
+                      >
+                        <span
+                          className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                        "
+                        >
+                          {area}
+                        </span>
+                        <DeleteIcon
+                          className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
+                    Especialidades
+                  </h4>
+                  <div className="flex flex-wrap gap-3">
+                    {/* Tags de exemplo */}
+                    {[
+                      "Matemática",
+                      "Física",
+                      "Programação",
+                      "UI Design",
+                      "Algoritmos",
+                    ].map((area) => (
+                      <div
+                        key={area}
+                        className="
+                          flex 
+                          items-center
+                          bg-slate-100 
+                          px-4 
+                          py-2 
+                          rounded-full
+                          gap-2
+                      "
+                      >
+                        <span
+                          className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                        "
+                        >
+                          {area}
+                        </span>
+                        <DeleteIcon
+                          className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <h4 className="
+                    font-bold 
+                    2xl:text-lg 
+                    mt-6 
+                    mb-6
+                  ">
+                    Disponibilidade
+                  </h4>
+                  <AvailabilityManager/>
                 </section>
               </div>
             </main>

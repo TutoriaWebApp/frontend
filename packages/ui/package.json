@@ -14,7 +14,8 @@
     "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
     "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
     "./availabilitySection": "./src/Availability/AvailabilitySection.tsx",
-    "./changePasswordModal": "./src/ChangePasswordModal/ChangePasswordModal.tsx"
+    "./changePasswordModal": "./src/ChangePasswordModal/ChangePasswordModal.tsx",
+    "./availabilityManager": "./src/Availability/AvailabilityManager.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
