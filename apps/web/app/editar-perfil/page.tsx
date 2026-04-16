@@ -6,7 +6,6 @@ import { ClipLoader } from "react-spinners";
 import { GetUserDataClient } from "@repo/services/userClient";
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
-import AddIcon from "@mui/icons-material/Add";
 
 import { UserData } from "@repo/services/userTypes";
 
@@ -16,6 +15,7 @@ import Link from "next/link";
 import { Grade } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import InfoIcon from '@mui/icons-material/Info';
 
 import { ChangePasswordModal } from "@repo/ui/changePasswordModal";
 
@@ -32,8 +32,24 @@ import { CityResult } from "../../../../packages/services/src/types/cities";
 
 import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
 
-import { AvailabilitySection } from "@repo/ui/Availability/AvailabilitySection";
 import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
+import { AddArea } from "@repo/ui/addArea";
+import { AddSpecialty } from "@repo/ui/AddSpeciality/AddSpecialty";
+
+interface StudentAreas {
+  id: number;
+  area: string;
+}
+
+interface TutorAreas {
+  id: number;
+  area: string;
+}
+
+interface Specialty {
+  id: number;
+  specialty: string;
+}
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -102,8 +118,31 @@ export default function EditProfilePage() {
     useState(false);
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
+  const [studentAreas, setStudentAreas] = useState<StudentAreas[]>([
+    { id: 1, area: "Matemática" },
+    { id: 2, area: "Física" },
+    { id: 3, area: "Programação" },
+    { id: 4, area: "UI Design" },
+    { id: 5, area: "Algoritmos" },
+  ]);
 
-  const selectedEstado = watch("estado", "");
+  const [tutorAreas, setTutorAreas] = useState<TutorAreas[]>([
+    { id: 1, area: "Matemática" },
+    { id: 2, area: "Física" },
+    { id: 3, area: "Programação" },
+    { id: 4, area: "UI Design" },
+    { id: 5, area: "Algoritmos" },
+  ]);
+
+  const [specialties, setSpecialties] = useState<Specialty[]>([
+    { id: 1, specialty: "Matemática" },
+    { id: 2, specialty: "Física" },
+    { id: 3, specialty: "Programação" },
+    { id: 4, specialty: "UI Design" },
+    { id: 5, specialty: "Algoritmos" },
+  ]);
+
+  const selectedEstado = watch("estado", userData?.estado);
 
   const { showNotification } = useContext(NotificationContext);
 
@@ -400,6 +439,7 @@ export default function EditProfilePage() {
                     <input
                       type="text"
                       {...register("nomePerfil")}
+                      defaultValue={userData.nomePerfil}
                       className="
                       bg-white  
                         w-full
@@ -452,7 +492,7 @@ export default function EditProfilePage() {
                           py-1
                           border-2
                           border-slate-300"
-                        defaultValue={""}
+                        defaultValue={userData.estado}
                       >
                         <option value="" disabled hidden>
                           Selecione uma opção
@@ -484,24 +524,17 @@ export default function EditProfilePage() {
                       </span>
                       <select
                         {...register("cidade")}
-                        className={`${selectedEstado != "" ? "bg-white" : "bg-gray-300"}  
+                        className="
+                        bg-white  
                         w-full
                         text-slate-900
                           rounded-md
                           py-1
                           border-2
                         border-slate-300
-                      `}
-                        disabled={
-                          selectedEstado != "" && cities.length > 0
-                            ? false
-                            : true
-                        }
-                        defaultValue={""}
+                        "
+                        defaultValue={userData.cidade}
                       >
-                        <option value="" disabled hidden>
-                          Selecione uma opção
-                        </option>
                         {cities.map((city) => (
                           <option key={city.id} value={city.nome}>
                             {city.nome}
@@ -591,15 +624,9 @@ export default function EditProfilePage() {
                   </h3>
                   <div className="flex flex-wrap gap-3">
                     {/* Tags de exemplo */}
-                    {[
-                      "Matemática",
-                      "Física",
-                      "Programação",
-                      "UI Design",
-                      "Algoritmos",
-                    ].map((area) => (
+                    {studentAreas.map((area) => (
                       <div
-                        key={area}
+                        key={area.id}
                         className="
                         flex 
                         items-center
@@ -617,7 +644,7 @@ export default function EditProfilePage() {
                             font-semibold
                         "
                         >
-                          {area}
+                          {area.area}
                         </span>
                         <DeleteIcon
                           className="
@@ -632,30 +659,7 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="
-                      w-full 
-                      md:w-auto 
-                      bg-emerald-600 
-                      hover:bg-emerald-800  
-                      text-white 
-                      font-bold 
-                      py-2
-                      px-8 
-                      rounded-xl 
-                      transition-all 
-                      shadow-lg 
-                      shadow-brand-primary/20
-                      flex
-                      items-center
-                      gap-2
-                      mt-12
-                    "
-                    >
-                      <AddIcon />
-                      <span>Adicionar Área</span>
-                    </button>
+                    <AddArea />
                   </div>
                 </section>
                 <section>
@@ -676,17 +680,15 @@ export default function EditProfilePage() {
                   <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
                     Áreas de Tutoria
                   </h4>
+                  <div className="flex items-center gap-2 mb-6">
+                    <InfoIcon className="text-indigo-600"/>
+                    <span>É necessário ter ao menos <em className="not-italic font-bold">1 área</em> para ser considerado um tutor.</span>
+                  </div>
                   <div className="flex flex-wrap gap-3">
                     {/* Tags de exemplo */}
-                    {[
-                      "Matemática",
-                      "Física",
-                      "Programação",
-                      "UI Design",
-                      "Algoritmos",
-                    ].map((area) => (
+                    {tutorAreas.map((area) => (
                       <div
-                        key={area}
+                        key={area.id}
                         className="
                         flex 
                         items-center
@@ -704,7 +706,7 @@ export default function EditProfilePage() {
                             font-semibold
                         "
                         >
-                          {area}
+                          {area.area}
                         </span>
                         <DeleteIcon
                           className="
@@ -719,45 +721,16 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="
-                      w-full 
-                      md:w-auto 
-                      bg-emerald-600 
-                      hover:bg-emerald-800  
-                      text-white 
-                      font-bold 
-                      py-2
-                      px-8 
-                      rounded-xl 
-                      transition-all 
-                      shadow-lg 
-                      shadow-brand-primary/20
-                      flex
-                      items-center
-                      gap-2
-                      mt-12
-                    "
-                    >
-                      <AddIcon />
-                      <span>Adicionar Área</span>
-                    </button>
+                    <AddArea />
                   </div>
                   <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
                     Especialidades
                   </h4>
                   <div className="flex flex-wrap gap-3">
                     {/* Tags de exemplo */}
-                    {[
-                      "Matemática",
-                      "Física",
-                      "Programação",
-                      "UI Design",
-                      "Algoritmos",
-                    ].map((area) => (
+                    {specialties.map((specialty) => (
                       <div
-                        key={area}
+                        key={specialty.id}
                         className="
                           flex 
                           items-center
@@ -775,7 +748,7 @@ export default function EditProfilePage() {
                             font-semibold
                         "
                         >
-                          {area}
+                          {specialty.specialty}
                         </span>
                         <DeleteIcon
                           className="
@@ -790,30 +763,7 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="
-                      w-full 
-                      md:w-auto 
-                      bg-emerald-600 
-                      hover:bg-emerald-800  
-                      text-white 
-                      font-bold 
-                      py-2
-                      px-8 
-                      rounded-xl 
-                      transition-all 
-                      shadow-lg 
-                      shadow-brand-primary/20
-                      flex
-                      items-center
-                      gap-2
-                      mt-12
-                    "
-                    >
-                      <AddIcon />
-                      <span>Adicionar Especialidade</span>
-                    </button>
+                    <AddSpecialty />
                   </div>
                   <h4
                     className="
@@ -825,6 +775,10 @@ export default function EditProfilePage() {
                   >
                     Disponibilidade
                   </h4>
+                  <div className="flex items-center gap-2 mb-6">
+                    <InfoIcon className="text-indigo-600"/>
+                    <span>É necessário ter ao menos <em className="not-italic font-bold">1 disponibilidade</em> para ser considerado um tutor.</span>
+                  </div>
                   <AvailabilityManager />
                 </section>
                 <div className="flex justify-between">
