@@ -6,13 +6,16 @@ import { ClipLoader } from "react-spinners";
 import { GetUserDataClient } from "@repo/services/userClient";
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
+import AddIcon from "@mui/icons-material/Add";
 
 import { UserData } from "@repo/services/userTypes";
 
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { Grade } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { ChangePasswordModal } from "@repo/ui/changePasswordModal";
 
@@ -69,6 +72,7 @@ const registerSchema = z.object({
     .nullable(),
   foto: z
     .any()
+    .nullable()
     .refine((file) => file instanceof File, "A foto de perfil é obrigatória."),
   passwordConfirm: z
     .string()
@@ -376,7 +380,7 @@ export default function EditProfilePage() {
                   <ImageUpload
                     name="foto"
                     label="Foto de Perfil"
-                    required={true}
+                    required={false}
                   />
                   <label
                     className="
@@ -627,6 +631,32 @@ export default function EditProfilePage() {
                       </div>
                     ))}
                   </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      className="
+                      w-full 
+                      md:w-auto 
+                      bg-emerald-600 
+                      hover:bg-emerald-800  
+                      text-white 
+                      font-bold 
+                      py-2
+                      px-8 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                      shadow-brand-primary/20
+                      flex
+                      items-center
+                      gap-2
+                      mt-12
+                    "
+                    >
+                      <AddIcon />
+                      <span>Adicionar Área</span>
+                    </button>
+                  </div>
                 </section>
                 <section>
                   <h3
@@ -635,9 +665,10 @@ export default function EditProfilePage() {
                       font-bold 
                     text-slate-800 
                       mb-6
-                      mt-8
+                      md:mt-8
                       border-b-2
                       pb-2
+                      2xl:mt-0
                   "
                   >
                     Perfil como Tutor
@@ -687,6 +718,32 @@ export default function EditProfilePage() {
                       </div>
                     ))}
                   </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      className="
+                      w-full 
+                      md:w-auto 
+                      bg-emerald-600 
+                      hover:bg-emerald-800  
+                      text-white 
+                      font-bold 
+                      py-2
+                      px-8 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                      shadow-brand-primary/20
+                      flex
+                      items-center
+                      gap-2
+                      mt-12
+                    "
+                    >
+                      <AddIcon />
+                      <span>Adicionar Área</span>
+                    </button>
+                  </div>
                   <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
                     Especialidades
                   </h4>
@@ -732,16 +789,81 @@ export default function EditProfilePage() {
                       </div>
                     ))}
                   </div>
-                  <h4 className="
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      className="
+                      w-full 
+                      md:w-auto 
+                      bg-emerald-600 
+                      hover:bg-emerald-800  
+                      text-white 
+                      font-bold 
+                      py-2
+                      px-8 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                      shadow-brand-primary/20
+                      flex
+                      items-center
+                      gap-2
+                      mt-12
+                    "
+                    >
+                      <AddIcon />
+                      <span>Adicionar Especialidade</span>
+                    </button>
+                  </div>
+                  <h4
+                    className="
                     font-bold 
                     2xl:text-lg 
                     mt-6 
                     mb-6
-                  ">
+                  "
+                  >
                     Disponibilidade
                   </h4>
-                  <AvailabilityManager/>
+                  <AvailabilityManager />
                 </section>
+                <div className="flex justify-between">
+                  <Link
+                    href={"/perfil"}
+                    className="
+                      p-4 
+                      pb-0 
+                      flex 
+                      items-center
+                    text-brand-primary 
+                      hover:font-bold 
+                      hover:underline 
+                      transition-all
+                  "
+                  >
+                    <ArrowBackIcon className="mr-1" />
+                    <span>Voltar para Perfil</span>
+                  </Link>
+                  <button
+                    type="button"
+                    className="
+                      w-full 
+                      md:w-auto 
+                      bg-brand-primary 
+                      hover:bg-indigo-800  
+                      text-white 
+                      font-bold 
+                      py-2
+                      px-8 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                      shadow-brand-primary/20 
+                  "
+                  >
+                    Salvar
+                  </button>
+                </div>
               </div>
             </main>
           </div>

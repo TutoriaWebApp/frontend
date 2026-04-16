@@ -4,7 +4,6 @@ import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { DaySelector } from "./DaySelector/DaySelector";
-import { TimePicker } from "./TimePicker/TimePicker";
 
 interface TimeSlot {
   id: string;
@@ -25,7 +24,7 @@ export function AvailabilityManager() {
     { name: "Terça", isAvailable: true, slots: [{ id: "3", time: "14:00" }] },
     { name: "Quarta", isAvailable: false, slots: [] },
     { name: "Quinta", isAvailable: false, slots: [] },
-    { name: "Sexta", isAvailable: true, slots: [{id: "4", time: "09:00"}] },
+    { name: "Sexta", isAvailable: true, slots: [{ id: "4", time: "09:00" }] },
     { name: "Sábado", isAvailable: false, slots: [] },
   ]);
 
@@ -106,7 +105,7 @@ export function AvailabilityManager() {
               text-slate-800 
               mb-4 
               underline 
-              decoration-cyan-400 
+              decoration-slate-400 
               underline-offset-8 
               uppercase 
               tracking-widest
@@ -114,16 +113,59 @@ export function AvailabilityManager() {
               >
                 Horários Disponíveis:
               </p>
-              <TimePicker slots={currentDay?.slots || []} />
+              <div
+                className="
+                flex 
+                flex-wrap 
+                gap-2
+              "
+              >
+                {currentDay?.slots.map((slot) => (
+                  <div
+                    key={slot.time}
+                    className={`
+                    bg-slate-200 
+                    text-[15px] 
+                    py-1.5 
+                    px-3
+                    flex
+                    items-center
+                    gap-2
+                    rounded 
+                  `}
+                  >
+                    <span
+                      className="    
+                      text-slate-800 
+                      text-[15px] 
+                      font-black 
+                    "
+                    >
+                      {slot.time}
+                    </span>
+                    <DeleteIcon
+                      className="
+                      text-rose-500
+                      cursor-pointer
+                      hover:text-[28px]
+                    hover:text-rose-900
+                      transition-all
+                    "
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <button
-              type="button"
-              className="
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="
               w-full 
               md:w-auto 
-              bg-brand-primary 
-              hover:bg-indigo-800  
+              bg-emerald-600 
+              hover:bg-emerald-800  
               text-white 
               font-bold 
               py-2
@@ -131,12 +173,17 @@ export function AvailabilityManager() {
               rounded-xl 
               transition-all 
               shadow-lg 
-              shadow-brand-primary/20 
+              shadow-brand-primary/20
+              flex
+              items-center
+              gap-2
+              mt-12
+              mb-6
             "
-            >
-              Adicionar  Sessão
-            </button>
-          </div>
+          >
+            <AddIcon />
+            <span>Adicionar Disponibilidade</span>
+          </button>
         </div>
       </section>
     </>

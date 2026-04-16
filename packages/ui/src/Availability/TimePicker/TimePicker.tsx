@@ -12,7 +12,7 @@ export function TimePicker({ slots }: { slots: readonly TimeSlot[] }) {
             className={`
                 bg-emerald-600 
                 text-white 
-                text-[12px] 
+                text-[15px] 
                 font-black 
                 py-1.5 
                 px-3 
