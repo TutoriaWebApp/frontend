@@ -40,3 +40,18 @@ export interface ChangePasswordResult {
   status: number;
   data: BackendResponse;
 }
+
+export interface StudentArea {
+  id?: number;
+  area: string;
+}
+
+export interface TutorArea {
+  id?: number;
+  area: string;
+}
+
+export interface Specialty {
+  id: number;
+  specialty: string;
+}

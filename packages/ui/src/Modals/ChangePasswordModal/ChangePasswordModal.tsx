@@ -9,7 +9,7 @@ import * as z from "zod";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-import { NotificationContext } from "../contexts/NotificationContext/NotificationContext";
+import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
 
 import { ChangePasswordAction } from "@repo/services/userAction";
 import { ChangePassword } from "@repo/services/userClient";

@@ -14,10 +14,17 @@
     "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
     "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
     "./availabilitySection": "./src/Availability/AvailabilitySection.tsx",
-    "./changePasswordModal": "./src/ChangePasswordModal/ChangePasswordModal.tsx",
+    "./changePasswordModal": "./src/Modals/ChangePasswordModal/ChangePasswordModal.tsx",
     "./availabilityManager": "./src/Availability/AvailabilityManager.tsx",
-    "./addArea": "./src/AddArea/AddArea.tsx",
-    "./addSpecialty": "./src/AddSpecialty/AddSpecialty.tsx"
+    "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
+    "./addTutorAreaButton": "./src/AddTutorAreaButton/AddTutorAreaButton.tsx",
+    "./addSpecialty": "./src/AddSpecialty/AddSpecialty.tsx",
+    "./addSpecialtyModal": "./src/Modals/Specialty/AddSpecialtyModal.tsx",
+    "./deleteSpecialtyModal": "./src/Modals/Specialty/DeleteSpecialtyModal.tsx",
+    "./addStudentModal": "./src/Modals/Specialty/AddStudentArea.tsx",
+    "./deleteStudentModal": "./src/Modals/Specialty/DeleteStudentArea.tsx",
+    "./addTutorAreasModal": "./src/Modals/TutorAreas/AddTutorAreas.tsx",
+    "./deleteTutorAreasModal": "./src/Modals/TutorAreas/DeleteTutorAreas.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -41,6 +48,7 @@
   "dependencies": {
     "@repo/services": "workspace:*",
     "@repo/lib": "workspace:*",
+    "@repo/services": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "@emotion/react": "^11.14.0",

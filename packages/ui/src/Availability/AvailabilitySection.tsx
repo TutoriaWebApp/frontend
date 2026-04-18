@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { DaySelector } from "./DaySelector/DaySelector";
 import { TimePicker } from "./TimePicker/TimePicker";
-import { ScheduleModal } from "../ScheduleModal/ScheduleModal";
+import { ScheduleModal } from "../Modals/ScheduleModal/ScheduleModal";
 
 interface AvailabilitySectionProps{
   ownProfile: boolean;

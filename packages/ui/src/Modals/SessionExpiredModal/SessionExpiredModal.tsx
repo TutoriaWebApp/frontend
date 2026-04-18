@@ -4,8 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import LoginIcon from "@mui/icons-material/Login";
-import { useContext } from "react"
-import { useSessionExpired } from "../contexts/SessionExpiredContext/SessionExpiredContext";
+import { useSessionExpired } from "../../contexts/SessionExpiredContext/SessionExpiredContext";
 
 interface SessionExpiredModalProps {
   isOpen: boolean;

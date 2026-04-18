@@ -5,11 +5,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { DaySelector } from "./DaySelector/DaySelector";
 
-interface TimeSlot {
-  id: string;
-  time: string;
-}
-
 export function AvailabilityManager() {
   const [availability, setAvailability] = useState([
     { name: "Domingo", isAvailable: false, slots: [] },

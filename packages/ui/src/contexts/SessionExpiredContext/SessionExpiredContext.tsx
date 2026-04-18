@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { SessionExpiredModal } from "../../SessionExpiredModal/SessionExpiredModal";
+import { SessionExpiredModal } from "../../Modals/SessionExpiredModal/SessionExpiredModal";
 
 interface SessionExpiredAuthContextType {
   isSessionExpired: boolean;

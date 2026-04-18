@@ -4,7 +4,7 @@ import { useState, useContext } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { NotificationContext } from "../contexts/NotificationContext/NotificationContext";
+import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
 
 interface ScheduleModalProps {
   isOpen: boolean;

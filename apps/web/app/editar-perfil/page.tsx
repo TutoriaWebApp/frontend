@@ -33,23 +33,11 @@ import { CityResult } from "../../../../packages/services/src/types/cities";
 import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
 
 import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
-import { AddArea } from "@repo/ui/addArea";
+import { AddStudentArea } from "@repo/ui/addStudentAreaButton";
+import { AddTutorAreaButton} from "@repo/ui/addTutorAreaButton"
 import { AddSpecialty } from "@repo/ui/AddSpeciality/AddSpecialty";
 
-interface StudentAreas {
-  id: number;
-  area: string;
-}
-
-interface TutorAreas {
-  id: number;
-  area: string;
-}
-
-interface Specialty {
-  id: number;
-  specialty: string;
-}
+import { StudentArea, TutorArea, Specialty } from "@repo/services/userTypes";
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -118,20 +106,12 @@ export default function EditProfilePage() {
     useState(false);
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
-  const [studentAreas, setStudentAreas] = useState<StudentAreas[]>([
+  const [studentAreas, setStudentAreas] = useState<StudentArea[]>([
     { id: 1, area: "Matemática" },
-    { id: 2, area: "Física" },
-    { id: 3, area: "Programação" },
-    { id: 4, area: "UI Design" },
-    { id: 5, area: "Algoritmos" },
   ]);
 
-  const [tutorAreas, setTutorAreas] = useState<TutorAreas[]>([
+  const [tutorAreas, setTutorAreas] = useState<TutorArea[]>([
     { id: 1, area: "Matemática" },
-    { id: 2, area: "Física" },
-    { id: 3, area: "Programação" },
-    { id: 4, area: "UI Design" },
-    { id: 5, area: "Algoritmos" },
   ]);
 
   const [specialties, setSpecialties] = useState<Specialty[]>([
@@ -623,10 +603,9 @@ export default function EditProfilePage() {
                     Áreas de Interesse como Aprendiz
                   </h3>
                   <div className="flex flex-wrap gap-3">
-                    {/* Tags de exemplo */}
-                    {studentAreas.map((area) => (
+                    {studentAreas.map((area, index) => (
                       <div
-                        key={area.id}
+                        key={index}
                         className="
                         flex 
                         items-center
@@ -659,7 +638,7 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <AddArea />
+                    <AddStudentArea areas={studentAreas} setAreas={setStudentAreas} />
                   </div>
                 </section>
                 <section>
@@ -685,10 +664,9 @@ export default function EditProfilePage() {
                     <span>É necessário ter ao menos <em className="not-italic font-bold">1 área</em> para ser considerado um tutor.</span>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    {/* Tags de exemplo */}
-                    {tutorAreas.map((area) => (
+                    {tutorAreas.map((area, index) => (
                       <div
-                        key={area.id}
+                        key={index}
                         className="
                         flex 
                         items-center
@@ -721,7 +699,7 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <AddArea />
+                    <AddTutorAreaButton areas={tutorAreas} setAreas={setTutorAreas} />
                   </div>
                   <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
                     Especialidades
