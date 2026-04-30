@@ -3,11 +3,12 @@
 import { cookies } from "next/headers";
 
 import { CreateAccount } from "../userServer";
-import { ChangePassword } from "../userClient";
+import { ChangePassword, EditProfile } from "../userClient";
 import {
   CreateUserResponse,
   CreateUserResult,
   ChangePasswordResult,
+  EditProfileResult
 } from "../types/user";
 
 export async function CreateAccountAction(
@@ -70,6 +71,32 @@ export async function ChangePasswordAction(
     return {
       success: false,
       message: "Não foi possível conectar com o servidor.",
+    };
+  }
+}
+
+export async function EditProfileAction(
+  formData: FormData,
+): Promise<EditProfileResult> {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("access_token")?.value;
+    const csrfToken = cookieStore.get("csrftoken")!.value;
+
+    const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: EditProfileResult = await EditProfile(formData, cookieString, csrfToken);
+
+    if (result.success) {
+      return { success: true, status: result.status};
+    }
+    return {
+      success: false,
+      status: result.status
+    };
+  } catch (error) {
+    return {
+      success: false,
     };
   }
 }

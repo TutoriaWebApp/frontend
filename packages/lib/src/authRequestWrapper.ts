@@ -1,7 +1,7 @@
 interface reqParamsData {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: {};
-  body?: string;
+  body?: string | FormData;
 }
 
 interface authRequestResponseData {

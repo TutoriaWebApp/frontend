@@ -5,6 +5,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { DaySelector } from "./DaySelector/DaySelector";
 
+import { AddScheduleModal } from "../Modals/ScheduleModal/AddScheduleModal";
+import { DeleteScheduleModal } from "../Modals/ScheduleModal/DeleteScheduleModal";
+
 export function AvailabilityManager() {
   const [availability, setAvailability] = useState([
     { name: "Domingo", isAvailable: false, slots: [] },
@@ -23,8 +26,21 @@ export function AvailabilityManager() {
     { name: "Sábado", isAvailable: false, slots: [] },
   ]);
 
+  
+  // Schedule Modal
+  const [openDeleteScheduleModal, setDeleteScheduleModal] =
+    useState<boolean>(false);
+  const setDeleteScheduleModalOpen = () => setDeleteScheduleModal(true);
+  const closeDeleteScheduleModal = () => setDeleteScheduleModal(false);
+
   const [selectedDayName, setSelectedDayName] = useState("Segunda");
   const [newTime, setNewTime] = useState("");
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const setModalOpen = () => setOpenModal(true);
+  const closeModal = () => setOpenModal(false);
+
 
   const currentDay = availability.find((d) => d.name === selectedDayName);
 
@@ -139,6 +155,7 @@ export function AvailabilityManager() {
                       {slot.time}
                     </span>
                     <DeleteIcon
+                      onClick={setDeleteScheduleModalOpen}
                       className="
                       text-rose-500
                       cursor-pointer
@@ -156,6 +173,7 @@ export function AvailabilityManager() {
         <div className="flex justify-end">
           <button
             type="button"
+            onClick={setModalOpen}
             className="
               w-full 
               md:w-auto 
@@ -181,6 +199,8 @@ export function AvailabilityManager() {
           </button>
         </div>
       </section>
+      <AddScheduleModal isOpen={openModal} onAdd={setAvailability} onClose={closeModal}/>
+      <DeleteScheduleModal isOpen={openDeleteScheduleModal} onClose={closeDeleteScheduleModal} />
     </>
   );
 }

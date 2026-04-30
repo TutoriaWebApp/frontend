@@ -9,15 +9,18 @@ import { userTitle } from "@repo/lib/userTitle";
 
 import { UserData } from "@repo/services/userTypes";
 
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { Grade } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 
 import { ChangePasswordModal } from "@repo/ui/changePasswordModal";
+import { DeleteStudentAreaModal } from "@repo/ui/Modals/StudentAreas/DeleteStudentArea";
+import { DeleteTutorAreaModal } from "@repo/ui/Modals/TutorAreas/DeleteTutorAreas";
+import { DeleteSpecialtyModal } from "@repo/ui/Modals/Specialty/DeleteSpecialtyModal";
 
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 
@@ -34,10 +37,12 @@ import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
 
 import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
 import { AddStudentArea } from "@repo/ui/addStudentAreaButton";
-import { AddTutorAreaButton} from "@repo/ui/addTutorAreaButton"
+import { AddTutorAreaButton } from "@repo/ui/addTutorAreaButton";
 import { AddSpecialty } from "@repo/ui/AddSpeciality/AddSpecialty";
 
 import { StudentArea, TutorArea, Specialty } from "@repo/services/userTypes";
+
+import { EditProfileAction } from "@repo/services/userAction";
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -77,12 +82,10 @@ const registerSchema = z.object({
   foto: z
     .any()
     .nullable()
-    .refine((file) => file instanceof File, "A foto de perfil é obrigatória."),
-  passwordConfirm: z
-    .string()
-    .min(10, "A senha deve possuir 10 ou mais caracteres.")
-    .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
-    .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+    .refine(
+      (file) => !file || file instanceof File,
+      "A foto de perfil é obrigatória.",
+    ),
 });
 
 type RegisterData = z.infer<typeof registerSchema>;
@@ -97,6 +100,8 @@ export default function EditProfilePage() {
     register,
     handleSubmit,
     watch,
+    reset,
+    setValue,
     formState: { errors },
   } = methods;
 
@@ -108,10 +113,12 @@ export default function EditProfilePage() {
   const [cities, setCities] = useState<CityResult[]>([]);
   const [studentAreas, setStudentAreas] = useState<StudentArea[]>([
     { id: 1, area: "Matemática" },
+    { id: 2, area: "Matemática" },
   ]);
 
   const [tutorAreas, setTutorAreas] = useState<TutorArea[]>([
     { id: 1, area: "Matemática" },
+    { id: 2, area: "Matemática" },
   ]);
 
   const [specialties, setSpecialties] = useState<Specialty[]>([
@@ -126,8 +133,37 @@ export default function EditProfilePage() {
 
   const { showNotification } = useContext(NotificationContext);
 
+  // Change Password Modal
   const openChangePasswordModal = () => setChangePasswordModalIsOpen(true);
   const closeChangePasswordModal = () => setChangePasswordModalIsOpen(false);
+
+  // Student Area Modal
+  const [openDeleteStudentAreaModal, setDeleteStudentAreaModal] =
+    useState<boolean>(false);
+  const setDeleteStudentAreaModalOpen = () => setDeleteStudentAreaModal(true);
+  const closeDeleteStudentAreaModal = () => setDeleteStudentAreaModal(false);
+  const [studentAreaToDelete, setStudentAreaToDelete] =
+    useState<StudentArea | null>(null);
+
+  // Tutor Area Modal
+  const [openDeleteTutorAreaModal, setDeleteTutorAreaModal] =
+    useState<boolean>(false);
+  const setDeleteTutorAreaModalOpen = () => setDeleteTutorAreaModal(true);
+  const closeDeleteTutorAreaModal = () => setDeleteTutorAreaModal(false);
+  const [tutorAreaToDelete, setTutorAreaToDelete] = useState<TutorArea | null>(
+    null,
+  );
+
+  // Specialty Modal
+  const [openDeleteSpecialtyModal, setDeleteSpecialtyModal] =
+    useState<boolean>(false);
+  const setDeleteSpecialtyModalOpen = () => setDeleteSpecialtyModal(true);
+  const closeDeleteSpecialtyModal = () => setDeleteSpecialtyModal(false);
+  const [specialtyToDelete, setSpecialtyToDelete] = useState<Specialty | null>(
+    null,
+  );
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -140,6 +176,7 @@ export default function EditProfilePage() {
         }
       } else {
         setUserData(results.data);
+        reset(results.data);
       }
       setLoading(false);
     };
@@ -180,6 +217,35 @@ export default function EditProfilePage() {
     }
     fetchCities();
   }, [selectedEstado]);
+
+  useEffect(() => {
+    // Se tiver os dados do usuário e a lista de cidades tiver carregado
+    if (userData?.cidade && cities.length > 0) {
+      setValue("cidade", userData.cidade);
+    }
+  }, [cities, userData, setValue]);
+
+  const onSubmit = async (data: RegisterData) => {
+    const formData = new FormData();
+
+    formData.append("nomePerfil", data.nomePerfil);
+    formData.append("estado", data.estado);
+    formData.append("cidade", data.cidade);
+
+    if (data.foto) formData.append("foto", data.foto);
+
+    const result = await EditProfileAction(formData);
+
+    if (result.success) {
+      showNotification("Perfil alterado com sucesso!", "success");
+  
+      router.refresh();
+
+      router.push("/perfil");
+    } else {
+      showNotification("Não foi possível realizar as alterações", "error");
+    }
+  };
 
   return (
     <>
@@ -238,7 +304,8 @@ export default function EditProfilePage() {
                           "
                   >
                     <img
-                      src={userData.fotoURL}
+                      // Cache Busting
+                      src={`${userData.fotoURL}?t=${new Date().getTime()}`}
                       alt="Foto do Perfil"
                       className="
                               w-full
@@ -626,6 +693,10 @@ export default function EditProfilePage() {
                           {area.area}
                         </span>
                         <DeleteIcon
+                          onClick={() => {
+                            setStudentAreaToDelete(area);
+                            setDeleteStudentAreaModalOpen();
+                          }}
                           className="
                           text-rose-500
                           cursor-pointer
@@ -638,7 +709,10 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <AddStudentArea areas={studentAreas} setAreas={setStudentAreas} />
+                    <AddStudentArea
+                      areas={studentAreas}
+                      setAreas={setStudentAreas}
+                    />
                   </div>
                 </section>
                 <section>
@@ -660,8 +734,12 @@ export default function EditProfilePage() {
                     Áreas de Tutoria
                   </h4>
                   <div className="flex items-center gap-2 mb-6">
-                    <InfoIcon className="text-indigo-600"/>
-                    <span>É necessário ter ao menos <em className="not-italic font-bold">1 área</em> para ser considerado um tutor.</span>
+                    <InfoIcon className="text-indigo-600" />
+                    <span>
+                      É necessário ter ao menos{" "}
+                      <em className="not-italic font-bold">1 área</em> para ser
+                      considerado um tutor.
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {tutorAreas.map((area, index) => (
@@ -687,6 +765,10 @@ export default function EditProfilePage() {
                           {area.area}
                         </span>
                         <DeleteIcon
+                          onClick={() => {
+                            setTutorAreaToDelete(area);
+                            setDeleteTutorAreaModalOpen();
+                          }}
                           className="
                           text-rose-500
                           cursor-pointer
@@ -699,7 +781,10 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <AddTutorAreaButton areas={tutorAreas} setAreas={setTutorAreas} />
+                    <AddTutorAreaButton
+                      areas={tutorAreas}
+                      setAreas={setTutorAreas}
+                    />
                   </div>
                   <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
                     Especialidades
@@ -729,6 +814,10 @@ export default function EditProfilePage() {
                           {specialty.specialty}
                         </span>
                         <DeleteIcon
+                          onClick={() => {
+                            setSpecialtyToDelete(specialty);
+                            setDeleteSpecialtyModalOpen();
+                          }}
                           className="
                           text-rose-500
                           cursor-pointer
@@ -741,7 +830,11 @@ export default function EditProfilePage() {
                     ))}
                   </div>
                   <div className="flex justify-end">
-                    <AddSpecialty />
+                    <AddSpecialty
+                      areas={tutorAreas}
+                      specialties={specialties}
+                      setSpecialties={setSpecialties}
+                    />
                   </div>
                   <h4
                     className="
@@ -754,8 +847,14 @@ export default function EditProfilePage() {
                     Disponibilidade
                   </h4>
                   <div className="flex items-center gap-2 mb-6">
-                    <InfoIcon className="text-indigo-600"/>
-                    <span>É necessário ter ao menos <em className="not-italic font-bold">1 disponibilidade</em> para ser considerado um tutor.</span>
+                    <InfoIcon className="text-indigo-600" />
+                    <span>
+                      É necessário ter ao menos{" "}
+                      <em className="not-italic font-bold">
+                        1 disponibilidade
+                      </em>{" "}
+                      para ser considerado um tutor.
+                    </span>
                   </div>
                   <AvailabilityManager />
                 </section>
@@ -777,6 +876,7 @@ export default function EditProfilePage() {
                     <span>Voltar para Perfil</span>
                   </Link>
                   <button
+                    onClick={handleSubmit(onSubmit)}
                     type="button"
                     className="
                       w-full 
@@ -804,6 +904,27 @@ export default function EditProfilePage() {
       <ChangePasswordModal
         isOpen={changePasswordModalIsOpen}
         onClose={closeChangePasswordModal}
+      />
+      <DeleteStudentAreaModal
+        isOpen={openDeleteStudentAreaModal}
+        onClose={closeDeleteStudentAreaModal}
+        setAreas={setStudentAreas}
+        area={studentAreaToDelete}
+        areas={studentAreas}
+      />
+      <DeleteTutorAreaModal
+        isOpen={openDeleteTutorAreaModal}
+        onClose={closeDeleteTutorAreaModal}
+        setAreas={setTutorAreas}
+        area={tutorAreaToDelete}
+        areas={tutorAreas}
+      />
+      <DeleteSpecialtyModal
+        isOpen={openDeleteSpecialtyModal}
+        onClose={closeDeleteSpecialtyModal}
+        setSpecialties={setSpecialties}
+        specialty={specialtyToDelete}
+        specialties={specialties}
       />
     </>
   );

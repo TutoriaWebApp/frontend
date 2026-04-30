@@ -133,7 +133,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                     transition-all 
                     cursor-pointer 
                 ">
-                  <option value="">
+                  <option value="" disabled>
                     Selecione uma opção de área de interesse
                   </option>
                   <option value="Matemática">Matemática</option>

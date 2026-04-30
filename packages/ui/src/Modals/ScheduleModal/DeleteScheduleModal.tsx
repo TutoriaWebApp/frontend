@@ -1,34 +1,28 @@
 "use client";
 
 import React from "react";
-import { StudentArea } from "@repo/services/userTypes";
+import { Specialty } from "@repo/services/userTypes";
 import CloseIcon from "@mui/icons-material/Close";
 
-interface DeleteStudentAreaModalProps {
+interface DeleteScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  area: StudentArea | null;
-  areas: StudentArea[];
-  setAreas: React.Dispatch<React.SetStateAction<StudentArea[]>>;
 }
 
-export function DeleteStudentAreaModal({
+export function DeleteScheduleModal({
   isOpen,
-  onClose,
-  setAreas,
-  area,
-  areas,
-}: DeleteStudentAreaModalProps) {
+  onClose
+}: DeleteScheduleModalProps) {
   if (!isOpen) return null;
 
-  const deleteArea = () => {
-    const newAreas = areas.filter((a) => {
-      return a.id != area?.id;
-    })
+//   const deleteSchedule = () => {
+//     const newSpecialties = specialties.filter((s) => {
+//      return  s.id != specialty?.id;
+//     })
 
-    setAreas(newAreas);
-    onClose();
-  }
+//     setSpecialties(newSpecialties);
+//     onClose();
+//   }
 
   return (
     <div className="
@@ -68,7 +62,7 @@ export function DeleteStudentAreaModal({
             font-bold 
             text-slate-800
           ">
-            Remover Área de Interesse
+            Remover Disponibilidade
           </h2>
           <button
             type="button"
@@ -93,12 +87,12 @@ export function DeleteStudentAreaModal({
             leading-relaxed 
             text-sm
           ">
-            Tem certeza que deseja remover{" "}
+            Tem certeza que deseja remover a disponibilidade de 13h-14h do dia Segunda?{" "}
             <span className="
               font-bold 
               text-slate-700
             ">
-              "{area?.area}"
+              {/* "{specialty?.specialty}" */}
             </span>?
             <br />
           </p>
@@ -135,7 +129,7 @@ export function DeleteStudentAreaModal({
           </button>
           <button
             type="button"
-            onClick={deleteArea}
+            // onClick={deleteArea}
             className="
               order-1 
               sm:order-2 

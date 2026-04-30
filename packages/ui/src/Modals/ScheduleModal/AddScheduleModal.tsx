@@ -1,90 +1,58 @@
 "use client";
 
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-import { Specialty, TutorArea } from "@repo/services/userTypes";
-
-import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
-
-// 1. Definição do mapeamento de dados
-const SPECIALTIES_BY_AREA: Record<string, string[]> = {
-  Programação: [
-    "React",
-    "Next.js",
-    "Node.js",
-    "Python",
-    "Django",
-    "TypeScript",
-  ],
-  Matemática: [
-    "Cálculo I",
-    "Cálculo II",
-    "Álgebra Linear",
-    "Estatística",
-    "Geometria",
-  ],
-  "UI Design": ["Figma", "Design System", "Acessibilidade", "Prototipagem"],
-  Física: ["Mecânica Clássica", "Termodinâmica", "Eletromagnetismo"],
-};
-
-interface AddSpecialtyModalProps {
+interface AddScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  tutorAreas: TutorArea[];
-  specialties: Specialty[];
-  setSpecialties: React.Dispatch<React.SetStateAction<Specialty[]>>;
+  onAdd: any;
 }
 
-export function AddSpecialtyModal({
+const DAYS_OF_WEEK = [
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+  "Domingo",
+];
+
+export function AddScheduleModal({
   isOpen,
   onClose,
-  tutorAreas,
-  setSpecialties,
-  specialties,
-}: AddSpecialtyModalProps) {
-  const [selectedArea, setSelectedArea] = useState<string>("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>("");
+  onAdd,
+}: AddScheduleModalProps) {
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
 
-  const availableSpecialties = useMemo(() => {
-    return selectedArea ? SPECIALTIES_BY_AREA[selectedArea] || [] : [];
-  }, [selectedArea]);
+  // Gera a lista de horários de 00:00 até 23:00
+  const timeOptions = Array.from({ length: 24 }, (_, i) => {
+    const hour = i < 10 ? `0${i}` : `${i}`;
+    const nextHour =
+      i + 1 < 10 ? `0${i + 1}` : i + 1 === 24 ? "00" : `${i + 1}`;
+    return {
+      value: `${hour}:00`,
+      label: `${hour}:00 - ${nextHour}:00`,
+    };
+  });
 
   if (!isOpen) return null;
 
-  const { showNotification } = useContext(NotificationContext);
-
-  const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedArea(e.target.value);
-    setSelectedSpecialty("");
+  const handleClose = () => {
+    setSelectedDay("");
+    setSelectedTime("");
+    onClose();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (selectedSpecialty) {
-      const alreadyExists = specialties.some(
-        (s) => s.specialty === selectedSpecialty,
-      );
-
-      if (!alreadyExists) {
-        setSpecialties((prev) => [
-          ...prev,
-          { specialty: selectedSpecialty, id: 99 } as Specialty,
-        ]);
-
-        onClose();
-      } else {
-        showNotification("Essa especialidade já foi adicionada!", "error");
-      }
+    if (selectedDay && selectedTime) {
+      onAdd(selectedDay, selectedTime);
+      handleClose();
     }
-  };
-
-  const handleClose = () => {
-    setSelectedArea("");
-    setSelectedSpecialty("");
-    onClose();
   };
 
   return (
@@ -108,7 +76,7 @@ export function AddSpecialtyModal({
         className="
         bg-white 
         w-full 
-        max-w-xl 
+        max-w-lg 
         rounded-3xl 
         shadow-2xl 
         overflow-hidden 
@@ -134,7 +102,7 @@ export function AddSpecialtyModal({
             text-center
         "
           >
-            Adicionar Especialidade
+            Adicionar Disponibilidade
           </h2>
           <button
             onClick={onClose}
@@ -143,7 +111,7 @@ export function AddSpecialtyModal({
                 hover:text-slate-600 
                 transition-colors 
                 p-1
-            "
+          "
           >
             <CloseIcon onClick={handleClose} />
           </button>
@@ -157,7 +125,8 @@ export function AddSpecialtyModal({
             mt-4
         "
         >
-          Escolha uma especialidade de ensino na sua área de tutoria.
+          Informe um dia e horário em que possui disponibilidade para lecionar
+          uma sessão de tutoria.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -165,9 +134,9 @@ export function AddSpecialtyModal({
             className="
             p-8 
             space-y-6
-        "
+          "
           >
-            {/* Select 1: Área de Tutoria */}
+            {/* Select 1: Dia da Semana */}
             <div className="space-y-2">
               <label
                 className="
@@ -176,15 +145,19 @@ export function AddSpecialtyModal({
                 text-slate-500 
                 uppercase 
                 tracking-widest
-            "
+               "
               >
-                Selecione a Área de Tutoria
+                Escolha o dia
               </label>
-              <div className="relative">
+              <div
+                className="
+                relative 
+                group
+              ">
                 <select
                   required
-                  value={selectedArea}
-                  onChange={handleAreaChange}
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(e.target.value)}
                   className="
                     w-full 
                     appearance-none 
@@ -192,51 +165,59 @@ export function AddSpecialtyModal({
                     border-slate-200 
                     rounded-xl 
                     px-5 
-                    py-3
+                    py-3 
                     text-slate-700 
                     font-medium 
                     outline-none 
+                    focus:border-brand-primary 
+                    focus:ring-4 
+                    focus:ring-brand-primary/5 
                     transition-all 
                     cursor-pointer
-                "
-                >
+                ">
                   <option value="" disabled>
-                    Selecione entre suas áreas registradas
+                    Selecione o dia da semana
                   </option>
-                  {tutorAreas.map((area, index) => (
-                    <option key={index} value={area.area}>
-                      {area.area}
+                  {DAYS_OF_WEEK.map((day) => (
+                    <option key={day} value={day}>
+                      {day}
                     </option>
                   ))}
                 </select>
-                <KeyboardArrowDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                <KeyboardArrowDownIcon className="
+                    absolute 
+                    right-4 
+                    top-1/2 
+                    -translate-y-1/2 
+                    pointer-events-none 
+                    text-slate-400 
+                    group-focus-within:text-brand-primary 
+                    transition-colors" 
+                />
               </div>
             </div>
 
-            {/* Select 2: Especialidade */}
+            {/* Select 2: Horário */}
             <div className="space-y-2">
-              <label
-                className="
+              <label className="
                 text-xs 
                 font-black 
                 text-slate-500 
                 uppercase 
                 tracking-widest
-            "
-              >
-                Selecione a Especialidade
+            ">
+                Horário da Sessão
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <select
                   required
-                  disabled={!selectedArea}
-                  value={selectedSpecialty}
-                  onChange={(e) => setSelectedSpecialty(e.target.value)}
+                  disabled={!selectedDay}
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
                   className={`
                     w-full 
                     appearance-none 
-                    bg-white 
-                    border-2 
+                    bg-white border-2 
                     rounded-xl 
                     px-5 
                     py-3 
@@ -244,31 +225,36 @@ export function AddSpecialtyModal({
                     outline-none 
                     transition-all
                     ${
-                      !selectedArea
+                      !selectedDay
                         ? "border-slate-100 text-slate-300 cursor-not-allowed bg-slate-50"
-                        : "border-slate-200 text-slate-700 cursor-pointer"
+                        : "border-slate-200 text-slate-700 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 cursor-pointer"
                     }
                   `}
                 >
                   <option value="" disabled>
-                    Selecione uma especialidade
+                    Selecione o horário de início e fim
                   </option>
-                  {availableSpecialties.map((spec) => (
-                    <option key={spec} value={spec}>
-                      {spec}
+                  {timeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
                 <KeyboardArrowDownIcon
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${!selectedArea ? "text-slate-200" : "text-slate-400"}`}
+                  className={`
+                        absolute 
+                        right-4 
+                        top-1/2 
+                        -translate-y-1/2 
+                        pointer-events-none 
+                        ${!selectedDay ? "text-slate-100" : "text-slate-400 group-focus-within:text-brand-primary"}
+                    `}
                 />
               </div>
             </div>
           </div>
 
-          {/* Footer */}
-          <div
-            className="
+          <div className="
             p-6 
             bg-slate-50 
             flex 
@@ -278,8 +264,7 @@ export function AddSpecialtyModal({
             gap-4 
             border-t 
             border-slate-100
-        "
-          >
+        ">
             <button
               type="button"
               onClick={handleClose}
@@ -294,13 +279,12 @@ export function AddSpecialtyModal({
                 bg-slate-200 
                 hover:bg-slate-300 
                 transition-all
-            "
-            >
+            ">
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={!selectedSpecialty}
+              disabled={!selectedDay || !selectedTime}
               className="
                 order-1 
                 sm:order-2 
@@ -315,9 +299,8 @@ export function AddSpecialtyModal({
                 hover:bg-indigo-700  
                 transition-all 
                 disabled:bg-gray-500
-            "
-            >
-              Adicionar Especialidade
+            ">
+              Confirmar
             </button>
           </div>
         </form>

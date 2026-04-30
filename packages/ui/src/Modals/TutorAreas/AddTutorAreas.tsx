@@ -85,7 +85,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             text-slate-800 
             text-center
         ">
-            Adicionar Área de Interesse
+            Adicionar Área de Tutoria
           </h2>
           <button
             onClick={onClose}
@@ -101,7 +101,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             ml-6
             mt-4
         ">
-          Escolha uma área que está interessado em receber tutorias.
+          Escolha uma área que está interessado em fornecer tutorias.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -133,8 +133,8 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                     transition-all 
                     cursor-pointer 
                 ">
-                  <option value="">
-                    Selecione uma opção de área de interesse
+                  <option value="" disabled>
+                    Selecione uma opção de área de tutoria
                   </option>
                   <option value="Matemática">Matemática</option>
                   <option value="Física">Física</option>

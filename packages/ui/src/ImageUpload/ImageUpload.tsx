@@ -29,22 +29,26 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement("canvas");
-          canvas.width = 400;
-          canvas.height = 400;
           const ctx = canvas.getContext("2d");
 
+          canvas.width = 400;
+          canvas.height = 400;
           ctx?.drawImage(img, 0, 0, 400, 400);
+
+          const mimeType = file.type;
 
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const resizedFile = new File([blob], file.name, {
+                const newName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+                const resizedFile = new File([blob], newName, {
                   type: "image/jpeg",
                 });
+
                 resolve(resizedFile);
               }
             },
-            "image/jpeg",
+            mimeType,
             0.8,
           );
         };
@@ -56,20 +60,24 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const resized = await resizeImage(file); 
+      const resized = await resizeImage(file);
       setValue(name, resized);
-      trigger(name);
+
+      if (preview) URL.revokeObjectURL(preview);
 
       const objectUrl = URL.createObjectURL(resized);
       setPreview(objectUrl);
 
-      return () => URL.revokeObjectURL(objectUrl);
+      trigger(name);
     }
   };
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <label className="font-semibold">{label}{required && <span className="text-red-500">*</span>} </label>
+      <label className="font-semibold">
+        {label}
+        {required && <span className="text-red-500">*</span>}{" "}
+      </label>
       <div
         className="relative w-40 h-40 group cursor-pointer"
         onClick={() => document.getElementById(name)?.click()}

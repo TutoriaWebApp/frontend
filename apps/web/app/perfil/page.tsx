@@ -75,7 +75,8 @@ export default async function ProfilePage() {
               "
                 >
                   <img
-                    src={userData.fotoURL}
+                    // Cache Busting
+                    src={`${userData.fotoURL}?t=${new Date().getTime()}`}
                     alt="Foto do Perfil"
                     className="
                   w-full

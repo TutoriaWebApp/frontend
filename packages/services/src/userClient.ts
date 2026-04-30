@@ -2,6 +2,7 @@ import {
   UserDataFailResult,
   UserDataSuccessResult,
   ChangePasswordResult,
+  EditProfileResult
 } from "./types/user";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
 
@@ -67,6 +68,42 @@ export async function ChangePassword(
       success: false,
       status: res.status,
       data: res.data,
+    };
+    return failedRequest;
+  }
+}
+
+export async function EditProfile(
+  formData: FormData,
+  cookieString: string,
+  csrfTokenString: string
+): Promise<EditProfileResult> {
+  const URL = `${process.env.backendBaseURL}/perfil`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Cookie": cookieString,
+        "X-CSRFToken": csrfTokenString
+      },
+      body: formData,
+    },
+    "Edit Profile",
+  );
+
+  if (res.success) {
+    const sucessRequest: EditProfileResult = {
+      success: true,
+      status: res.status,
+    };
+    return sucessRequest;
+  } else {
+    const failedRequest: EditProfileResult = {
+      success: false,
+      status: res.status,
     };
     return failedRequest;
   }

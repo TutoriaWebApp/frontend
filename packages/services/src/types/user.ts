@@ -52,6 +52,11 @@ export interface TutorArea {
 }
 
 export interface Specialty {
-  id: number;
+  id?: number;
   specialty: string;
+}
+
+export interface EditProfileResult{
+  success: boolean;
+  status?: number;
 }

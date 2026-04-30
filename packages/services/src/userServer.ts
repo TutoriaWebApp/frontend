@@ -33,7 +33,7 @@ export async function CreateAccount(
     return {
       success: false,
       status: 500,
-      data: { mensagem: "Não foi possível conectar ao servidor." },
+      data: { message: "Não foi possível conectar ao servidor." },
     };
   }
 }
