@@ -1190,7 +1190,8 @@ export default function CreateAccountPage(): React.ReactNode {
                     hover:bg-indigo-800 
                     text-white 
                       font-bold 
-                      px-4 
+                      px-8
+                      py-3 
                       rounded-xl 
                       transition-all 
                       shadow-lg 
@@ -1198,7 +1199,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     "
                     onClick={handleSubmit(onSubmit)}
                   >
-                    <span>Criar</span>
+                    <span>Criar Conta</span>
                   </button>
                 </div>
               </div>

@@ -24,7 +24,8 @@
     "./addStudentModal": "./src/Modals/Specialty/AddStudentArea.tsx",
     "./deleteStudentModal": "./src/Modals/Specialty/DeleteStudentArea.tsx",
     "./addTutorAreasModal": "./src/Modals/TutorAreas/AddTutorAreas.tsx",
-    "./deleteTutorAreasModal": "./src/Modals/TutorAreas/DeleteTutorAreas.tsx"
+    "./deleteTutorAreasModal": "./src/Modals/TutorAreas/DeleteTutorAreas.tsx",
+    "./evaluateUserModal": "./src/Modals/EvaluateUser/EvaluateUser.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
