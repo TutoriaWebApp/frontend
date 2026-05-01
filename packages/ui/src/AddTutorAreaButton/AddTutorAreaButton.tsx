@@ -29,7 +29,7 @@ export const AddTutorAreaButton = ({areas, setAreas}: AddTutorAreaProps) => {
       text-white 
         font-bold 
         py-2
-        px-8 
+        px-4 
         rounded-xl 
         transition-all 
         shadow-lg 

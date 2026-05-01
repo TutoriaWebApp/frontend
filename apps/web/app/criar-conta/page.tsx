@@ -21,8 +21,21 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { ClipLoader } from "react-spinners";
 
 import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
+import { AddStudentArea } from "@repo/ui/AddStudentAreaButton/AddStudentAreaButton";
+import { AddTutorAreaButton } from "@repo/ui/AddTutorAreaButton/AddTutorAreaButton";
+import { AddSpecialty } from "@repo/ui/AddSpeciality/AddSpecialty";
+import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
+
+import { StudentArea, TutorArea, Specialty } from "@repo/services/userTypes";
 
 import { CreateAccountAction } from "@repo/services/userAction";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import InfoIcon from "@mui/icons-material/Info";
+
+import { DeleteStudentAreaModal } from "@repo/ui/Modals/StudentAreas/DeleteStudentArea";
+import { DeleteTutorAreaModal } from "@repo/ui/Modals/TutorAreas/DeleteTutorAreas";
+import { DeleteSpecialtyModal } from "@repo/ui/Modals/Specialty/DeleteSpecialtyModal";
 
 const registerSchema = z
   .object({
@@ -110,7 +123,41 @@ export default function CreateAccountPage(): React.ReactNode {
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [preview, setPreview] = useState<string | null>(null);
+
+  //Áreas de Estudante
+  const [studentAreas, setStudentAreas] = useState<StudentArea[]>([]);
+
+  //Áreas de Tutoria
+  const [tutorAreas, setTutorAreas] = useState<TutorArea[]>([]);
+
+  //Áreas de Especialidade
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
+
+  // Student Area Modal
+  const [openDeleteStudentAreaModal, setDeleteStudentAreaModal] =
+    useState<boolean>(false);
+  const setDeleteStudentAreaModalOpen = () => setDeleteStudentAreaModal(true);
+  const closeDeleteStudentAreaModal = () => setDeleteStudentAreaModal(false);
+  const [studentAreaToDelete, setStudentAreaToDelete] =
+    useState<StudentArea | null>(null);
+
+  // Tutor Area Modal
+  const [openDeleteTutorAreaModal, setDeleteTutorAreaModal] =
+    useState<boolean>(false);
+  const setDeleteTutorAreaModalOpen = () => setDeleteTutorAreaModal(true);
+  const closeDeleteTutorAreaModal = () => setDeleteTutorAreaModal(false);
+  const [tutorAreaToDelete, setTutorAreaToDelete] = useState<TutorArea | null>(
+    null,
+  );
+
+  // Specialty Modal
+  const [openDeleteSpecialtyModal, setDeleteSpecialtyModal] =
+    useState<boolean>(false);
+  const setDeleteSpecialtyModalOpen = () => setDeleteSpecialtyModal(true);
+  const closeDeleteSpecialtyModal = () => setDeleteSpecialtyModal(false);
+  const [specialtyToDelete, setSpecialtyToDelete] = useState<Specialty | null>(
+    null,
+  );
 
   const selectedEstado = watch("estado", "");
 
@@ -186,15 +233,14 @@ export default function CreateAccountPage(): React.ReactNode {
     formData.append("aniversario", rest.aniversario || "");
     formData.append("foto", rest.foto);
 
-      const result = await CreateAccountAction(formData);
+    const result = await CreateAccountAction(formData);
 
-      if (result.success) {
-        showNotification(result.message, "success");
-        router.push("/");
-      } else {
-        showNotification(result.message, "error");
-      }
-    
+    if (result.success) {
+      showNotification(result.message, "success");
+      router.push("/");
+    } else {
+      showNotification(result.message, "error");
+    }
   };
 
   return (
@@ -276,7 +322,7 @@ export default function CreateAccountPage(): React.ReactNode {
                 <span
                   className={`text-xs font-bold transition-all ${step >= 2 ? "text-indigo-600" : "text-slate-400"}`}
                 >
-                  Áreas de Interesse
+                  Áreas de Interesse (Opcional)
                 </span>
               </div>
 
@@ -294,7 +340,7 @@ export default function CreateAccountPage(): React.ReactNode {
                 <span
                   className={`text-xs font-bold transition-all ${step >= 3 ? "text-indigo-600" : "text-slate-400"}`}
                 >
-                  Perfil como Tutor
+                  Perfil como Tutor (Opcional)
                 </span>
               </div>
             </div>
@@ -732,13 +778,23 @@ export default function CreateAccountPage(): React.ReactNode {
                     <ArrowBackIcon className="mr-1" />
                     <span>Voltar para o Login</span>
                   </Link>
-                  <div
-                    className="p-4 pb-0 flex items-center text-brand-primary hover:font-bold transition-all cursor-pointer"
-                    onClick={handleSubmit(onSubmit)}
+                  <button
+                    className="
+                      bg-brand-primary 
+                    hover:bg-indigo-800 
+                    text-white 
+                      font-bold 
+                      px-4 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                    shadow-brand-primary/20
+                    "
+                    onClick={handleAdvanceStep}
                   >
                     <span>Avançar</span>
                     <ArrowForwardIcon className="ml-1" />
-                  </div>
+                  </button>
                 </div>
               </div>
             </>
@@ -752,21 +808,425 @@ export default function CreateAccountPage(): React.ReactNode {
           )}
           {step == 2 && (
             <>
-              {/*Barra de Progresso*/}
-              <div></div>
               <div
                 className="
-              bg-white
-              w-full
-              rounded-3xl
-              shadow-xl shadow-slate-200/50
-              pb-6
+                bg-white
+                w-full
+                rounded-3xl
+                shadow-xl 
+                shadow-slate-200/50
+                pb-6
               "
-              ></div>
+              >
+                <div className="pl-8 pr-8">
+                  <div
+                    className="
+                  flex 
+                  flex-col 
+                  gap-4
+                  "
+                  >
+                    <h3
+                      className="
+                    pt-6
+                    text-xl 
+                  font-bold 
+                  text-slate-800
+                  "
+                    >
+                      Áreas de Interesse
+                    </h3>
+                    <div
+                      className="
+                    flex 
+                    items-center 
+                    mb-6
+                    "
+                    >
+                      <span className="text-slate-600">
+                        Informe as áreas de conhecimento em que está interessado
+                        em receber tutorias. Essa informação será usada para
+                        recomendar tutores para seu perfil.
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col mb-4">
+                    <div className="flex gap-4 flex-wrap">
+                      {studentAreas.map((area, index) => (
+                        <div
+                          key={index}
+                          className="
+                        flex 
+                        items-center
+                        bg-slate-100 
+                        px-4 
+                        py-2 
+                        rounded-full
+                        gap-2
+                        "
+                        >
+                          <span
+                            className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                            "
+                          >
+                            {area.area}
+                          </span>
+                          <DeleteIcon
+                            onClick={() => {
+                              setStudentAreaToDelete(area);
+                              setDeleteStudentAreaModalOpen();
+                            }}
+                            className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="self-end">
+                      <AddStudentArea
+                        areas={studentAreas}
+                        setAreas={setStudentAreas}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="
+                  flex 
+                  justify-between 
+                  p-4
+                  "
+                >
+                  <div
+                    onClick={() => setStep(1)}
+                    className="
+                    p-4 
+                    pb-0 
+                    flex 
+                    items-center 
+                    text-brand-primary 
+                    hover:font-bold 
+                    transition-all
+                    hover:cursor-pointer
+                    "
+                  >
+                    <ArrowBackIcon className="mr-1" />
+                    <span>Voltar para o Passo 1</span>
+                  </div>
+                  <button
+                    className="
+                    bg-brand-primary 
+                    hover:bg-indigo-800 
+                    text-white 
+                      font-bold 
+                      px-4 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                    shadow-brand-primary/20
+                    "
+                    onClick={() => setStep(3)}
+                  >
+                    <span>Avançar</span>
+                    <ArrowForwardIcon className="ml-1" />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+          {step == 3 && (
+            <>
+              <div
+                className="
+                bg-white
+                w-full
+                rounded-3xl
+                shadow-xl 
+                shadow-slate-200/50
+                pb-6
+              "
+              >
+                <div className="pl-8 pr-8">
+                  <div
+                    className="
+                    flex 
+                    flex-col 
+                    gap-4
+                  "
+                  >
+                    <h3
+                      className="
+                      pt-6
+                      text-xl 
+                      font-bold 
+                    text-slate-800
+                    "
+                    >
+                      Áreas de Tutoria
+                    </h3>
+                    <div
+                      className="
+                    flex
+                    flex-col 
+                    items-center 
+                    "
+                    >
+                      <span className="text-slate-600">
+                        Selecione as áreas em que você deseja atuar como tutor.
+                        Isso ajudará outros alunos a encontrarem o seu perfil
+                        quando buscarem ajuda nesses assuntos.
+                      </span>
+                    </div>
+                    <div className="text-slate-600 mb-6">
+                      <span>
+                        É necessário ter ao menos{" "}
+                        <em className="not-italic font-bold">1 área</em> para
+                        ser considerado um tutor.
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col mb-4">
+                    <div className="flex gap-4 flex-wrap">
+                      {tutorAreas.map((area, index) => (
+                        <div
+                          key={index}
+                          className="
+                        flex 
+                        items-center
+                        bg-slate-100 
+                        px-4 
+                        py-2 
+                        rounded-full
+                        gap-2
+                      "
+                        >
+                          <span
+                            className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                        "
+                          >
+                            {area.area}
+                          </span>
+                          <DeleteIcon
+                            onClick={() => {
+                              setTutorAreaToDelete(area);
+                              setDeleteTutorAreaModalOpen();
+                            }}
+                            className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="self-end">
+                      <AddTutorAreaButton
+                        areas={tutorAreas}
+                        setAreas={setTutorAreas}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="
+                    flex 
+                    flex-col 
+                    gap-4
+                  "
+                  >
+                    <h3
+                      className="
+                      pt-6
+                      text-xl 
+                      font-bold 
+                    text-slate-800
+                    "
+                    >
+                      Especialidades
+                    </h3>
+                    <div
+                      className="
+                    flex
+                    flex-col 
+                    items-center
+                    mb-6 
+                    "
+                    >
+                      <span className="text-slate-600">
+                        Selecione suas especialidades dentro das áreas em que
+                        você deseja atuar como tutor. Isso ajudará outros alunos
+                        a encontrarem o seu perfil quando buscarem ajuda nesses
+                        assuntos específicos.
+                      </span>
+                    </div>
+                    <div className="flex flex-col mb-4">
+                      <div className="flex gap-4 flex-wrap">
+                        {specialties.map((specialty) => (
+                          <div
+                            key={specialty.id}
+                            className="
+                          flex 
+                          items-center
+                          bg-slate-100 
+                          px-4 
+                          py-2 
+                          rounded-full
+                          gap-2
+                      "
+                          >
+                            <span
+                              className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                        "
+                            >
+                              {specialty.specialty}
+                            </span>
+                            <DeleteIcon
+                              onClick={() => {
+                                setSpecialtyToDelete(specialty);
+                                setDeleteSpecialtyModalOpen();
+                              }}
+                              className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="self-end">
+                        <AddSpecialty
+                          areas={tutorAreas}
+                          specialties={specialties}
+                          setSpecialties={setSpecialties}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="
+                    flex 
+                    flex-col 
+                    gap-4
+                  "
+                  >
+                    <h3
+                      className="
+                      pt-6
+                      text-xl 
+                      font-bold 
+                    text-slate-800
+                    "
+                    >
+                      Disponibilidade
+                    </h3>
+                    <div
+                      className="
+                    flex
+                    flex-col 
+                    "
+                    >
+                      <span className="text-slate-600">
+                        Selecione os dias e horários que possui disponibilidade
+                        para oferecer sessões de tutoria.
+                      </span>
+                    </div>
+                    <div className="text-slate-600 mb-6">
+                      <span>
+                        É necessário ter ao menos{" "}
+                        <em className="not-italic font-bold">
+                          1 disponibilidade
+                        </em>{" "}
+                        para ser considerado um tutor.
+                      </span>
+                    </div>
+                  </div>
+                  <AvailabilityManager/>
+                </div>
+                <div
+                  className="
+                  flex 
+                  justify-between 
+                  p-4
+                  "
+                >
+                  <div
+                    onClick={() => setStep(2)}
+                    className="
+                    p-4 
+                    pb-0 
+                    flex 
+                    items-center 
+                    text-brand-primary 
+                    hover:font-bold 
+                    transition-all
+                    hover:cursor-pointer
+                    "
+                  >
+                    <ArrowBackIcon className="mr-1" />
+                    <span>Voltar para o Passo 2</span>
+                  </div>
+                  <button
+                    className="
+                    bg-brand-primary 
+                    hover:bg-indigo-800 
+                    text-white 
+                      font-bold 
+                      px-4 
+                      rounded-xl 
+                      transition-all 
+                      shadow-lg 
+                    shadow-brand-primary/20
+                    "
+                    onClick={handleSubmit(onSubmit)}
+                  >
+                    <span>Criar</span>
+                  </button>
+                </div>
+              </div>
             </>
           )}
         </div>
       </FormProvider>
+      <DeleteStudentAreaModal
+        isOpen={openDeleteStudentAreaModal}
+        onClose={closeDeleteStudentAreaModal}
+        setAreas={setStudentAreas}
+        area={studentAreaToDelete}
+        areas={studentAreas}
+      />
+      <DeleteTutorAreaModal
+        isOpen={openDeleteTutorAreaModal}
+        onClose={closeDeleteTutorAreaModal}
+        setAreas={setTutorAreas}
+        area={tutorAreaToDelete}
+        areas={tutorAreas}
+      />
+      <DeleteSpecialtyModal
+        isOpen={openDeleteSpecialtyModal}
+        onClose={closeDeleteSpecialtyModal}
+        setSpecialties={setSpecialties}
+        specialty={specialtyToDelete}
+        specialties={specialties}
+      />
     </div>
   );
 }
