@@ -5,20 +5,25 @@
   "exports": {
     "./*": "./src/*.tsx",
     "./styles": "./src/styles/globals.css",
+
     "./cookieBanner": "./src/CookieBanner/CookieBanner.tsx",
     "./header": "./src/Header/Header.tsx",
     "./footer": "./src/Footer/Footer.tsx",
-    "./loginForm": "./src/LoginForm/LoginForm.tsx",
-    "./notification": "./src/contexts/NotificationContext.tsx",
+    "./loginForm": "./src/LoginForm/LoginForm.tsx",    
     "./imageUpload": "./src/ImageUpload/ImageUpload.tsx",
-    "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
-    "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
     "./availabilitySection": "./src/Availability/AvailabilitySection.tsx",
-    "./changePasswordModal": "./src/Modals/ChangePasswordModal/ChangePasswordModal.tsx",
     "./availabilityManager": "./src/Availability/AvailabilityManager.tsx",
+    "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
+  
     "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
+    "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
     "./addTutorAreaButton": "./src/AddTutorAreaButton/AddTutorAreaButton.tsx",
     "./addSpecialty": "./src/AddSpecialty/AddSpecialty.tsx",
+    
+    "./notification": "./src/contexts/NotificationContext/NotificationContext.tsx",
+    "./evaluateUserContext": "./src/contexts/EvaluateUserContext/Evaluate.tsx",
+
+    "./changePasswordModal": "./src/Modals/ChangePasswordModal/ChangePasswordModal.tsx",
     "./addSpecialtyModal": "./src/Modals/Specialty/AddSpecialtyModal.tsx",
     "./deleteSpecialtyModal": "./src/Modals/Specialty/DeleteSpecialtyModal.tsx",
     "./addStudentModal": "./src/Modals/Specialty/AddStudentArea.tsx",

@@ -6,22 +6,24 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 interface EvaluateUserModalProps {
   isOpen: boolean;
+  userId: number;
   userName: string;
   isTutor: boolean;
   sessionSubject: string;
   day: string;
   time: string;
-  onClose: () => void;
-  //   onSubmit: (data: { rating: number; comment: string }) => void;
+  setClose: () => void
 }
 
 export function EvaluateUserModal({
   isOpen,
+  userId,
   userName,
   isTutor,
   sessionSubject,
   day,
-  time
+  time,
+  setClose
 }: EvaluateUserModalProps) {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
@@ -32,8 +34,9 @@ export function EvaluateUserModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (rating > 0) {
-      //   onSubmit({ rating, comment });
-      // O fechamento será controlado pelo componente pai ao finalizar a requisição
+      setClose();
+      setComment("");
+      setRating(0);
     }
   };
 
@@ -105,7 +108,7 @@ export function EvaluateUserModal({
                     mb-4
               ">
                   <img
-                    src={``}
+                    src={`https://imgs.search.brave.com/rbh7pRnJ8Kh25nP02zCkvtQXBainO9_vApWJoGrpQMU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTcv/MzU1Lzc4NC9zbWFs/bC9nb29nbGUtbG9n/by1vbi10cmFuc3Bh/cmVudC1iYWNrZ3Jv/dW5kLWZyZWUtcG5n/LnBuZw`}
                     alt="Foto do Perfil"
                     className="
                     w-full

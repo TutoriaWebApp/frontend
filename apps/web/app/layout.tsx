@@ -11,6 +11,7 @@ import CookieBanner from "@repo/ui/CookieBanner/CookieBanner";
 
 import { NotificationContextProvider } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 import { SessionExpiredContextProvider } from "@repo/ui/contexts/SessionExpiredContext/SessionExpiredContext";
+import { EvaluateUserContextProvider } from "@repo/ui/contexts/EvaluateUserContext/EvaluateUserContext";
 
 import type { Metadata } from "next";
 
@@ -45,10 +46,12 @@ export default function RootLayout({
       <body className="font-inter">
         <SessionExpiredContextProvider>
           <NotificationContextProvider>
-            <Header />
-            {children}
-            <CookieBanner />
-            <Footer />
+            <EvaluateUserContextProvider>
+              <Header />
+              {children}
+              <CookieBanner />
+              <Footer />
+            </EvaluateUserContextProvider>
           </NotificationContextProvider>
         </SessionExpiredContextProvider>
       </body>
