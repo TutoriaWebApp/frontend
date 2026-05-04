@@ -1,0 +1,17 @@
+services:
+  web:
+    build:
+      context: .
+      target: deps 
+    volumes:
+      - .:/app 
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/ui/node_modules
+      - /app/apps/web/.next
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true 
+    command: pnpm --filter web dev

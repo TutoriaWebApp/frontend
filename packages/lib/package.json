@@ -2,6 +2,13 @@
   "name": "@repo/lib",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    "./*": "./src/*.tsx",
+    "./jwtAux": "./src/jwtAux.ts",
+    "./authRequestWrapper": "./src/authRequestWrapper.ts",
+    "./userLevel": "./src/userLevel.ts",
+    "./userTitle": "./src/userTitle.ts"
+  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
@@ -10,7 +17,12 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "@repo/config": "workspace:*",
     "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0"
+  },
+  "peerDependencies": {
+    "next": "16.1.6"
   }
 }

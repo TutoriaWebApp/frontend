@@ -4,7 +4,34 @@
   "private": true,
   "exports": {
     "./*": "./src/*.tsx",
-    "./styles": "./src/styles/globals.css"
+    "./styles": "./src/styles/globals.css",
+
+    "./cookieBanner": "./src/CookieBanner/CookieBanner.tsx",
+    "./header": "./src/Header/Header.tsx",
+    "./footer": "./src/Footer/Footer.tsx",
+    "./loginForm": "./src/LoginForm/LoginForm.tsx",    
+    "./imageUpload": "./src/ImageUpload/ImageUpload.tsx",
+    "./availabilitySection": "./src/Availability/AvailabilitySection.tsx",
+    "./availabilityManager": "./src/Availability/AvailabilityManager.tsx",
+    "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
+    "./dashboardCard": "./src/DashboardCard/DashboardCard.tsx",
+  
+    "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
+    "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
+    "./addTutorAreaButton": "./src/AddTutorAreaButton/AddTutorAreaButton.tsx",
+    "./addSpecialty": "./src/AddSpecialty/AddSpecialty.tsx",
+    
+    "./notification": "./src/contexts/NotificationContext/NotificationContext.tsx",
+    "./evaluateUserContext": "./src/contexts/EvaluateUserContext/Evaluate.tsx",
+
+    "./changePasswordModal": "./src/Modals/ChangePasswordModal/ChangePasswordModal.tsx",
+    "./addSpecialtyModal": "./src/Modals/Specialty/AddSpecialtyModal.tsx",
+    "./deleteSpecialtyModal": "./src/Modals/Specialty/DeleteSpecialtyModal.tsx",
+    "./addStudentModal": "./src/Modals/Specialty/AddStudentArea.tsx",
+    "./deleteStudentModal": "./src/Modals/Specialty/DeleteStudentArea.tsx",
+    "./addTutorAreasModal": "./src/Modals/TutorAreas/AddTutorAreas.tsx",
+    "./deleteTutorAreasModal": "./src/Modals/TutorAreas/DeleteTutorAreas.tsx",
+    "./evaluateUserModal": "./src/Modals/EvaluateUser/EvaluateUser.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -13,6 +40,8 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
+    "@repo/services": "workspace:*",
+    "@repo/lib": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.4",
     "@types/react-dom": "19.2.3",
@@ -20,10 +49,21 @@
     "eslint": "^9.39.1",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "next": "16.1.6"
   },
   "dependencies": {
+    "@repo/services": "workspace:*",
+    "@repo/lib": "workspace:*",
+    "@repo/services": "workspace:*",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9"
+  },
+  "peerDependencies": {
+    "next": "16.1.6"
   }
 }
