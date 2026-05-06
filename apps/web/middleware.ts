@@ -51,5 +51,5 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   // Aplique apenas nas rotas protegidas para não dar loop infinito na "/"
-  matcher: ["/dashboard/:path*", "/perfil/:path*", "/editar-perfil/:path*"],
+  matcher: ["/dashboard/:path*", "/perfil/:path*", "/editar-perfil/:path*", "/buscar-tutores", "/recomendacoes"],
 };
