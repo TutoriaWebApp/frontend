@@ -22,7 +22,7 @@ export default function Header() {
     { name: "Home", href: "/dashboard" },
     { name: "Perfil", href: "/perfil" },
     { name: "Conquistas", href: "/conquistas" },
-    { name: "Buscar Tutores", href: "/buscar" },
+    { name: "Buscar Tutores", href: "/buscar-tutores"},
     { name: "Solicitações", href: "/solicitacoes" },
     { name: "Chat", href: "/chat" },
   ];
