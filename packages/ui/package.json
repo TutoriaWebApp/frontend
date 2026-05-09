@@ -16,6 +16,7 @@
     "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
     "./dashboardCard": "./src/DashboardCard/DashboardCard.tsx",
     "./tutorCard": "./src/TutorCard/TutorCard.tsx",
+    "./solicitationCard": "./src/SolicitationCard/SolicitationCard.tsx",
   
     "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
     "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
