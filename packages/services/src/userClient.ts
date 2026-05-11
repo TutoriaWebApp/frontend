@@ -2,7 +2,9 @@ import {
   UserDataFailResult,
   UserDataSuccessResult,
   ChangePasswordResult,
-  EditProfileResult
+  EditProfileResult,
+  GetAreasResult,
+  GetSpecialtiesResult
 } from "./types/user";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
 
@@ -104,6 +106,58 @@ export async function EditProfile(
     const failedRequest: EditProfileResult = {
       success: false,
       status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetAreas(): Promise<GetAreasResult> {
+  const URL = `${process.env.backendBaseURL}/areas`;
+
+  const res = await authRequestWrapper(
+    URL,
+    { method: "GET"},
+    "Request Areas",
+  );
+
+  if (res.success) {
+    const areasData: GetAreasResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return areasData;
+  } else {
+    const failedRequest: GetAreasResult = {
+      success: false,
+      status: res.status,
+      data: []
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetSpecialties(): Promise<GetSpecialtiesResult> {
+  const URL = `${process.env.backendBaseURL}/especialidades`;
+
+  const res = await authRequestWrapper(
+    URL,
+    { method: "GET"},
+    "Request Specialties",
+  );
+
+  if (res.success) {
+    const specialtiesData: GetSpecialtiesResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return specialtiesData;
+  } else {
+    const failedRequest: GetSpecialtiesResult = {
+      success: false,
+      status: res.status,
+      data: []
     };
     return failedRequest;
   }

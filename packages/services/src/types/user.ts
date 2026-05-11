@@ -42,21 +42,34 @@ export interface ChangePasswordResult {
 }
 
 export interface StudentArea {
-  id?: number;
-  area: string;
+  id: number;
+  nomeArea: string;
 }
 
 export interface TutorArea {
-  id?: number;
-  area: string;
+  id: number;
+  nomeArea: string;
 }
 
 export interface Specialty {
-  id?: number;
-  specialty: string;
+  id: number;
+  nomeEspecialidade: string;
+  areaId: number;
 }
 
 export interface EditProfileResult{
   success: boolean;
   status?: number;
+}
+
+export interface GetAreasResult {
+  success: boolean;
+  status: number;
+  data: TutorArea[];
+}
+
+export interface GetSpecialtiesResult {
+  success: boolean;
+  status: number;
+  data: Specialty[];
 }

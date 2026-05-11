@@ -31,7 +31,6 @@ import { StudentArea, TutorArea, Specialty } from "@repo/services/userTypes";
 import { CreateAccountAction } from "@repo/services/userAction";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import InfoIcon from "@mui/icons-material/Info";
 
 import { DeleteStudentAreaModal } from "@repo/ui/Modals/StudentAreas/DeleteStudentArea";
 import { DeleteTutorAreaModal } from "@repo/ui/Modals/TutorAreas/DeleteTutorAreas";
@@ -119,7 +118,7 @@ export default function CreateAccountPage(): React.ReactNode {
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] =
     useState<boolean>(false);
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(3);
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -192,8 +191,6 @@ export default function CreateAccountPage(): React.ReactNode {
       }
 
       setCities(res);
-
-      setLoading(false);
     }
     fetchCities();
   }, [selectedEstado]);
@@ -872,7 +869,7 @@ export default function CreateAccountPage(): React.ReactNode {
                             font-semibold
                             "
                           >
-                            {area.area}
+                            {area.nomeArea}
                           </span>
                           <DeleteIcon
                             onClick={() => {
@@ -980,21 +977,23 @@ export default function CreateAccountPage(): React.ReactNode {
                     "
                     >
                       <span className="text-slate-600">
-                        Selecione as áreas em que você deseja atuar como tutor.
+                        Selecione as áreas em que você deseja atuar como tutor e suas especialidades dentro dessas áreas.
+
                         Isso ajudará outros alunos a encontrarem o seu perfil
-                        quando buscarem ajuda nesses assuntos.
+                        quando buscarem ajuda no aprendizado desses conteúdos.
                       </span>
                     </div>
                     <div className="text-slate-600 mb-6">
                       <span>
                         É necessário ter ao menos{" "}
-                        <em className="not-italic font-bold">1 área</em> para
+                        <em className="not-italic font-bold">1 área e 1 especialidade</em> para
                         ser considerado um tutor.
                       </span>
                     </div>
                   </div>
                   <div className="flex flex-col mb-4">
-                    <div className="flex gap-4 flex-wrap">
+                    <span><b>Áreas Adicionadas</b></span>
+                    <div className="flex gap-4 flex-wrap mb-10">
                       {tutorAreas.map((area, index) => (
                         <div
                           key={index}
@@ -1015,7 +1014,7 @@ export default function CreateAccountPage(): React.ReactNode {
                             font-semibold
                         "
                           >
-                            {area.area}
+                            {area.nomeArea}
                           </span>
                           <DeleteIcon
                             onClick={() => {
@@ -1033,92 +1032,53 @@ export default function CreateAccountPage(): React.ReactNode {
                         </div>
                       ))}
                     </div>
-                    <div className="self-end">
-                      <AddTutorAreaButton
-                        areas={tutorAreas}
-                        setAreas={setTutorAreas}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className="
-                    flex 
-                    flex-col 
-                    gap-4
-                  "
-                  >
-                    <h3
-                      className="
-                      pt-6
-                      text-xl 
-                      font-bold 
-                    text-slate-800
-                    "
-                    >
-                      Especialidades
-                    </h3>
-                    <div
-                      className="
-                    flex
-                    flex-col 
-                    items-center
-                    mb-6 
-                    "
-                    >
-                      <span className="text-slate-600">
-                        Selecione suas especialidades dentro das áreas em que
-                        você deseja atuar como tutor. Isso ajudará outros alunos
-                        a encontrarem o seu perfil quando buscarem ajuda nesses
-                        assuntos específicos.
-                      </span>
-                    </div>
-                    <div className="flex flex-col mb-4">
-                      <div className="flex gap-4 flex-wrap">
-                        {specialties.map((specialty) => (
-                          <div
-                            key={specialty.id}
-                            className="
-                          flex 
-                          items-center
-                          bg-slate-100 
-                          px-4 
-                          py-2 
-                          rounded-full
-                          gap-2
+                    <span><b>Especialidades Adicionadas</b></span>
+                    <div className="flex gap-4 flex-wrap">
+                      {specialties.map((specialty) => (
+                        <div
+                          key={specialty.id}
+                          className="
+                        flex 
+                        items-center
+                        bg-slate-100 
+                        px-4 
+                        py-2 
+                        rounded-full
+                        gap-2
                       "
-                          >
-                            <span
-                              className="
+                        >
+                          <span
+                            className="
                             text-slate-700 
                             text-sm 
                             font-semibold
                         "
-                            >
-                              {specialty.specialty}
-                            </span>
-                            <DeleteIcon
-                              onClick={() => {
-                                setSpecialtyToDelete(specialty);
-                                setDeleteSpecialtyModalOpen();
-                              }}
-                              className="
+                          >
+                            {specialty.nomeEspecialidade}
+                          </span>
+                          <DeleteIcon
+                            onClick={() => {
+                              setSpecialtyToDelete(specialty);
+                              setDeleteSpecialtyModalOpen();
+                            }}
+                            className="
                           text-rose-500
                           cursor-pointer
                           hover:text-[28px]
                           hover:text-rose-900
                           transition-all
                           "
-                            />
-                          </div>
-                        ))}
-                      </div>
-                      <div className="self-end">
-                        <AddSpecialty
-                          areas={tutorAreas}
-                          specialties={specialties}
-                          setSpecialties={setSpecialties}
-                        />
-                      </div>
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="self-end">
+                      <AddSpecialty
+                        areas={tutorAreas}
+                        setAreas={setTutorAreas}
+                        specialties={specialties}
+                        setSpecialties={setSpecialties}
+                      />
                     </div>
                   </div>
                   <div
@@ -1159,7 +1119,7 @@ export default function CreateAccountPage(): React.ReactNode {
                       </span>
                     </div>
                   </div>
-                  <AvailabilityManager/>
+                  <AvailabilityManager />
                 </div>
                 <div
                   className="
