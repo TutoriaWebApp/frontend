@@ -112,7 +112,7 @@ export async function EditProfile(
 }
 
 export async function GetAreas(): Promise<GetAreasResult> {
-  const URL = `${process.env.backendBaseURL}/areas`;
+  const URL = `${process.env.backendBaseURL}/areas/`;
 
   const res = await authRequestWrapper(
     URL,
@@ -138,7 +138,7 @@ export async function GetAreas(): Promise<GetAreasResult> {
 }
 
 export async function GetSpecialties(): Promise<GetSpecialtiesResult> {
-  const URL = `${process.env.backendBaseURL}/especialidades`;
+  const URL = `${process.env.backendBaseURL}/especialidades/`;
 
   const res = await authRequestWrapper(
     URL,

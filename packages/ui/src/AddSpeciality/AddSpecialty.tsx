@@ -53,8 +53,8 @@ export const AddSpecialty = ({
       <AddSpecialtyModal
         isOpen={openModal}
         onClose={closeModal}
-        areas={areas}
-        setAreas={setAreas}
+        tutorAreas={areas}
+        setTutorAreas={setAreas}
         specialties={specialties}
         setSpecialties={setSpecialties}
       />

@@ -993,7 +993,7 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div className="flex flex-col mb-4">
                     <span><b>Áreas Adicionadas</b></span>
-                    <div className="flex gap-4 flex-wrap mb-10">
+                    <div className=" mt-4 flex gap-4 flex-wrap mb-10">
                       {tutorAreas.map((area, index) => (
                         <div
                           key={index}
@@ -1033,7 +1033,7 @@ export default function CreateAccountPage(): React.ReactNode {
                       ))}
                     </div>
                     <span><b>Especialidades Adicionadas</b></span>
-                    <div className="flex gap-4 flex-wrap">
+                    <div className="mt-4 flex gap-4 flex-wrap">
                       {specialties.map((specialty) => (
                         <div
                           key={specialty.id}

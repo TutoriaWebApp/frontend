@@ -15,9 +15,9 @@ interface DeleteTutorAreaModalProps {
 export function DeleteTutorAreaModal({
   isOpen,
   onClose,
-  setAreas,
   area,
   areas,
+  setAreas,
 }: DeleteTutorAreaModalProps) {
   if (!isOpen) return null;
 
@@ -98,7 +98,7 @@ export function DeleteTutorAreaModal({
               font-bold 
               text-slate-700
             ">
-              "{area?.area}"
+              "{area?.nomeArea}"
             </span>?
             <br />
           </p>
