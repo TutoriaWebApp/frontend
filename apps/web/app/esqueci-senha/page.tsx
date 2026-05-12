@@ -68,15 +68,16 @@ export default function ForgotPassword(): React.ReactNode {
         className="
          bg-white
          relative
-         md:top-[15%]
          mx-auto 
          rounded-3xl
          border
-       border-slate-200
+         border-slate-200
          shadow-xl
-       shadow-slate-200/50
-         w-[520px]
+         shadow-slate-200/50
+         w-full
+         md:w-[520px]
          2xl:w-[640px]
+         top-[15%]
          2xl:top-[20%]
         "
       >
@@ -132,8 +133,9 @@ export default function ForgotPassword(): React.ReactNode {
                 type="email"
                 {...register("email")}
                 className="
-                bg-white  
-                w-[470px]
+                bg-white
+                w-[calc(100vw-40px)]
+                md:w-[470px]
                 text-slate-900
                 rounded-md
                 leading-7
@@ -154,7 +156,8 @@ export default function ForgotPassword(): React.ReactNode {
               className="
               bg-indigo-600
               hover:bg-indigo-800
-              w-[470px]
+              w-[calc(100vw-40px)]
+              md:w-[470px]
               rounded-md
               text-white
               font-semibold
