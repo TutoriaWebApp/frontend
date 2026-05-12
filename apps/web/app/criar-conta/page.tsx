@@ -1177,9 +1177,11 @@ export default function CreateAccountPage(): React.ReactNode {
       <DeleteTutorAreaModal
         isOpen={openDeleteTutorAreaModal}
         onClose={closeDeleteTutorAreaModal}
-        setAreas={setTutorAreas}
         area={tutorAreaToDelete}
         areas={tutorAreas}
+        setAreas={setTutorAreas}
+        specialties={specialties}
+        setSpecialties={setSpecialties}
       />
       <DeleteSpecialtyModal
         isOpen={openDeleteSpecialtyModal}
