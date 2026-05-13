@@ -87,13 +87,14 @@ export default function ForgotPassword(): React.ReactNode {
          bg-white 
          mx-auto
          relative
-         md:top-[5%]
          rounded-3xl
          border 
          border-slate-200
          shadow-xl
-       shadow-slate-200/50
-         w-fit
+         shadow-slate-200/50
+         w-full
+         md:w-fit
+         top-[5%]
          2xl:top-[15%]
         "
       >
@@ -105,7 +106,12 @@ export default function ForgotPassword(): React.ReactNode {
           mb-4
           "
         >
-          <h2 className="font-quicksand text-2xl font-bold m-5">
+          <h2 className="
+            font-quicksand 
+            text-2xl 
+            font-bold 
+            m-5
+          ">
             Redefinição de Senha
           </h2>
         </div>
@@ -114,61 +120,110 @@ export default function ForgotPassword(): React.ReactNode {
           bg-white
           w-full
           rounded-3xl
-          shadow-xl shadow-slate-200/50
+          shadow-xl 
+          shadow-slate-200/50
           pb-6
           "
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-            <div className="flex items-center">
-              <label className="flex flex-col pl-6">
-                <span className="font-semibold mb-2">Nova senha</span>
+          <form onSubmit={handleSubmit(onSubmit)} className="
+            flex 
+            flex-col
+          ">
+            <div className="
+              flex 
+              items-center
+              w-full
+            ">
+              <label className="
+                flex 
+                flex-col 
+                pl-6
+                w-full  
+              ">
+                <span className="
+                  font-semibold 
+                  mb-2
+                ">
+                  Nova senha
+                </span>
                 <input
                   type={showNewPassword ? "text" : "password"}
                   {...register("password")}
                   className="
-                bg-white  
-                w-[470px]
-                text-slate-900
-                rounded-md
-                leading-7
-                border-2
-                border-slate-300
+                  bg-white
+                  md:w-[470px]
+                  text-slate-900
+                  rounded-md
+                  leading-7
+                  border-2
+                  border-slate-300
                 "
                   placeholder="Digite a nova senha"
                 />
               </label>
               <div
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
-              >
+                className="
+                  flex 
+                  items-center 
+                  border-2 
+                  border-slate-300 
+                  bg-white 
+                  rounded-md 
+                  h-[2rem] 
+                  pr-2 
+                  pl-2 
+                  mr-6 
+                  mt-8 
+                  cursor-pointer
+              ">
                 <VisibilityIcon className="mr-1" />
-                Mostrar
+                  Mostrar
               </div>
             </div>
-            <div className="mb-6 pl-6 mt-4 flex flex-col">
+            <div className="
+              mb-6 
+              pl-6 
+              mt-4 
+              flex 
+              flex-col
+            ">
               {errors.password && (
                 <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                   {errors.password.message}
                 </span>
               )}
             </div>
-            <div className="flex items-center">
-              <label className="flex flex-col pl-6">
-                <span className="font-semibold mb-2">
+            <div className="
+              flex 
+              items-center
+              w-full
+            ">
+              <label className="
+                flex 
+                flex-col 
+                pl-6
+                w-full
+              ">
+                <span className="
+                  font-semibold 
+                  mb-2
+                ">
                   Confirme a nova senha
                 </span>
                 <input
                   type={showConfirmNewPassword ? "text" : "password"}
                   {...register("passwordConfirm")}
                   className="
-                bg-white  
-                w-[470px]
-                text-slate-900
-                rounded-md
-                leading-7
-                border-2
-                border-slate-300
-                          "
+                    bg-white
+                    w-full  
+                    md:w-[470px]
+                    text-slate-900
+                    rounded-md
+                    leading-7
+                    border-2
+                    border-slate-300
+                  "
                   placeholder="Digite a nova senha novamente"
                 />
               </label>
@@ -176,8 +231,20 @@ export default function ForgotPassword(): React.ReactNode {
                 onClick={() =>
                   setShowConfirmNewPassword(!showConfirmNewPassword)
                 }
-                className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
-              >
+                className="
+                  flex 
+                  items-center 
+                  border-2 
+                  border-slate-300 
+                  bg-white 
+                  rounded-md 
+                  h-[2rem] 
+                  pr-2 
+                  pl-2 
+                  mr-6 
+                  mt-8 
+                  cursor-pointer
+              ">
                 <VisibilityIcon className="mr-1" />
                 Mostrar
               </div>
@@ -193,7 +260,8 @@ export default function ForgotPassword(): React.ReactNode {
               className="
               bg-indigo-600
               hover:bg-indigo-800
-              w-[470px]
+              w-full
+              md:w-[470px]
               rounded-md
               text-white
               font-semibold
@@ -202,8 +270,7 @@ export default function ForgotPassword(): React.ReactNode {
               m-auto
               mb-5
               mt-8
-              "
-            >
+            ">
               Redefinir a senha
             </button>
           </form>
