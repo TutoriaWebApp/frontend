@@ -17,7 +17,7 @@ export const SolicitationCard = ({
 }: SolicitationCardProps) => (
   <div
     className="
-        bg-white 
+        bg-white
         rounded-[2.5rem] 
         border 
         border-slate-100 
@@ -28,6 +28,9 @@ export const SolicitationCard = ({
         flex 
         flex-col 
         text-center
+        mx-auto
+        max-w-[500px]
+        w-full
     "
   >
     <h3

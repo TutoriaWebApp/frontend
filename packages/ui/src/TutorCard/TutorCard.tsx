@@ -34,6 +34,8 @@ export const TutorCard = ({
     items-center 
     text-center 
     group
+    mx-auto
+    max-w-[500px]
   "
   >
     {/* Foto */}
@@ -153,7 +155,8 @@ export const TutorCard = ({
     </div>
 
     <button className="
-      w-full 
+      w-full
+      lg:max-w-[250px] 
       py-3
       mt-2
       mb-2 

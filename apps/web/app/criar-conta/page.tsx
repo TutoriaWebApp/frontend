@@ -22,7 +22,6 @@ import { ClipLoader } from "react-spinners";
 
 import { ImageUpload } from "@repo/ui/ImageUpload/ImageUpload";
 import { AddStudentArea } from "@repo/ui/AddStudentAreaButton/AddStudentAreaButton";
-import { AddTutorAreaButton } from "@repo/ui/AddTutorAreaButton/AddTutorAreaButton";
 import { AddSpecialty } from "@repo/ui/AddSpeciality/AddSpecialty";
 import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
 
@@ -118,7 +117,7 @@ export default function CreateAccountPage(): React.ReactNode {
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] =
     useState<boolean>(false);
-  const [step, setStep] = useState<number>(3);
+  const [step, setStep] = useState<number>(1);
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -253,7 +252,8 @@ export default function CreateAccountPage(): React.ReactNode {
          border-slate-200
          shadow-xl 
          shadow-slate-200/50
-         w-[calc(100%-33%)]
+         w-full
+         md:w-[calc(100%-33%)]
         "
         >
           <div
@@ -276,66 +276,169 @@ export default function CreateAccountPage(): React.ReactNode {
             </h2>
           </div>
           {/* Barra de Progresso */}
-          <div className="w-full px-12 py-8">
-            <div className="relative flex items-center justify-between w-full">
+          <div
+            className="
+            w-full 
+            px-12 
+            py-8
+          "
+          >
+            <div
+              className="
+              relative 
+              flex 
+              items-center 
+              justify-between 
+              w-full
+            "
+            >
               {/* Linha de Fundo (Cinza) */}
-              <div className="absolute top-5 left-0 w-full h-0.5 bg-slate-200 z-0" />
+              <div
+                className="
+                absolute 
+                top-5 
+                left-0 
+                w-full 
+                h-0.5 
+                bg-slate-200 
+                z-0
+              "
+              />
 
               {/* Linha de Progresso Ativa (Indigo) */}
               <div
-                className="absolute top-5 left-0 h-0.5 bg-indigo-600 transition-all duration-500 ease-in-out z-0"
+                className="
+                  absolute 
+                  top-5 
+                  left-0 
+                  h-0.5 
+                  bg-indigo-600 
+                  transition-all 
+                  duration-500 
+                  ease-in-out 
+                  z-0
+                "
                 style={{ width: `${((step - 1) / 2) * 100}%` }}
               />
 
               {/* Etapa 1: Informações Pessoais */}
-              <div className="relative z-10 flex flex-col items-center gap-2">
+              <div
+                className="
+                relative 
+                z-10 
+                flex 
+                flex-col 
+                items-center 
+                gap-2
+              "
+              >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                    step >= 1
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "bg-white border-slate-300 text-slate-400"
-                  }`}
+                  className={`
+                      w-10 
+                      h-10 
+                      rounded-full 
+                      flex 
+                      items-center 
+                      justify-center 
+                      border-2 
+                      transition-all 
+                      duration-300 
+                    ${
+                      step >= 1
+                        ? "bg-indigo-600 border-indigo-600 text-white"
+                        : "bg-white border-slate-300 text-slate-400"
+                    }`}
                 >
                   {step > 1 ? "✓" : "1"}
                 </div>
                 <span
-                  className={`text-xs font-bold transition-all ${step >= 1 ? "text-indigo-600" : "text-slate-400"}`}
+                  className={`
+                    text-xs 
+                    font-bold 
+                    transition-all 
+                    ${step >= 1 ? "text-indigo-600" : "text-slate-400"}`}
                 >
                   Informações Pessoais
                 </span>
               </div>
 
               {/* Etapa 2: Perfil */}
-              <div className="relative z-10 flex flex-col items-center gap-2">
+              <div
+                className="
+                relative 
+                z-10 
+                flex 
+                flex-col 
+                items-center 
+                gap-2
+              "
+              >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                    step >= 2
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "bg-white border-slate-300 text-slate-400"
-                  }`}
+                  className={`
+                      w-10 
+                      h-10 
+                      rounded-full 
+                      flex 
+                      items-center 
+                      justify-center 
+                      border-2 
+                      transition-all 
+                      duration-300 
+                    ${
+                      step >= 2
+                        ? "bg-indigo-600 border-indigo-600 text-white"
+                        : "bg-white border-slate-300 text-slate-400"
+                    }`}
                 >
                   {step > 2 ? "✓" : "2"}
                 </div>
                 <span
-                  className={`text-xs font-bold transition-all ${step >= 2 ? "text-indigo-600" : "text-slate-400"}`}
+                  className={`
+                      text-xs 
+                      font-bold 
+                      transition-all 
+                      ${step >= 2 ? "text-indigo-600" : "text-slate-400"}`}
                 >
                   Áreas de Interesse (Opcional)
                 </span>
               </div>
 
               {/* Etapa 3: Perfil de Tutor */}
-              <div className="relative z-10 flex flex-col items-center gap-2">
+              <div
+                className="
+                relative 
+                z-10 
+                flex 
+                flex-col 
+                items-center 
+                gap-2
+              "
+              >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                    step >= 3
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "bg-white border-slate-300 text-slate-400"
-                  }`}
+                  className={`
+                      w-10 
+                      h-10 
+                      rounded-full 
+                      flex 
+                      items-center 
+                      justify-center 
+                      border-2 
+                      transition-all 
+                      duration-300 
+                    ${
+                      step >= 3
+                        ? "bg-indigo-600 border-indigo-600 text-white"
+                        : "bg-white border-slate-300 text-slate-400"
+                    }`}
                 >
                   3
                 </div>
                 <span
-                  className={`text-xs font-bold transition-all ${step >= 3 ? "text-indigo-600" : "text-slate-400"}`}
+                  className={`
+                      text-xs 
+                      font-bold 
+                      transition-all 
+                      ${step >= 3 ? "text-indigo-600" : "text-slate-400"}`}
                 >
                   Perfil como Tutor (Opcional)
                 </span>
@@ -346,12 +449,13 @@ export default function CreateAccountPage(): React.ReactNode {
             <>
               <div
                 className="
-              bg-white
-                w-full
-               rounded-3xl
-               shadow-xl shadow-slate-200/50
-               pb-6
-            "
+                bg-white
+                  w-full
+                  rounded-3xl
+                  shadow-xl 
+                  shadow-slate-200/50
+                  pb-6
+              "
               >
                 <ImageUpload
                   name="foto"
@@ -360,31 +464,29 @@ export default function CreateAccountPage(): React.ReactNode {
                 />
                 <form
                   className="
-                grid 
-                grid-cols-2
-                gap-6
-              "
+                  grid
+                  grid-cols-1 
+                  lg:grid-cols-2
+                  gap-3
+                  lg:gap-6
+                "
                 >
                   <div
                     className="
-                  flex 
-                  items-center
-                "
+                    flex 
+                    items-center
+                  "
                   >
                     <label
                       className="
-                    flex 
-                    flex-col 
-                    pl-6
-                    w-full
-                    gap-2
-                  "
-                    >
-                      <span
-                        className="
-                      font-semibold 
+                      flex 
+                      flex-col 
+                      pl-6
+                      w-full
+                      gap-2
                     "
-                      >
+                    >
+                      <span className="font-semibold">
                         Nome<span className="text-rose-500">*</span>
                       </span>
                       <input
@@ -392,7 +494,8 @@ export default function CreateAccountPage(): React.ReactNode {
                         {...register("nomePerfil")}
                         className="
                       bg-white  
-                        w-full
+                        lg:w-full
+                        w-[calc(100%-4%)]
                       text-slate-900
                         rounded-md
                         leading-7
@@ -405,24 +508,33 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  flex 
-                  items-center
-                "
+                    lg:hidden
+                    lg:mb-6 
+                    pl-6 
+                  "
+                  >
+                    {errors.nomePerfil && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.nomePerfil.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                    flex 
+                    items-center
+                  "
                   >
                     <label
                       className="
-                    flex 
-                    flex-col 
-                    pl-6
-                    w-full
-                    gap-2
-                  "
-                    >
-                      <span
-                        className="
-                      font-semibold
+                      flex 
+                      flex-col 
+                      pl-6
+                      w-full
+                      gap-2
                     "
-                      >
+                    >
+                      <span className="font-semibold">
                         E-mail<span className="text-rose-500">*</span>
                       </span>
                       <input
@@ -444,20 +556,9 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  mb-6 
-                  pl-6 
-                "
-                  >
-                    {errors.nomePerfil && (
-                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
-                        {errors.nomePerfil.message}
-                      </span>
-                    )}
-                  </div>
-                  <div
-                    className="
-                  pl-6 
-                "
+                      pl-6
+                      lg:hidden
+                  "
                   >
                     {errors.email && (
                       <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
@@ -467,32 +568,56 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  flex 
-                  items-center
-                "
+                    hidden
+                    lg:block
+                    lg:mb-6 
+                    pl-6 
+                  "
+                  >
+                    {errors.nomePerfil && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.nomePerfil.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                    hidden  
+                    pl-6 
+                    lg:block
+                  "
+                  >
+                    {errors.email && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.email.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                    flex 
+                    items-center
+                  "
                   >
                     <label
                       className="
-                    flex 
-                    flex-col 
-                    pl-6
-                    w-full
-                    gap-2
-                  "
-                    >
-                      <span
-                        className="
-                      font-semibold
+                        flex 
+                        flex-col 
+                        pl-6
+                        w-full
+                        gap-2
                     "
-                      >
-                        Senha<span className="text-rose-500">*</span>
+                    >
+                      <span className="font-semibold">
+                        Senha
+                        <span className="text-rose-500">*</span>
                       </span>
                       <input
                         type={showNewPassword ? "text" : "password"}
                         {...register("password")}
                         className="
-                        bg-white  
-                        w-full
+                        bg-white
+                        w-full  
                       text-slate-900
                         rounded-md
                         leading-7
@@ -512,8 +637,8 @@ export default function CreateAccountPage(): React.ReactNode {
                       bg-white 
                       rounded-md 
                       h-[2rem] 
-                      pr-2 
-                      pl-2 
+                      px-2
+                      mr-5 
                       mt-8 
                       cursor-pointer
                     "
@@ -528,37 +653,45 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  flex 
-                  items-center
-                "
+                    pl-6
+                    lg:hidden 
+                  "
+                  >
+                    {errors.password && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.password.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                      flex 
+                      items-center
+                  "
                   >
                     <label
                       className="
-                    flex 
-                    flex-col 
-                    pl-6
-                    w-full
-                    gap-2
-                  "
-                    >
-                      <span
-                        className="
-                      font-semibold
+                        flex 
+                        flex-col 
+                        pl-6
+                        w-full
+                        gap-2
                     "
-                      >
+                    >
+                      <span className="font-semibold">
                         Confirme a senha<span className="text-rose-500">*</span>
                       </span>
                       <input
                         type={showConfirmNewPassword ? "text" : "password"}
                         {...register("passwordConfirm")}
                         className="
-                      bg-white  
-                        w-full
-                      text-slate-900
-                      rounded-md
-                      leading-7
-                      border-2
-                      border-slate-300
+                        bg-white  
+                          w-full
+                        text-slate-900
+                          rounded-md
+                          leading-7
+                          border-2
+                          border-slate-300
                       "
                         placeholder="Digite a nova senha novamente"
                       />
@@ -588,8 +721,22 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  mb-6 
-                  pl-6 
+                      pl-6
+                      lg:hidden 
+                    "
+                  >
+                    {errors.passwordConfirm && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.passwordConfirm.message}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="
+                      hidden
+                      lg:block
+                      mb-6 
+                      pl-6 
                   "
                   >
                     {errors.password && (
@@ -600,7 +747,9 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  pl-6 
+                    hidden
+                    lg:block
+                    pl-6 
                   "
                   >
                     {errors.passwordConfirm && (
@@ -611,37 +760,34 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  flex 
-                  items-center
-                "
+                      flex 
+                      items-center
+                  "
                   >
                     <label
                       className="
-                    flex 
-                    flex-col 
-                    pl-6 
-                    mb-4
-                    w-full
-                    gap-2
+                        flex 
+                        flex-col 
+                        pl-6 
+                        mb-4
+                        w-full
+                        gap-2
                     "
                     >
-                      <span
-                        className="
-                      font-semibold
-                      "
-                      >
+                      <span className="font-semibold">
                         Estado<span className="text-rose-500">*</span>
                       </span>
                       <select
                         {...register("estado")}
                         className="
-                      bg-white  
-                      w-full
-                      text-slate-900
-                      rounded-md
-                      py-1
-                        border-2
-                        border-slate-300"
+                          bg-white
+                          w-[calc(100%-4%)]    
+                          lg:w-full
+                          text-slate-900
+                          rounded-md
+                          py-1
+                          border-2
+                          border-slate-300"
                         defaultValue={""}
                       >
                         <option value="" disabled hidden>
@@ -654,6 +800,18 @@ export default function CreateAccountPage(): React.ReactNode {
                         ))}
                       </select>
                     </label>
+                  </div>
+                  <div
+                    className="
+                    pl-6
+                    lg:hidden 
+                  "
+                  >
+                    {errors.cidade && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.cidade.message}
+                      </span>
+                    )}
                   </div>
                   <div
                     className="
@@ -708,10 +866,11 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  mb-6 
-                  pl-6 
-                  "
-                  >
+                      hidden
+                      lg:block
+                      mb-6 
+                      pl-6 
+                  ">
                     {errors.cidade && (
                       <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                         {errors.cidade.message}
@@ -731,33 +890,28 @@ export default function CreateAccountPage(): React.ReactNode {
                   </div>
                   <div
                     className="
-                  flex
-                  flex-col 
-                  "
-                  >
+                    mt-4
+                    lg:mt-0
+                    flex
+                    flex-col 
+                  ">
                     <label
                       className="
-                    flex 
-                    pl-6 
-                    w-full
-                    gap-2
-                    "
-                    >
-                      <span
-                        className="
-                      font-semibold
-                      "
-                      >
+                      flex 
+                      pl-6 
+                      w-full
+                      gap-2
+                    ">
+                      <span className="font-semibold">
                         Data de Nascimento
                       </span>
                       - <input type="date" {...register("aniversario")} />
                     </label>
                     <div
                       className="
-                  pl-6
-                  mt-4
-                "
-                    >
+                        pl-6
+                        mt-4
+                    ">
                       {errors.aniversario && (
                         <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                           {errors.aniversario.message}
@@ -780,8 +934,9 @@ export default function CreateAccountPage(): React.ReactNode {
                       bg-brand-primary 
                     hover:bg-indigo-800 
                     text-white 
-                      font-bold 
-                      px-4 
+                      font-bold
+                      px-2 
+                      md:px-4 
                       rounded-xl 
                       transition-all 
                       shadow-lg 
@@ -977,36 +1132,39 @@ export default function CreateAccountPage(): React.ReactNode {
                     "
                     >
                       <span className="text-slate-600">
-                        Selecione as áreas em que você deseja atuar como tutor e suas especialidades dentro dessas áreas.
-
-                        Isso ajudará outros alunos a encontrarem o seu perfil
-                        quando buscarem ajuda no aprendizado desses conteúdos.
+                        Selecione as áreas em que você deseja atuar como tutor e
+                        suas especialidades dentro dessas áreas. Isso ajudará
+                        outros alunos a encontrarem o seu perfil quando buscarem
+                        ajuda no aprendizado desses conteúdos.
                       </span>
                     </div>
                     <div className="text-slate-600 mb-6">
                       <span>
                         É necessário ter ao menos{" "}
-                        <em className="not-italic font-bold">1 área e 1 especialidade</em> para
-                        ser considerado um tutor.
+                        <em className="not-italic font-bold">
+                          1 área e 1 especialidade
+                        </em>{" "}
+                        para ser considerado um tutor.
                       </span>
                     </div>
                   </div>
                   <div className="flex flex-col mb-4">
-                    <span><b>Áreas Adicionadas</b></span>
+                    <span>
+                      <b>Áreas Adicionadas</b>
+                    </span>
                     <div className=" mt-4 flex gap-4 flex-wrap mb-10">
                       {tutorAreas.map((area, index) => (
                         <div
                           key={index}
                           className="
-                        flex 
-                        items-center
-                        bg-slate-100 
-                        px-4 
-                        py-2 
-                        rounded-full
-                        gap-2
-                      "
-                        >
+                          flex 
+                          items-center
+                          bg-slate-100 
+                          px-4 
+                          py-2 
+                          rounded-full
+                          gap-2
+                        ">
                           <span
                             className="
                             text-slate-700 
@@ -1032,7 +1190,9 @@ export default function CreateAccountPage(): React.ReactNode {
                         </div>
                       ))}
                     </div>
-                    <span><b>Especialidades Adicionadas</b></span>
+                    <span>
+                      <b>Especialidades Adicionadas</b>
+                    </span>
                     <div className="mt-4 flex gap-4 flex-wrap">
                       {specialties.map((specialty) => (
                         <div
@@ -1150,7 +1310,8 @@ export default function CreateAccountPage(): React.ReactNode {
                     hover:bg-indigo-800 
                     text-white 
                       font-bold 
-                      px-8
+                      px-2
+                      md:px-8
                       py-3 
                       rounded-xl 
                       transition-all 

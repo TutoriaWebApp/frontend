@@ -232,7 +232,7 @@ export function AddScheduleModal({
                   `}
                 >
                   <option value="" disabled>
-                    Selecione o horário de início e fim
+                    Selecione o horário
                   </option>
                   {timeOptions.map((option) => (
                     <option key={option.value} value={option.value}>

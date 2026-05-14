@@ -175,8 +175,7 @@ export function AvailabilityManager() {
             type="button"
             onClick={setModalOpen}
             className="
-              w-full 
-              md:w-auto 
+              w-auto 
               bg-emerald-600 
               hover:bg-emerald-800  
               text-white 

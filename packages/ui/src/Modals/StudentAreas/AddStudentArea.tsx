@@ -28,20 +28,20 @@ export function AddStudentAreaModal({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const selectedArea = formData.get("area") as string;
+  //   const formData = new FormData(e.currentTarget);
+  //   const selectedArea = formData.get("area") as string;
 
-    if (!selectedArea) return;
+  //   if (!selectedArea) return;
 
-    const alreadyExists = areas.some((a) => a.area === selectedArea);
+  //   const alreadyExists = areas.some((a) => a.area === selectedArea);
 
-    if (!alreadyExists) {
-      setAreas((prev) => [...prev, { area: selectedArea } as StudentArea]);
+  //   if (!alreadyExists) {
+  //     setAreas((prev) => [...prev, { area: selectedArea } as StudentArea]);
 
       onClose();
-    } else {
-      showNotification("Essa área já foi adicionada!", "error");
-    }
+  //   } else {
+  //     showNotification("Essa área já foi adicionada!", "error");
+  //   }
   };
 
   return (
@@ -145,7 +145,7 @@ export function AddStudentAreaModal({
                 "
                 >
                   <option value="" disabled>
-                    Selecione uma opção de área de interesse
+                    Selecione uma área
                   </option>
                   {selectAreas.map((area) => (
                     <option key={area.id} value={area.nomeArea} disabled>

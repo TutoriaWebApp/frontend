@@ -252,7 +252,7 @@ export function AddSpecialtyModal({
                     "
                     >
                       <option value="" disabled>
-                        Selecione uma área de tutoria
+                        Selecione a área de tutoria
                       </option>
                       {availableAreas.map((area) => (
                         <option key={area.id} value={area.id}>
@@ -303,7 +303,7 @@ export function AddSpecialtyModal({
                     `}
                     >
                       <option value="" disabled>
-                        Selecione uma especialidade
+                        Selecione a especialidade
                       </option>
                       {availableSpecialties.map((specialty) => (
                         <option key={specialty.id} value={specialty.id}>

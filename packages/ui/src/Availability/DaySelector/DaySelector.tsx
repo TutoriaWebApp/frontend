@@ -15,7 +15,7 @@ export function DaySelector({ days, selectedDay, onSelect }: DaySelectorProps) {
       grid 
       grid-cols-2 
       sm:grid-cols-4 
-      md:grid-cols-7 
+      lg:grid-cols-7 
       gap-2 
       mb-6
     ">
@@ -35,6 +35,7 @@ export function DaySelector({ days, selectedDay, onSelect }: DaySelectorProps) {
             uppercase 
             tracking-wider
             2xl:text-sm
+            text-center
             ${!day.isAvailable 
               ? "bg-slate-100 border-slate-100 text-slate-300 cursor-not-allowed" 
               : day.name === selectedDay

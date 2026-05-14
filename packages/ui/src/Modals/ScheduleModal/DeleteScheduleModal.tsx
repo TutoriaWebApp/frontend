@@ -87,13 +87,13 @@ export function DeleteScheduleModal({
             leading-relaxed 
             text-sm
           ">
-            Tem certeza que deseja remover a disponibilidade de 13h-14h do dia Segunda?{" "}
+            Tem certeza que deseja remover a disponibilidade de 13h-14h do dia Segunda?
             <span className="
               font-bold 
               text-slate-700
             ">
               {/* "{specialty?.specialty}" */}
-            </span>?
+            </span>
             <br />
           </p>
         </div>

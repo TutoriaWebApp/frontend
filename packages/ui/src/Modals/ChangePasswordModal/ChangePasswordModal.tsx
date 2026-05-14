@@ -107,20 +107,19 @@ export function ChangePasswordModal({
         justify-center 
         bg-black/50 
         backdrop-blur-sm 
-        p-4
-    "
-    >
+        md:p-4
+    ">
       <div
         className="
-            bg-white 
-            w-full 
-            max-w-2xl 
+            bg-white
+            mx-auto
+            sm:w-full
+            sm:max-w-lg
+            md:max-w-2xl 
             rounded-3xl 
             shadow-2xl 
             overflow-hidden 
-
-        "
-      >
+      ">
         {/* Header */}
         <div
           className="
@@ -155,14 +154,14 @@ export function ChangePasswordModal({
         <div>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
             <div className="flex items-center mb-6 pt-6 pb-3">
-              <label className="flex flex-col pl-6">
+              <label className="flex flex-col pl-6 w-full">
                 <span className="font-semibold mb-2">Senha Atual</span>
                 <input
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
                   className="
-                bg-white  
-                w-[500px]
+                bg-white
+                w-full  
                 text-slate-900
                 rounded-md
                 leading-7
@@ -181,14 +180,14 @@ export function ChangePasswordModal({
               </div>
             </div>
             <div className="flex items-center">
-              <label className="flex flex-col pl-6">
+              <label className="flex flex-col pl-6 w-full">
                 <span className="font-semibold mb-2">Nova Senha</span>
                 <input
                   type={showNewPassword ? "text" : "password"}
                   {...register("newPassword")}
                   className="
                 bg-white  
-                w-[500px]
+                w-full
                 text-slate-900
                 rounded-md
                 leading-7
@@ -214,7 +213,7 @@ export function ChangePasswordModal({
               )}
             </div>
             <div className="flex items-center">
-              <label className="flex flex-col pl-6">
+              <label className="flex flex-col pl-6 w-full">
                 <span className="font-semibold mb-2">
                   Confirme a nova senha
                 </span>
@@ -223,7 +222,7 @@ export function ChangePasswordModal({
                   {...register("newPasswordConfirm")}
                   className="
                 bg-white  
-                w-[500px]
+                w-full
                 text-slate-900
                 rounded-md
                 leading-7

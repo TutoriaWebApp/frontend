@@ -176,7 +176,8 @@ export default function Dashboard(): React.ReactNode {
           <div
             className="
             grid 
-            grid-cols-3 
+            grid-cols-1
+            md:grid-cols-3 
             gap-4 
             mb-10 
             text-center
@@ -309,8 +310,9 @@ export default function Dashboard(): React.ReactNode {
               hover:bg-indigo-700 
               text-white 
               font-bold 
-              py-4 
-              px-10 
+              py-4
+              px-3 
+              md:px-10 
               rounded-2xl 
               shadow-xl 
               shadow-indigo-100 
