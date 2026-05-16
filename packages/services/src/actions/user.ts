@@ -3,12 +3,13 @@
 import { cookies } from "next/headers";
 
 import { CreateAccount } from "../userServer";
-import { ChangePassword, EditProfile } from "../userClient";
+import { ChangePassword, EditProfile, BecomeTutor } from "../userClient";
 import {
   CreateUserResponse,
   CreateUserResult,
   ChangePasswordResult,
-  EditProfileResult
+  EditProfileResult,
+  BecomeTutorResult
 } from "../types/user";
 
 export async function CreateAccountAction(
@@ -100,3 +101,29 @@ export async function EditProfileAction(
     };
   }
 }
+
+export async function BecomeTutorAction(): Promise<BecomeTutorResult> {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("access_token")?.value;
+    const csrfToken = cookieStore.get("csrftoken")!.value;
+
+    const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: BecomeTutorResult = await BecomeTutor(cookieString, csrfToken);
+
+    if (result.success) {
+      return { success: true, status: result.status};
+    }
+    return {
+      success: false,
+      status: result.status
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500
+    };
+  }
+}
+

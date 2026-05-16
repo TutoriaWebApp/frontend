@@ -4,7 +4,9 @@ import {
   ChangePasswordResult,
   EditProfileResult,
   GetAreasResult,
-  GetSpecialtiesResult
+  GetAreaResult,
+  GetSpecialtiesResult,
+  BecomeTutorResult,
 } from "./types/user";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
 
@@ -39,7 +41,7 @@ export async function ChangePassword(
   password: string,
   newPassword: string,
   cookieString: string,
-  csrfTokenString: string
+  csrfTokenString: string,
 ): Promise<ChangePasswordResult> {
   const URL = `${process.env.backendBaseURL}/usuarios/altera-senha`;
 
@@ -50,8 +52,8 @@ export async function ChangePassword(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        "Cookie": cookieString,
-        "X-CSRFToken": csrfTokenString
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
       },
       body: JSON.stringify({ senhaAntiga: password, senhaAtual: newPassword }),
     },
@@ -78,7 +80,7 @@ export async function ChangePassword(
 export async function EditProfile(
   formData: FormData,
   cookieString: string,
-  csrfTokenString: string
+  csrfTokenString: string,
 ): Promise<EditProfileResult> {
   const URL = `${process.env.backendBaseURL}/perfil`;
 
@@ -88,8 +90,8 @@ export async function EditProfile(
       method: "PATCH",
       headers: {
         Accept: "application/json",
-        "Cookie": cookieString,
-        "X-CSRFToken": csrfTokenString
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
       },
       body: formData,
     },
@@ -114,11 +116,7 @@ export async function EditProfile(
 export async function GetAreas(): Promise<GetAreasResult> {
   const URL = `${process.env.backendBaseURL}/areas/`;
 
-  const res = await authRequestWrapper(
-    URL,
-    { method: "GET"},
-    "Request Areas",
-  );
+  const res = await authRequestWrapper(URL, { method: "GET" }, "Request Areas");
 
   if (res.success) {
     const areasData: GetAreasResult = {
@@ -131,7 +129,29 @@ export async function GetAreas(): Promise<GetAreasResult> {
     const failedRequest: GetAreasResult = {
       success: false,
       status: res.status,
-      data: []
+      data: [],
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetAreaById(id: number): Promise<GetAreaResult> {
+  const URL = `${process.env.backendBaseURL}/areas/${id}/`;
+
+  const res = await authRequestWrapper(URL, { method: "GET" }, "Request Areas");
+
+  if (res.success) {
+    const areasData: GetAreaResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return areasData;
+  } else {
+    const failedRequest: GetAreaResult = {
+      success: false,
+      status: res.status,
+      data: null,
     };
     return failedRequest;
   }
@@ -142,7 +162,7 @@ export async function GetSpecialties(): Promise<GetSpecialtiesResult> {
 
   const res = await authRequestWrapper(
     URL,
-    { method: "GET"},
+    { method: "GET" },
     "Request Specialties",
   );
 
@@ -157,7 +177,40 @@ export async function GetSpecialties(): Promise<GetSpecialtiesResult> {
     const failedRequest: GetSpecialtiesResult = {
       success: false,
       status: res.status,
-      data: []
+      data: [],
+    };
+    return failedRequest;
+  }
+}
+
+export async function BecomeTutor(
+  cookieString: string,
+  csrfTokenString: string,
+): Promise<BecomeTutorResult> {
+  const URL = `${process.env.backendBaseURL}/tutores/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "POST",
+      headers: {
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
+      },
+    },
+    "Request Become Tutor",
+  );
+
+  if (res.success) {
+    const successBecomeTutor: BecomeTutorResult = {
+      success: true,
+      status: res.status,
+    };
+    return successBecomeTutor;
+  } else {
+    const failedRequest: BecomeTutorResult = {
+      success: false,
+      status: res.status,
     };
     return failedRequest;
   }

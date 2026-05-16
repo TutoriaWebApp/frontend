@@ -22,6 +22,10 @@ export interface UserData{
     aniversario: string;
     pontuacao: number;
     fotoURL: string;
+    perfilTutor?: {
+      id: number;
+      especialidades: Specialty[];
+    } | null;
 }
 
 export interface UserDataSuccessResult {
@@ -68,8 +72,20 @@ export interface GetAreasResult {
   data: TutorArea[];
 }
 
+export interface GetAreaResult {
+  success: boolean;
+  status: number;
+  data: TutorArea | null;
+}
+
+
 export interface GetSpecialtiesResult {
   success: boolean;
   status: number;
   data: Specialty[];
+}
+
+export interface BecomeTutorResult {
+  success: boolean;
+  status: number;
 }

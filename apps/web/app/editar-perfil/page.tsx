@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import { ClipLoader } from "react-spinners";
 
-import { GetUserDataClient } from "@repo/services/userClient";
+import { GetUserDataClient, GetAreaById } from "@repo/services/userClient";
+
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
 
@@ -42,7 +43,7 @@ import { AddSpecialty } from "@repo/ui/AddSpeciality/AddSpecialty";
 
 import { StudentArea, TutorArea, Specialty } from "@repo/services/userTypes";
 
-import { EditProfileAction } from "@repo/services/userAction";
+import { BecomeTutorAction, EditProfileAction } from "@repo/services/userAction";
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -111,23 +112,14 @@ export default function EditProfilePage() {
     useState(false);
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
-  const [studentAreas, setStudentAreas] = useState<StudentArea[]>([
-    { id: 1, area: "Matemática" },
-    { id: 2, area: "Matemática" },
-  ]);
+  // const [studentAreas, setStudentAreas] = useState<StudentArea[]>([
+  //   { id: 1, area: "Matemática" },
+  //   { id: 2, area: "Matemática" },
+  // ]);
 
-  const [tutorAreas, setTutorAreas] = useState<TutorArea[]>([
-    { id: 1, area: "Matemática" },
-    { id: 2, area: "Matemática" },
-  ]);
+  const [tutorAreas, setTutorAreas] = useState<TutorArea[]>([]);
 
-  const [specialties, setSpecialties] = useState<Specialty[]>([
-    { id: 1, specialty: "Matemática" },
-    { id: 2, specialty: "Física" },
-    { id: 3, specialty: "Programação" },
-    { id: 4, specialty: "UI Design" },
-    { id: 5, specialty: "Algoritmos" },
-  ]);
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
 
   const selectedEstado = watch("estado", userData?.estado);
 
@@ -165,6 +157,12 @@ export default function EditProfilePage() {
 
   const router = useRouter();
 
+  const fetchArea = async (id: number) => {
+    const area = await GetAreaById(id);
+
+    return area.data;
+  }
+
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
@@ -177,6 +175,23 @@ export default function EditProfilePage() {
       } else {
         setUserData(results.data);
         reset(results.data);
+
+        if(results.data.perfilTutor){
+          const fetchedSpecialties = results.data.perfilTutor.especialidades;
+          setSpecialties(fetchedSpecialties);
+
+          const uniqueAreaIds = Array.from(
+            new Set(fetchedSpecialties.map((specialty) => specialty.areaId))
+          );
+
+          const areaPromises = uniqueAreaIds.map((areaId) => fetchArea(areaId));
+
+          const fetchedAreas = await Promise.all(areaPromises);
+
+          const validAreas = fetchedAreas.filter((area) => area !== null);
+
+          setTutorAreas(validAreas);
+        }
       }
       setLoading(false);
     };
@@ -226,7 +241,15 @@ export default function EditProfilePage() {
   }, [cities, userData, setValue]);
 
   const onSubmit = async (data: RegisterData) => {
+    if(!userData?.perfilTutor && tutorAreas.length >= 1 && specialties.length >= 1){
+      const resultadoTutor = await BecomeTutorAction();    
+      console.log(resultadoTutor)
+    }
+    
+
     const formData = new FormData();
+
+    console.log(tutorAreas, specialties);
 
     formData.append("nomePerfil", data.nomePerfil);
     formData.append("estado", data.estado);
@@ -462,7 +485,11 @@ export default function EditProfilePage() {
                 >
                   Informações Pessoais
                 </h3>
-                <section>
+                <section className="
+                  flex 
+                  flex-col
+                  md:block
+                ">
                   <ImageUpload
                     name="foto"
                     label="Foto de Perfil"
@@ -648,15 +675,16 @@ export default function EditProfilePage() {
                     shadow-brand-primary/20
                       mt-4
                       mb-4
-                      relative
-                      left-[80%]
+                      self-end
+                      md:relative
+                      md:left-[80%]
                   "
                     onClick={openChangePasswordModal}
                   >
                     Alterar Senha
                   </button>
                 </section>
-                <section>
+                {/* <section>
                   <h3
                     className="
                       text-xl 
@@ -665,6 +693,7 @@ export default function EditProfilePage() {
                       mb-6
                       border-b-2
                       pb-2
+                      mt-8
                   "
                   >
                     Áreas de Interesse como Aprendiz
@@ -690,7 +719,7 @@ export default function EditProfilePage() {
                             font-semibold
                         "
                         >
-                          {area.area}
+                          {area.nomeArea}
                         </span>
                         <DeleteIcon
                           onClick={() => {
@@ -714,7 +743,7 @@ export default function EditProfilePage() {
                       setAreas={setStudentAreas}
                     />
                   </div>
-                </section>
+                </section> */}
                 <section>
                   <h3
                     className="
@@ -722,7 +751,7 @@ export default function EditProfilePage() {
                       font-bold 
                     text-slate-800 
                       mb-6
-                      md:mt-8
+                      mt-8
                       border-b-2
                       pb-2
                       2xl:mt-0
@@ -737,15 +766,60 @@ export default function EditProfilePage() {
                     <InfoIcon className="text-indigo-600" />
                     <span>
                       É necessário ter ao menos{" "}
-                      <em className="not-italic font-bold">1 área</em> para ser
+                      <em className="not-italic font-bold">1 área e 1 especialidade</em> para ser
                       considerado um tutor.
                     </span>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    {tutorAreas.map((area, index) => (
-                      <div
-                        key={index}
-                        className="
+                  <div className="flex flex-col mb-4">
+                    <span>
+                      <b>Áreas Adicionadas</b>
+                    </span>
+                    <div className=" mt-4 flex gap-4 flex-wrap mb-10">
+                      {tutorAreas.map((area, index) => (
+                        <div
+                          key={index}
+                          className="
+                          flex 
+                          items-center
+                          bg-slate-100 
+                          px-4 
+                          py-2 
+                          rounded-full
+                          gap-2
+                        ">
+                          <span
+                            className="
+                            text-slate-700 
+                            text-sm 
+                            font-semibold
+                        "
+                          >
+                            {area.nomeArea}
+                          </span>
+                          <DeleteIcon
+                            onClick={() => {
+                              setTutorAreaToDelete(area);
+                              setDeleteTutorAreaModalOpen();
+                            }}
+                            className="
+                          text-rose-500
+                          cursor-pointer
+                          hover:text-[28px]
+                          hover:text-rose-900
+                          transition-all
+                          "
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <span>
+                      <b>Especialidades Adicionadas</b>
+                    </span>
+                    <div className="mt-4 flex gap-4 flex-wrap">
+                      {specialties.map((specialty) => (
+                        <div
+                          key={specialty.id}
+                          className="
                         flex 
                         items-center
                         bg-slate-100 
@@ -754,87 +828,40 @@ export default function EditProfilePage() {
                         rounded-full
                         gap-2
                       "
-                      >
-                        <span
-                          className="
+                        >
+                          <span
+                            className="
                             text-slate-700 
                             text-sm 
                             font-semibold
                         "
-                        >
-                          {area.area}
-                        </span>
-                        <DeleteIcon
-                          onClick={() => {
-                            setTutorAreaToDelete(area);
-                            setDeleteTutorAreaModalOpen();
-                          }}
-                          className="
+                          >
+                            {specialty.nomeEspecialidade}
+                          </span>
+                          <DeleteIcon
+                            onClick={() => {
+                              setSpecialtyToDelete(specialty);
+                              setDeleteSpecialtyModalOpen();
+                            }}
+                            className="
                           text-rose-500
                           cursor-pointer
                           hover:text-[28px]
                           hover:text-rose-900
                           transition-all
                           "
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-end">
-                    <AddTutorAreaButton
-                      areas={tutorAreas}
-                      setAreas={setTutorAreas}
-                    />
-                  </div>
-                  <h4 className="font-bold 2xl:text-lg mt-6 mb-6">
-                    Especialidades
-                  </h4>
-                  <div className="flex flex-wrap gap-3">
-                    {/* Tags de exemplo */}
-                    {specialties.map((specialty) => (
-                      <div
-                        key={specialty.id}
-                        className="
-                          flex 
-                          items-center
-                          bg-slate-100 
-                          px-4 
-                          py-2 
-                          rounded-full
-                          gap-2
-                      "
-                      >
-                        <span
-                          className="
-                            text-slate-700 
-                            text-sm 
-                            font-semibold
-                        "
-                        >
-                          {specialty.specialty}
-                        </span>
-                        <DeleteIcon
-                          onClick={() => {
-                            setSpecialtyToDelete(specialty);
-                            setDeleteSpecialtyModalOpen();
-                          }}
-                          className="
-                          text-rose-500
-                          cursor-pointer
-                          hover:text-[28px]
-                          hover:text-rose-900
-                          transition-all
-                          "
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-end">
-                    <AddSpecialty
-                      areas={tutorAreas}
-                      specialties={specialties}
-                      setSpecialties={setSpecialties}
-                    />
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="self-end">
+                      <AddSpecialty
+                        areas={tutorAreas}
+                        setAreas={setTutorAreas}
+                        specialties={specialties}
+                        setSpecialties={setSpecialties}
+                      />
+                    </div>
                   </div>
                   <h4
                     className="
@@ -879,7 +906,7 @@ export default function EditProfilePage() {
                     onClick={handleSubmit(onSubmit)}
                     type="button"
                     className="
-                      w-full 
+                      w-auto 
                       md:w-auto 
                       bg-brand-primary 
                       hover:bg-indigo-800  
@@ -905,19 +932,21 @@ export default function EditProfilePage() {
         isOpen={changePasswordModalIsOpen}
         onClose={closeChangePasswordModal}
       />
-      <DeleteStudentAreaModal
+      {/* <DeleteStudentAreaModal
         isOpen={openDeleteStudentAreaModal}
         onClose={closeDeleteStudentAreaModal}
         setAreas={setStudentAreas}
         area={studentAreaToDelete}
         areas={studentAreas}
-      />
+      /> */}
       <DeleteTutorAreaModal
         isOpen={openDeleteTutorAreaModal}
         onClose={closeDeleteTutorAreaModal}
         setAreas={setTutorAreas}
         area={tutorAreaToDelete}
         areas={tutorAreas}
+        specialties={specialties}
+        setSpecialties={setSpecialties}
       />
       <DeleteSpecialtyModal
         isOpen={openDeleteSpecialtyModal}
