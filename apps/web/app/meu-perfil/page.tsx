@@ -1,10 +1,14 @@
 import React from "react";
 
-import { GetUserData } from "@repo/services/userServer";
+import {
+  GetAreaById,
+  GetSchedule,
+  GetUserData,
+} from "@repo/services/userServer";
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
 
-import { UserData } from "@repo/services/userTypes";
+import { Specialty, TutorArea, UserData } from "@repo/services/userTypes";
 
 import { redirect } from "next/navigation";
 
@@ -13,9 +17,19 @@ import { Grade } from "@mui/icons-material";
 import { ReviewSection } from "@repo/ui/reviewSection";
 import { EditProfileButton } from "@repo/ui/editProfileButton";
 import { AvailabilitySection } from "@repo/ui/availabilitySection";
+import { TimeSlot } from "@repo/services/availabilityTypes";
 
 export default async function ProfilePage() {
   let userData: UserData | boolean = false;
+  let tutorAreas: TutorArea[] = [];
+  let specialties: Specialty[] = [];
+  let availabilities: TimeSlot[] = [];
+
+  const fetchArea = async (id: number) => {
+    const area = await GetAreaById(id);
+
+    return area.data;
+  };
 
   const results = await GetUserData();
 
@@ -25,6 +39,32 @@ export default async function ProfilePage() {
     }
   } else {
     userData = results.data;
+
+    if (userData.perfilTutor) {
+      specialties = userData.perfilTutor.especialidades;
+
+      const uniqueAreaIds = Array.from(
+        new Set(specialties.map((specialty) => specialty.areaId)),
+      );
+
+      const areaPromises = uniqueAreaIds.map((areaId) => fetchArea(areaId));
+
+      const fetchedAreas = await Promise.all(areaPromises);
+
+      const validAreas = fetchedAreas.filter((area) => area !== null);
+
+      tutorAreas = validAreas;
+
+      const allSchedules = await GetSchedule();
+
+      if (allSchedules.success && allSchedules.data != undefined) {
+        const profileSchedules = allSchedules.data.filter(
+          (schedule) => schedule.tutorId === results.data.perfilTutor!.id,
+        );
+
+        availabilities = profileSchedules;
+      }
+    }
   }
 
   return (
@@ -215,77 +255,66 @@ export default async function ProfilePage() {
               </p>
             </section>
 
-            {/* Seção Áreas de Conhecimento e Especialidades */}
-            <section
-              className="
+            {/* Seção Áreas de Tutoria e Especialidades */}
+            {tutorAreas.length >= 1 && specialties.length >= 1 && (
+              <section
+                className="
             bg-white 
             rounded-3xl 
             p-8 
             border 
             border-slate-200 
             shadow-sm
-          "
-            >
-              <h2
-                className="
-              text-xl 
+            "
+              >
+                <h2
+                  className="
+                text-xl 
               font-bold 
               text-slate-800 
               mb-6 
             "
-              >
-                Áreas de Conhecimento
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {/* Tags de exemplo */}
-                {[
-                  "Matemática",
-                  "Física",
-                  "Programação",
-                  "UI Design",
-                  "Algoritmos",
-                ].map((area) => (
-                  <span
-                    key={area}
-                    className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
-                  >
-                    {area}
-                  </span>
-                ))}
-              </div>
-              <h2
-                className="
-              text-xl 
-              font-bold 
-              text-slate-800 
-              mb-6
+                >
+                  Áreas de Tutoria
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {tutorAreas.map((area) => (
+                    <span
+                      key={area.id}
+                      className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
+                    >
+                      {area.nomeArea}
+                    </span>
+                  ))}
+                </div>
+                <h2
+                  className="
+                text-xl 
+                font-bold 
+                text-slate-800 
+                mb-6
               mt-8 
             "
-              >
-                Especialidades
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {/* Tags de exemplo */}
-                {[
-                  "Matemática",
-                  "Física",
-                  "Programação",
-                  "UI Design",
-                  "Algoritmos",
-                ].map((area) => (
-                  <span
-                    key={area}
-                    className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
-                  >
-                    {area}
-                  </span>
-                ))}
-              </div>
-            </section>
+                >
+                  Especialidades
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {specialties.map((specialty) => (
+                    <span
+                      key={specialty.id}
+                      className="bg-slate-100 text-slate-700 px-4 py-2 rounded-full text-sm font-semibold border border-slate-200"
+                    >
+                      {specialty.nomeEspecialidade}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Seção de Disponibilidades */}
-            <section
-              className="
+            {availabilities.length >= 1 && (
+              <section
+                className="
             bg-white 
             rounded-3xl 
             p-8 
@@ -293,19 +322,23 @@ export default async function ProfilePage() {
             border-slate-200 
             shadow-sm
           "
-            >
-              <h2
-                className="
+              >
+                <h2
+                  className="
               text-xl 
               font-bold 
               text-slate-800 
               mb-6 
             "
-              >
-                Disponibilidade
-              </h2>
-                <AvailabilitySection ownProfile={true}/>
-            </section>
+                >
+                  Disponibilidade
+                </h2>
+                <AvailabilitySection
+                  availabilities={availabilities}
+                  ownProfile={true}
+                />
+              </section>
+            )}
             <ReviewSection />
           </main>
         </div>

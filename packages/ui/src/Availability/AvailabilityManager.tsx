@@ -145,7 +145,7 @@ const daysStatus = useMemo(() => {
                         font-black
                       ">
                         {slot.horarioInicio.slice(0, 5)} -{" "}
-                        {slot.horarioFim.slice(0, 6)}
+                        {slot.horarioFim.slice(0, 5)}
                       </span>
                       <DeleteIcon
                         onClick={() => handleOpenDeleteModal(slot)}
