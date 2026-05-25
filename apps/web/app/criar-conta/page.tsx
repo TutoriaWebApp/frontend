@@ -34,6 +34,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DeleteStudentAreaModal } from "@repo/ui/Modals/StudentAreas/DeleteStudentArea";
 import { DeleteTutorAreaModal } from "@repo/ui/Modals/TutorAreas/DeleteTutorAreas";
 import { DeleteSpecialtyModal } from "@repo/ui/Modals/Specialty/DeleteSpecialtyModal";
+import { TimeSlot } from "@repo/services/availabilityTypes";
 
 const registerSchema = z
   .object({
@@ -121,6 +122,7 @@ export default function CreateAccountPage(): React.ReactNode {
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [availabilities, setAvailabilities] = useState<TimeSlot[]>([]);
 
   //Áreas de Estudante
   const [studentAreas, setStudentAreas] = useState<StudentArea[]>([]);
@@ -618,7 +620,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         className="
                         bg-white
                         w-full  
-                      text-slate-900
+                        text-slate-900
                         rounded-md
                         leading-7
                         border-2
@@ -870,7 +872,8 @@ export default function CreateAccountPage(): React.ReactNode {
                       lg:block
                       mb-6 
                       pl-6 
-                  ">
+                  "
+                  >
                     {errors.cidade && (
                       <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                         {errors.cidade.message}
@@ -894,24 +897,25 @@ export default function CreateAccountPage(): React.ReactNode {
                     lg:mt-0
                     flex
                     flex-col 
-                  ">
+                  "
+                  >
                     <label
                       className="
                       flex 
                       pl-6 
                       w-full
                       gap-2
-                    ">
-                      <span className="font-semibold">
-                        Data de Nascimento
-                      </span>
+                    "
+                    >
+                      <span className="font-semibold">Data de Nascimento</span>
                       - <input type="date" {...register("aniversario")} />
                     </label>
                     <div
                       className="
                         pl-6
                         mt-4
-                    ">
+                    "
+                    >
                       {errors.aniversario && (
                         <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
                           {errors.aniversario.message}
@@ -1164,7 +1168,8 @@ export default function CreateAccountPage(): React.ReactNode {
                           py-2 
                           rounded-full
                           gap-2
-                        ">
+                        "
+                        >
                           <span
                             className="
                             text-slate-700 
@@ -1279,7 +1284,10 @@ export default function CreateAccountPage(): React.ReactNode {
                       </span>
                     </div>
                   </div>
-                  <AvailabilityManager />
+                  <AvailabilityManager
+                    availabilities={availabilities}
+                    setAvailabilities={setAvailabilities}
+                  />
                 </div>
                 <div
                   className="

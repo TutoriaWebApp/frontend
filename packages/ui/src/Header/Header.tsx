@@ -23,7 +23,7 @@ export default function Header() {
 
   const navLinks = [
     { name: "Home", href: "/dashboard" },
-    { name: "Perfil", href: "/perfil" },
+    { name: "Perfil", href: "/meu-perfil" },
     { name: "Conquistas", href: "/conquistas" },
     { name: "Buscar Tutores", href: "/buscar-tutores" },
     { name: "Solicitações", href: "/solicitacoes" },

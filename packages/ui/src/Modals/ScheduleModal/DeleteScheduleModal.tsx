@@ -3,29 +3,53 @@
 import React from "react";
 import { Specialty } from "@repo/services/userTypes";
 import CloseIcon from "@mui/icons-material/Close";
+import { TimeSlot } from "@repo/services/availabilityTypes";
 
 interface DeleteScheduleModalProps {
   isOpen: boolean;
+  availabilities: TimeSlot[];
+  availabilityToDelete: TimeSlot;
+  setAvailabilities: React.Dispatch<React.SetStateAction<TimeSlot[]>>;
   onClose: () => void;
 }
 
 export function DeleteScheduleModal({
   isOpen,
-  onClose
+  availabilities,
+  availabilityToDelete,
+  setAvailabilities,
+  onClose,
 }: DeleteScheduleModalProps) {
   if (!isOpen) return null;
 
-//   const deleteSchedule = () => {
-//     const newSpecialties = specialties.filter((s) => {
-//      return  s.id != specialty?.id;
-//     })
+  const DAYS_OF_WEEK = [
+    { name: "Domingo", value: "DOM" },
+    { name: "Segunda", value: "SEG" },
+    { name: "Terça", value: "TER" },
+    { name: "Quarta", value: "QUA" },
+    { name: "Quinta", value: "QUI" },
+    { name: "Sexta", value: "SEX" },
+    { name: "Sábado", value: "SAB" },
+  ];
 
-//     setSpecialties(newSpecialties);
-//     onClose();
-//   }
+  const beginTime = `${availabilityToDelete.horarioInicio.split(":")[0]}:${availabilityToDelete.horarioInicio.split(":")[1]}`;
+  const endTime = `${availabilityToDelete.horarioFim.split(":")[0]}:${availabilityToDelete.horarioFim.split(":")[1]}`;
+  const dayObj = DAYS_OF_WEEK.find(
+    (d) => d.value === availabilityToDelete.dia,
+  );
+  const day = dayObj?.name;
 
+  const deleteAvailability = () => {
+    const filteredAvailabilities = availabilities.filter((availability) => {
+      return availability.id != availabilityToDelete?.id;
+    });
+
+    setAvailabilities(filteredAvailabilities);
+    onClose();
+  };
   return (
-    <div className="
+    <div
+      className="
       fixed 
       inset-0 
       z-[100] 
@@ -38,30 +62,37 @@ export function DeleteScheduleModal({
       animate-in 
       fade-in 
       duration-200
-    ">
-      <div className="
+    "
+    >
+      <div
+        className="
         bg-white 
         w-full 
-        max-w-md 
+        max-w-xl
         rounded-3xl 
         shadow-2xl 
         overflow-hidden 
         animate-in 
         zoom-in-95 
         duration-200
-      ">
-        <div className="
+      "
+      >
+        <div
+          className="
           flex 
           justify-between 
           items-start 
           p-6 
           pb-0
-        ">
-          <h2 className="
+        "
+        >
+          <h2
+            className="
             text-xl 
             font-bold 
             text-slate-800
-          ">
+          "
+          >
             Remover Disponibilidade
           </h2>
           <button
@@ -72,33 +103,36 @@ export function DeleteScheduleModal({
               hover:text-slate-600 
               transition-colors 
               p-1
-          ">
+          "
+          >
             <CloseIcon />
           </button>
         </div>
 
-        <div className="
+        <div
+          className="
           p-6 
           pt-4 
           space-y-3
-        ">
-          <p className="
+        "
+        >
+          <p
+            className="
             text-slate-500 
             leading-relaxed 
             text-sm
-          ">
-            Tem certeza que deseja remover a disponibilidade de 13h-14h do dia Segunda?
-            <span className="
-              font-bold 
-              text-slate-700
-            ">
-              {/* "{specialty?.specialty}" */}
-            </span>
+          "
+          >
+            Tem certeza que deseja remover a disponibilidade de{" "}
+            <span className="font-bold">{beginTime} - </span>
+            <span className="font-bold">{endTime} </span>
+            de <span className="font-bold">{day}?</span>
             <br />
           </p>
         </div>
 
-        <div className="
+        <div
+          className="
           p-6 
           bg-slate-50 
           flex 
@@ -108,7 +142,8 @@ export function DeleteScheduleModal({
           gap-3 
           border-t 
           border-slate-100
-        ">
+        "
+        >
           <button
             type="button"
             onClick={onClose}
@@ -124,12 +159,13 @@ export function DeleteScheduleModal({
               hover:bg-slate-300 
               transition-all 
               active:scale-95
-          ">
+          "
+          >
             Cancelar
           </button>
           <button
             type="button"
-            // onClick={deleteArea}
+            onClick={deleteAvailability}
             className="
               order-1 
               sm:order-2 
@@ -144,7 +180,8 @@ export function DeleteScheduleModal({
               hover:bg-rose-800 
               transition-all 
               active:scale-95
-          ">
+          "
+          >
             Remover
           </button>
         </div>

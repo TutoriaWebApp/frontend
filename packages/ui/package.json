@@ -57,7 +57,6 @@
   "dependencies": {
     "@repo/services": "workspace:*",
     "@repo/lib": "workspace:*",
-    "@repo/services": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "@emotion/react": "^11.14.0",

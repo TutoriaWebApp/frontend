@@ -7,7 +7,13 @@ import {
   GetAreaResult,
   GetSpecialtiesResult,
   BecomeTutorResult,
+  InsertSpecialtyResult,
+  DeleteSpecialtyResult,
+  InsertScheduleResult,
+  DeleteScheduleResult,
+  GetTutorsResult
 } from "./types/user";
+import { GetScheduleResult, TimeSlot } from "./types/availability";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
 
 export async function GetUserDataClient(): Promise<
@@ -205,10 +211,210 @@ export async function BecomeTutor(
     const successBecomeTutor: BecomeTutorResult = {
       success: true,
       status: res.status,
+      data: res.data
     };
     return successBecomeTutor;
   } else {
     const failedRequest: BecomeTutorResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function InsertSpecialty(
+  cookieString: string,
+  csrfTokenString: string,
+  specialtyId: number,
+  tutorId: number
+): Promise<InsertSpecialtyResult> {
+  const URL = `${process.env.backendBaseURL}/contem/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "POST",
+      headers: {
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({especialidadeId: specialtyId, tutorId: tutorId})
+    },
+    "Request Insert Specialty",
+  );
+
+  if (res.success) {
+    const successBecomeTutor: InsertSpecialtyResult = {
+      success: true,
+      status: res.status,
+    };
+    return successBecomeTutor;
+  } else {
+    const failedRequest: InsertSpecialtyResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function DeleteSpecialty(
+  cookieString: string,
+  csrfTokenString: string,
+  relationId: number
+): Promise<DeleteSpecialtyResult> {
+  const URL = `${process.env.backendBaseURL}/contem/${relationId}/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "DELETE",
+      headers: {
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
+      },
+    },
+    "Request Delete Specialty",
+  );
+
+  if (res.success) {
+    const successBecomeTutor: DeleteSpecialtyResult = {
+      success: true,
+      status: res.status,
+    };
+    return successBecomeTutor;
+  } else {
+    const failedRequest: DeleteSpecialtyResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetSchedule(
+): Promise<GetScheduleResult> {
+  const URL = `${process.env.backendBaseURL}/agendas/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+    },
+    "Request Get Schedule",
+  );
+
+  if (res.success) {
+    const successBecomeTutor: GetScheduleResult = {
+      success: true,
+      status: res.status,
+      data: res.data
+    };
+    return successBecomeTutor;
+  } else {
+    const failedRequest: GetScheduleResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function InsertSchedule(
+  cookieString: string,
+  csrfTokenString: string,
+  scheduleData: TimeSlot,
+  tutorId: number
+): Promise<InsertScheduleResult> {
+  const URL = `${process.env.backendBaseURL}/agendas/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "POST",
+      headers: {
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({...scheduleData, tutorId: tutorId})
+    },
+    "Request Insert Schedule",
+  );
+
+  if (res.success) {
+    const successBecomeTutor: InsertScheduleResult = {
+      success: true,
+      status: res.status,
+    };
+    return successBecomeTutor;
+  } else {
+    const failedRequest: InsertScheduleResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function DeleteSchedule(
+  cookieString: string,
+  csrfTokenString: string,
+  scheduleId: number
+): Promise<DeleteScheduleResult> {
+  const URL = `${process.env.backendBaseURL}/agendas/${scheduleId}/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "DELETE",
+      headers: {
+        Cookie: cookieString,
+        "X-CSRFToken": csrfTokenString,
+      },
+    },
+    "Request Delete Specialty",
+  );
+
+  if (res.success) {
+    const successBecomeTutor: DeleteScheduleResult = {
+      success: true,
+      status: res.status,
+    };
+    return successBecomeTutor;
+  } else {
+    const failedRequest: DeleteScheduleResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetTutors(): Promise<GetTutorsResult> {
+  const URL = `${process.env.backendBaseURL}/tutores/`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+    },
+    "Request Tutors",
+  );
+
+  if (res.success) {
+    const successGetRelations: GetTutorsResult = {
+      success: true,
+      status: res.status,
+      data: res.data
+    };
+    return successGetRelations;
+  } else {
+    const failedRequest: GetTutorsResult = {
       success: false,
       status: res.status,
     };
