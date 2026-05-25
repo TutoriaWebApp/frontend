@@ -3,13 +3,27 @@
 import { cookies } from "next/headers";
 
 import { CreateAccount } from "../userServer";
-import { ChangePassword, EditProfile } from "../userClient";
+import {
+  ChangePassword,
+  EditProfile,
+  BecomeTutor,
+  InsertSpecialty,
+  DeleteSpecialty,
+  InsertSchedule,
+  DeleteSchedule,
+} from "../userClient";
 import {
   CreateUserResponse,
   CreateUserResult,
   ChangePasswordResult,
-  EditProfileResult
+  EditProfileResult,
+  BecomeTutorResult,
+  InsertSpecialtyResult,
+  DeleteSpecialtyResult,
+  InsertScheduleResult,
+  DeleteScheduleResult
 } from "../types/user";
+import { TimeSlot } from "../types/availability";
 
 export async function CreateAccountAction(
   formData: FormData,
@@ -78,25 +92,185 @@ export async function ChangePasswordAction(
 export async function EditProfileAction(
   formData: FormData,
 ): Promise<EditProfileResult> {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value;
-    const csrfToken = cookieStore.get("csrftoken")!.value;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")!.value;
 
-    const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+  const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
   try {
-    const result: EditProfileResult = await EditProfile(formData, cookieString, csrfToken);
+    const result: EditProfileResult = await EditProfile(
+      formData,
+      cookieString,
+      csrfToken,
+    );
 
     if (result.success) {
-      return { success: true, status: result.status};
+      return { success: true, status: result.status };
     }
     return {
       success: false,
-      status: result.status
+      status: result.status,
     };
   } catch (error) {
     return {
       success: false,
+    };
+  }
+}
+
+export async function BecomeTutorAction(): Promise<BecomeTutorResult> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")!.value;
+
+  const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: BecomeTutorResult = await BecomeTutor(
+      cookieString,
+      csrfToken,
+    );
+
+    if (result.success) {
+      return { success: true, status: result.status, data: result.data };
+    }
+    return {
+      success: false,
+      status: result.status,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function InsertSpecialtyAction(
+  specialtyId: number,
+  tutorId: number,
+): Promise<InsertSpecialtyResult> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")!.value;
+
+  const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: InsertSpecialtyResult = await InsertSpecialty(
+      cookieString,
+      csrfToken,
+      specialtyId,
+      tutorId,
+    );
+
+    if (result.success) {
+      return { success: true, status: result.status };
+    }
+    return {
+      success: false,
+      status: result.status,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function DeleteSpecialtyAction(
+  relationId: number
+): Promise<DeleteSpecialtyResult> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")!.value;
+
+  const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: DeleteSpecialtyResult = await DeleteSpecialty(
+      cookieString,
+      csrfToken,
+      relationId,
+    );
+
+    if (result.success) {
+      return { success: true, status: result.status };
+    }
+    return {
+      success: false,
+      status: result.status,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function InsertScheduleAction(
+  scheduleData: TimeSlot,
+  tutorId: number
+): Promise<InsertScheduleResult> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")!.value;
+
+  const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: InsertScheduleResult = await InsertSchedule(
+      cookieString,
+      csrfToken,
+      scheduleData,
+      tutorId
+    );
+
+    if (result.success) {
+      return { success: true, status: result.status };
+    }
+    return {
+      success: false,
+      status: result.status,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function DeleteScheduleAction(
+  scheduleId: number,
+): Promise<DeleteScheduleResult> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")!.value;
+
+  const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
+
+  try {
+    const result: InsertScheduleResult = await DeleteSchedule(
+      cookieString,
+      csrfToken,
+      scheduleId,
+    );
+
+    if (result.success) {
+      return { success: true, status: result.status };
+    }
+    return {
+      success: false,
+      status: result.status,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500,
     };
   }
 }

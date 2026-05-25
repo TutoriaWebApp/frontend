@@ -3,30 +3,35 @@
 import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { TimeSlot } from "@repo/services/availabilityTypes";
 
 interface AddScheduleModalProps {
   isOpen: boolean;
+  availabilities: TimeSlot[];
+  setAvailabilities: React.Dispatch<React.SetStateAction<TimeSlot[]>>;
   onClose: () => void;
-  onAdd: any;
 }
 
 const DAYS_OF_WEEK = [
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
-  "Domingo",
+  { key: "DOM", name: "Domingo", value: "DOM" },
+  { key: "SEG", name: "Segunda", value: "SEG" },
+  { key: "TER", name: "Terça", value: "TER" },
+  { key: "QUA", name: "Quarta", value: "QUA" },
+  { key: "QUI", name: "Quinta", value: "QUI" },
+  { key: "SEX", name: "Sexta", value: "SEX" },
+  { key: "SAB", name: "Sábado", value: "SAB" },
 ];
 
 export function AddScheduleModal({
   isOpen,
   onClose,
-  onAdd,
+  availabilities,
+  setAvailabilities,
 }: AddScheduleModalProps) {
-  const [selectedDay, setSelectedDay] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedDay, setSelectedDay] = useState<
+    "SEG" | "TER" | "QUA" | "QUI" | "SEX" | "SAB" | "DOM" | string
+  >();
+  const [selectedTime, setSelectedTime] = useState<string>("");
 
   // Gera a lista de horários de 00:00 até 23:00
   const timeOptions = Array.from({ length: 24 }, (_, i) => {
@@ -34,7 +39,7 @@ export function AddScheduleModal({
     const nextHour =
       i + 1 < 10 ? `0${i + 1}` : i + 1 === 24 ? "00" : `${i + 1}`;
     return {
-      value: `${hour}:00`,
+      value: `${hour}:00:00, ${nextHour}:00:00`,
       label: `${hour}:00 - ${nextHour}:00`,
     };
   });
@@ -50,7 +55,21 @@ export function AddScheduleModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedDay && selectedTime) {
-      onAdd(selectedDay, selectedTime);
+      const separateTimes = selectedTime.split(",");
+      let newAvailability: TimeSlot = {
+        horarioInicio: separateTimes[0]!.trim(),
+        horarioFim: separateTimes[1]!.trim(),
+        dia:
+          typeof selectedDay === "string"
+            ? (selectedDay as any)
+            : { dia: selectedDay }
+      };
+
+      console.log(separateTimes[0], separateTimes[1])
+
+      const updatedAvailabilities = [...availabilities, newAvailability];
+
+      setAvailabilities(updatedAvailabilities);
       handleClose();
     }
   };
@@ -153,11 +172,13 @@ export function AddScheduleModal({
                 className="
                 relative 
                 group
-              ">
+              "
+              >
                 <select
                   required
                   value={selectedDay}
                   onChange={(e) => setSelectedDay(e.target.value)}
+                  defaultValue={""}
                   className="
                     w-full 
                     appearance-none 
@@ -174,17 +195,19 @@ export function AddScheduleModal({
                     focus:ring-brand-primary/5 
                     transition-all 
                     cursor-pointer
-                ">
+                "
+                >
                   <option value="" disabled>
                     Selecione o dia da semana
                   </option>
                   {DAYS_OF_WEEK.map((day) => (
-                    <option key={day} value={day}>
-                      {day}
+                    <option key={day.key} value={day.value}>
+                      {day.name}
                     </option>
                   ))}
                 </select>
-                <KeyboardArrowDownIcon className="
+                <KeyboardArrowDownIcon
+                  className="
                     absolute 
                     right-4 
                     top-1/2 
@@ -192,20 +215,22 @@ export function AddScheduleModal({
                     pointer-events-none 
                     text-slate-400 
                     group-focus-within:text-brand-primary 
-                    transition-colors" 
+                    transition-colors"
                 />
               </div>
             </div>
 
             {/* Select 2: Horário */}
             <div className="space-y-2">
-              <label className="
+              <label
+                className="
                 text-xs 
                 font-black 
                 text-slate-500 
                 uppercase 
                 tracking-widest
-            ">
+            "
+              >
                 Horário da Sessão
               </label>
               <div className="relative group">
@@ -232,7 +257,7 @@ export function AddScheduleModal({
                   `}
                 >
                   <option value="" disabled>
-                    Selecione o horário de início e fim
+                    Selecione o horário
                   </option>
                   {timeOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -254,7 +279,8 @@ export function AddScheduleModal({
             </div>
           </div>
 
-          <div className="
+          <div
+            className="
             p-6 
             bg-slate-50 
             flex 
@@ -264,7 +290,8 @@ export function AddScheduleModal({
             gap-4 
             border-t 
             border-slate-100
-        ">
+        "
+          >
             <button
               type="button"
               onClick={handleClose}
@@ -279,7 +306,8 @@ export function AddScheduleModal({
                 bg-slate-200 
                 hover:bg-slate-300 
                 transition-all
-            ">
+            "
+            >
               Cancelar
             </button>
             <button
@@ -299,7 +327,8 @@ export function AddScheduleModal({
                 hover:bg-indigo-700  
                 transition-all 
                 disabled:bg-gray-500
-            ">
+            "
+            >
               Confirmar
             </button>
           </div>

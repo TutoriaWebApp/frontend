@@ -12,6 +12,7 @@ export const EditProfileButton = () => {
       <button
       onClick={redirectToEdit}
         className="
+        w-full
         bg-brand-primary 
         hover:bg-indigo-800 
         text-white 

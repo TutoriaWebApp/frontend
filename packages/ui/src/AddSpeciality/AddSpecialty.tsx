@@ -7,12 +7,14 @@ import { useState } from "react";
 
 interface AddSpecialtyProps {
   areas: TutorArea[];
+  setAreas: React.Dispatch<React.SetStateAction<TutorArea[]>>;
   specialties: Specialty[];
   setSpecialties: React.Dispatch<React.SetStateAction<Specialty[]>>;
 }
 
 export const AddSpecialty = ({
   areas,
+  setAreas,
   specialties,
   setSpecialties,
 }: AddSpecialtyProps) => {
@@ -27,7 +29,7 @@ export const AddSpecialty = ({
         type="button"
         onClick={setModalOpen}
         className="
-      w-full 
+      w-auto 
       md:w-auto 
       bg-emerald-600 
       hover:bg-emerald-800  
@@ -46,14 +48,15 @@ export const AddSpecialty = ({
       "
       >
         <AddIcon />
-        <span>Adicionar Especialidade</span>
+        <span>Adicionar Área e Especialidade</span>
       </button>
       <AddSpecialtyModal
         isOpen={openModal}
         onClose={closeModal}
-        setSpecialties={setSpecialties}
-        specialties={specialties}
         tutorAreas={areas}
+        setTutorAreas={setAreas}
+        specialties={specialties}
+        setSpecialties={setSpecialties}
       />
     </>
   );

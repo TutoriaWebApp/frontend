@@ -42,8 +42,11 @@ export default function LoginForm({
   }, [searchParams]);
 
   useEffect(() => {
-    const checkToken = async (access_token: string | undefined, refresh_token: string | undefined) => {
-      if (!isTokenExpired(access_token) || !isTokenExpired(refresh_token)) { 
+    const checkToken = async (
+      access_token: string | undefined,
+      refresh_token: string | undefined,
+    ) => {
+      if (!isTokenExpired(access_token) || !isTokenExpired(refresh_token)) {
         router.push("/dashboard");
       }
     };
@@ -220,7 +223,8 @@ export default function LoginForm({
               <button
                 className="
               bg-indigo-600 
-              hover:bg-indigo-800 
+              hover:bg-indigo-800
+              w-3/5 
               md:w-4/5 
               self-center 
               rounded-md 
@@ -273,7 +277,7 @@ export default function LoginForm({
               rounded-md 
               text-white 
               font-semibold 
-              md:h-[40px] 
+              h-[40px] 
               transition-all 
               mb-6 
               mt-4

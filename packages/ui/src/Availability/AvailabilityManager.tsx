@@ -1,206 +1,213 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { DaySelector } from "./DaySelector/DaySelector";
 
 import { AddScheduleModal } from "../Modals/ScheduleModal/AddScheduleModal";
 import { DeleteScheduleModal } from "../Modals/ScheduleModal/DeleteScheduleModal";
+import { TimeSlot } from "@repo/services/availabilityTypes";
 
-export function AvailabilityManager() {
-  const [availability, setAvailability] = useState([
-    { name: "Domingo", isAvailable: false, slots: [] },
-    {
-      name: "Segunda",
-      isAvailable: true,
-      slots: [
-        { id: "1", time: "09:00" },
-        { id: "2", time: "10:00" },
-      ],
-    },
-    { name: "Terça", isAvailable: true, slots: [{ id: "3", time: "14:00" }] },
-    { name: "Quarta", isAvailable: false, slots: [] },
-    { name: "Quinta", isAvailable: false, slots: [] },
-    { name: "Sexta", isAvailable: true, slots: [{ id: "4", time: "09:00" }] },
-    { name: "Sábado", isAvailable: false, slots: [] },
-  ]);
+interface AvailabilityManagerProps {
+  availabilities: TimeSlot[];
+  setAvailabilities: React.Dispatch<React.SetStateAction<TimeSlot[]>>;
+}
 
-  
-  // Schedule Modal
+export function AvailabilityManager({
+  availabilities,
+  setAvailabilities,
+}: AvailabilityManagerProps) {
+  const DAYS_MAP = [
+    { key: "DOM", name: "Domingo" },
+    { key: "SEG", name: "Segunda" },
+    { key: "TER", name: "Terça" },
+    { key: "QUA", name: "Quarta" },
+    { key: "QUI", name: "Quinta" },
+    { key: "SEX", name: "Sexta" },
+    { key: "SAB", name: "Sábado" },
+  ];
+
+  const [selectedDayKey, setSelectedDayKey] = useState<string>("SEG");
   const [openDeleteScheduleModal, setDeleteScheduleModal] =
     useState<boolean>(false);
-  const setDeleteScheduleModalOpen = () => setDeleteScheduleModal(true);
-  const closeDeleteScheduleModal = () => setDeleteScheduleModal(false);
-
-  const [selectedDayName, setSelectedDayName] = useState("Segunda");
-  const [newTime, setNewTime] = useState("");
-
+  const [availabilityToDelete, setAvailabilityToDelete] = useState<TimeSlot>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const setModalOpen = () => setOpenModal(true);
-  const closeModal = () => setOpenModal(false);
+const daysStatus = useMemo(() => {
+    return DAYS_MAP.map((day) => {
+      const slotsForDay = availabilities.filter(
+        (slot) => slot.dia === day.key
+      );
 
+      return {
+        key: day.key,
+        name: day.name,
+        isAvailable: true, 
+        hasSlots: slotsForDay.length > 0, 
+      };
+    });
+  }, [availabilities]);
 
-  const currentDay = availability.find((d) => d.name === selectedDayName);
+  const currentDaySlots = useMemo(() => {
+    return availabilities.filter((slot) => {
+      const diaStr = typeof slot.dia === "string" ? slot.dia : slot.dia;
+      return diaStr === selectedDayKey;
+    });
+  }, [availabilities, selectedDayKey]);
 
-  // Função para remover um horário
-  const removeSlot = (slotId: string) => {
-    setAvailability((prev) =>
-      prev.map((day) => {
-        if (day.name === selectedDayName) {
-          return { ...day, slots: day.slots.filter((s) => s.id !== slotId) };
-        }
-        return day;
-      }),
-    );
-  };
-
-  // Função para adicionar um horário
-  const addSlot = () => {
-    if (!newTime) return;
-
-    setAvailability((prev) =>
-      prev.map((day) => {
-        if (day.name === selectedDayName) {
-          const newSlot = { id: Math.random().toString(), time: newTime };
-          // Opcional: ordenar os horários após adicionar
-          const updatedSlots = [...day.slots, newSlot].sort((a, b) =>
-            a.time.localeCompare(b.time),
-          );
-          return { ...day, isAvailable: true, slots: updatedSlots };
-        }
-        return day;
-      }),
-    );
-    setNewTime("");
+  const handleOpenDeleteModal = (availability: TimeSlot) => {
+    setAvailabilityToDelete(availability);
+    setDeleteScheduleModal(true);
   };
 
   return (
     <>
       <section>
-        <div
-          className="
-            border-2 
-            border-slate-50
-            rounded-2xl 
-            p-6 
-            bg-slate-50/30
-        "
-        >
-          {/* Componente de Dias */}
+        <div className="
+          border-2 
+          border-slate-50 
+          rounded-2xl 
+          p-6 
+          bg-slate-50/30
+        ">
           <DaySelector
-            days={availability}
-            selectedDay={selectedDayName}
-            onSelect={setSelectedDayName}
+            days={daysStatus}
+            selectedDay={selectedDayKey}
+            onSelect={setSelectedDayKey}
           />
 
-          {/* Componente de Horários e Botão de Ação */}
-          <div
-            className="
-          flex 
-          flex-col 
-          md:flex-row 
-          justify-between 
-          items-start 
-          md:items-end 
-          gap-8 
-          mt-10
-        "
-          >
-            <div className="flex-1">
-              <p
-                className="
-              text-xs 
-              font-bold 
-              text-slate-800 
-              mb-4 
-              underline 
-              decoration-slate-400 
-              underline-offset-8 
-              uppercase 
-              tracking-widest
-            "
-              >
-                Horários Disponíveis:
+          <div className="
+            flex 
+            flex-col 
+            md:flex-row 
+            justify-between 
+            items-start 
+            md:items-end 
+            gap-8 
+            mt-10
+          ">
+            <div className="
+              flex-1 
+              w-full
+            ">
+              <p className="
+                text-xs
+                2xl:text-sm 
+                font-bold 
+                text-slate-800 
+                mb-4 
+                underline 
+                decoration-slate-400 
+                underline-offset-8 
+                uppercase 
+                tracking-widest
+              ">
+                Horários Disponíveis (
+                {DAYS_MAP.find((d) => d.key === selectedDayKey)?.name}):
               </p>
-              <div
-                className="
+
+              <div className="
                 flex 
                 flex-wrap 
                 gap-2
-              "
-              >
-                {currentDay?.slots.map((slot) => (
-                  <div
-                    key={slot.time}
-                    className={`
-                    bg-slate-200 
-                    text-[15px] 
-                    py-1.5 
-                    px-3
-                    flex
-                    items-center
-                    gap-2
-                    rounded 
-                  `}
-                  >
-                    <span
-                      className="    
-                      text-slate-800 
-                      text-[15px] 
-                      font-black 
-                    "
-                    >
-                      {slot.time}
-                    </span>
-                    <DeleteIcon
-                      onClick={setDeleteScheduleModalOpen}
+              ">
+                {currentDaySlots.length === 0 ? (
+                  <p className="
+                    text-sm
+                    2xl:text-base
+                    text-slate-400 
+                    py-4 
+                    font-medium
+                  ">
+                    Nenhum horário cadastrado para este dia da semana.
+                  </p>
+                ) : (
+                  currentDaySlots.map((slot) => (
+                    <div
+                      key={slot.id}
                       className="
-                      text-rose-500
-                      cursor-pointer
-                      hover:text-[28px]
-                    hover:text-rose-900
-                      transition-all
-                    "
-                    />
-                  </div>
-                ))}
+                        bg-slate-200 
+                        text-[15px] 
+                        py-1.5 
+                        px-3 
+                        flex 
+                        items-center 
+                        gap-2 
+                        rounded-xl 
+                        border 
+                        border-slate-300/40 
+                        shadow-sm
+                    ">
+                      <span className="
+                        text-slate-800 
+                        text-[15px] 
+                        font-black
+                      ">
+                        {slot.horarioInicio.slice(0, 5)} -{" "}
+                        {slot.horarioFim.slice(0, 6)}
+                      </span>
+                      <DeleteIcon
+                        onClick={() => handleOpenDeleteModal(slot)}
+                        className="
+                          text-rose-500 
+                          cursor-pointer 
+                          hover:text-rose-700 
+                          transition-all
+                        "
+                        sx={{ fontSize: 18 }}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
         </div>
-        <div className="flex justify-end">
+
+        <div className="
+          flex 
+          justify-end
+        ">
           <button
             type="button"
-            onClick={setModalOpen}
+            onClick={() => setOpenModal(true)}
             className="
-              w-full 
-              md:w-auto 
+              w-auto 
               bg-emerald-600 
-              hover:bg-emerald-800  
+              hover:bg-emerald-800 
               text-white 
               font-bold 
-              py-2
+              py-2.5 
               px-4 
               rounded-xl 
               transition-all 
               shadow-lg 
-              shadow-brand-primary/20
-              flex
-              items-center
-              gap-2
-              mt-12
+              flex 
+              items-center 
+              gap-2 
+              mt-12 
               mb-6
-            "
-          >
+          ">
             <AddIcon />
             <span>Adicionar Disponibilidade</span>
           </button>
         </div>
       </section>
-      <AddScheduleModal isOpen={openModal} onAdd={setAvailability} onClose={closeModal}/>
-      <DeleteScheduleModal isOpen={openDeleteScheduleModal} onClose={closeDeleteScheduleModal} />
+
+      <AddScheduleModal
+        isOpen={openModal}
+        availabilities={availabilities}
+        setAvailabilities={setAvailabilities}
+        onClose={() => setOpenModal(false)}
+      />
+      <DeleteScheduleModal
+        isOpen={openDeleteScheduleModal}
+        availabilities={availabilities}
+        availabilityToDelete={availabilityToDelete!}
+        setAvailabilities={setAvailabilities}
+        onClose={() => setDeleteScheduleModal(false)}
+      />
     </>
   );
 }

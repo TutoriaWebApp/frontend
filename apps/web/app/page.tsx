@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 
 import LoginForm from "@repo/ui/LoginForm/LoginForm";
 
-export default async function Home(){
+export default async function Home() {
   const cookieStore = await cookies();
 
   const accessToken = cookieStore.get("access_token")?.value;
@@ -28,15 +28,15 @@ export default async function Home(){
       >
         <div
           className="
+          hidden
+          md:flex
           flex-1 
-          flex 
           flex-col 
           items-center 
-          justify-center 
-          w-full 
-          h-full
+          justify-center
           gap-8
           2xl:gap-16
+          h-full
         "
         >
           <h2
@@ -44,6 +44,7 @@ export default async function Home(){
             text-2xl 
             text-center 
             font-quicksand
+            md:block
             2xl:text-3xl
             "
           >
@@ -53,9 +54,9 @@ export default async function Home(){
           <div
             className="
             relative 
-            w-full 
-            h-[300px] 
-            sm:h-[400px] 
+            w-full
+            md:h-[300px]
+            md:block
             lg:h-[500px]
             2xl:h-[600px]
           "
@@ -69,7 +70,7 @@ export default async function Home(){
             />
           </div>
         </div>
-        <LoginForm access_token={accessToken} refresh_token={refreshToken}/>
+        <LoginForm access_token={accessToken} refresh_token={refreshToken} />
       </div>
     </>
   );

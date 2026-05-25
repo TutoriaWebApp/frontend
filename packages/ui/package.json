@@ -15,6 +15,8 @@
     "./availabilityManager": "./src/Availability/AvailabilityManager.tsx",
     "./reviewSection": "./src/ReviewSection/ReviewSection.tsx",
     "./dashboardCard": "./src/DashboardCard/DashboardCard.tsx",
+    "./tutorCard": "./src/TutorCard/TutorCard.tsx",
+    "./solicitationCard": "./src/SolicitationCard/SolicitationCard.tsx",
   
     "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
     "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
@@ -55,7 +57,6 @@
   "dependencies": {
     "@repo/services": "workspace:*",
     "@repo/lib": "workspace:*",
-    "@repo/services": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "@emotion/react": "^11.14.0",

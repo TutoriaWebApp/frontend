@@ -15,15 +15,15 @@ interface DeleteSpecialtyModalProps {
 export function DeleteSpecialtyModal({
   isOpen,
   onClose,
-  setSpecialties,
   specialty,
   specialties,
+  setSpecialties,
 }: DeleteSpecialtyModalProps) {
   if (!isOpen) return null;
 
-  const deleteArea = () => {
+  const deleteSpecialty = () => {
     const newSpecialties = specialties.filter((s) => {
-     return  s.id != specialty?.id;
+     return s.id != specialty!.id;
     })
 
     setSpecialties(newSpecialties);
@@ -98,7 +98,7 @@ export function DeleteSpecialtyModal({
               font-bold 
               text-slate-700
             ">
-              "{specialty?.specialty}"
+              "{specialty!.nomeEspecialidade}"
             </span>?
             <br />
           </p>
@@ -135,7 +135,7 @@ export function DeleteSpecialtyModal({
           </button>
           <button
             type="button"
-            onClick={deleteArea}
+            onClick={deleteSpecialty}
             className="
               order-1 
               sm:order-2 

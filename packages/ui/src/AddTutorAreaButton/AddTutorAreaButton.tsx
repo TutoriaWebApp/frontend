@@ -22,7 +22,7 @@ export const AddTutorAreaButton = ({areas, setAreas}: AddTutorAreaProps) => {
       type="button"
       onClick={setModalOpen}
       className="
-        w-full 
+        w-auto 
         md:w-auto 
       bg-emerald-600 
       hover:bg-emerald-800  

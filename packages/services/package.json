@@ -5,14 +5,18 @@
   "type": "module",
   "exports": {
     "./auth": "./src/auth.ts",
-    "./authAction": "./src/actions/auth.ts",
     "./states": "./src/states.ts",
     "./cities": "./src/cities.ts",
+
+    "./authAction": "./src/actions/auth.ts",
     "./userAction": "./src/actions/user.ts",
+
     "./userServer": "./src/userServer.ts",
     "./userClient": "./src/userClient.ts",
+
     "./userTypes": "./src/types/user.ts",
-    "./authTypes": "./src/types/auth.ts"
+    "./authTypes": "./src/types/auth.ts",
+    "./availabilityTypes": "./src/types/availability.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",

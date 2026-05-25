@@ -17,7 +17,7 @@ const validateSession = async (req: NextRequest) => {
       method: "POST",
       headers: {
         Accept: "application/json",
-        Cookie: `refresh_token=${refreshToken}`
+        Cookie: `refresh_token=${refreshToken}`,
       },
       credentials: "include",
     });
@@ -51,5 +51,12 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   // Aplique apenas nas rotas protegidas para não dar loop infinito na "/"
-  matcher: ["/dashboard/:path*", "/perfil/:path*", "/editar-perfil/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/perfil/:path*",
+    "/editar-perfil/:path*",
+    "/buscar-tutores/:path*",
+    "/recomendacoes/:path*",
+    "/solicitacoes/:path*",
+  ],
 };

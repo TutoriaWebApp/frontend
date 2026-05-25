@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TutorArea } from "@repo/services/userTypes";
+import { TutorArea, Specialty } from "@repo/services/userTypes";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface DeleteTutorAreaModalProps {
@@ -10,28 +10,41 @@ interface DeleteTutorAreaModalProps {
   area: TutorArea | null;
   areas: TutorArea[];
   setAreas: React.Dispatch<React.SetStateAction<TutorArea[]>>;
+  specialties: Specialty[];
+  setSpecialties: React.Dispatch<React.SetStateAction<Specialty[]>>;
 }
 
 export function DeleteTutorAreaModal({
   isOpen,
   onClose,
-  setAreas,
   area,
   areas,
+  setAreas,
+  specialties,
+  setSpecialties,
 }: DeleteTutorAreaModalProps) {
   if (!isOpen) return null;
 
   const deleteArea = () => {
+    //Apaga a área da lista de áreas
     const newAreas = areas.filter((a) => {
       return a.id != area?.id;
-    })
+    });
 
     setAreas(newAreas);
+
+    const filteredSpecialites = specialties.filter(
+      (specialty) => specialty.areaId != area?.id,
+    );
+
+    setSpecialties(filteredSpecialites);
+
     onClose();
-  }
+  };
 
   return (
-    <div className="
+    <div
+      className="
       fixed 
       inset-0 
       z-[100] 
@@ -44,8 +57,10 @@ export function DeleteTutorAreaModal({
       animate-in 
       fade-in 
       duration-200
-    ">
-      <div className="
+    "
+    >
+      <div
+        className="
         bg-white 
         w-full 
         max-w-md 
@@ -55,19 +70,24 @@ export function DeleteTutorAreaModal({
         animate-in 
         zoom-in-95 
         duration-200
-      ">
-        <div className="
+      "
+      >
+        <div
+          className="
           flex 
           justify-between 
           items-start 
           p-6 
           pb-0
-        ">
-          <h2 className="
+        "
+        >
+          <h2
+            className="
             text-xl 
             font-bold 
             text-slate-800
-          ">
+          "
+          >
             Remover Área de Tutoria
           </h2>
           <button
@@ -78,33 +98,54 @@ export function DeleteTutorAreaModal({
               hover:text-slate-600 
               transition-colors 
               p-1
-          ">
+          "
+          >
             <CloseIcon />
           </button>
         </div>
 
-        <div className="
+        <div
+          className="
           p-6 
           pt-4 
           space-y-3
-        ">
-          <p className="
+        "
+        >
+          <p
+            className="
             text-slate-500 
             leading-relaxed 
             text-sm
-          ">
+          "
+          >
             Tem certeza que deseja remover{" "}
-            <span className="
+            <span
+              className="
               font-bold 
               text-slate-700
-            ">
-              "{area?.area}"
-            </span>?
+            "
+            >
+              "{area?.nomeArea}"
+            </span>
+            ?
+            <br />
+          </p>
+
+          <p
+            className="
+            text-slate-500 
+            leading-relaxed 
+            text-sm
+          "
+          >
+            Remover essa área irá remover todas as especialidades associadas à
+            ela.
             <br />
           </p>
         </div>
 
-        <div className="
+        <div
+          className="
           p-6 
           bg-slate-50 
           flex 
@@ -114,7 +155,8 @@ export function DeleteTutorAreaModal({
           gap-3 
           border-t 
           border-slate-100
-        ">
+        "
+        >
           <button
             type="button"
             onClick={onClose}
@@ -130,7 +172,8 @@ export function DeleteTutorAreaModal({
               hover:bg-slate-300 
               transition-all 
               active:scale-95
-          ">
+          "
+          >
             Cancelar
           </button>
           <button
@@ -150,7 +193,8 @@ export function DeleteTutorAreaModal({
               hover:bg-rose-800 
               transition-all 
               active:scale-95
-          ">
+          "
+          >
             Remover
           </button>
         </div>
