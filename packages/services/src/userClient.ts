@@ -306,9 +306,13 @@ export async function DeleteSpecialty(
   }
 }
 
-export async function GetSchedule(): Promise<GetScheduleResult> {
-  const URL = `${process.env.backendBaseURL}/agendas/`;
+export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> {
+  let URL = `${process.env.backendBaseURL}/agendas/`;
 
+  if (tutorId) {
+    URL += `?tutor=${tutorId}`;
+  }
+  
   const res = await authRequestWrapper(
     URL,
     {

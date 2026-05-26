@@ -111,8 +111,13 @@ export async function GetAreaById(id: number): Promise<GetAreaResult> {
   }
 }
 
-export async function GetSchedule(): Promise<GetScheduleResult> {
-  const URL = `${process.env.backendBaseURL}/agendas/`;
+export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> {
+  let URL = `${process.env.backendBaseURL}/agendas/`;
+
+  if (tutorId) {
+    URL += `?tutor=${tutorId}`;
+  }
+
   const cookieStore = await cookies();
 
   const accessToken = cookieStore.get("access_token")?.value;
