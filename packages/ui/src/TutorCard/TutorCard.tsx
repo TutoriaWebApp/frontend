@@ -3,6 +3,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 interface TutorCardProps {
   name: string;
+  photoURL: string;
   location: string;
   rating: number;
   totalRatings: number;
@@ -12,6 +13,7 @@ interface TutorCardProps {
 
 export const TutorCard = ({
   name,
+  photoURL,
   location,
   rating,
   totalRatings,
@@ -58,7 +60,7 @@ export const TutorCard = ({
         transition-transform
     ">
       <img
-        src={`https://imgs.search.brave.com/rbh7pRnJ8Kh25nP02zCkvtQXBainO9_vApWJoGrpQMU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTcv/MzU1Lzc4NC9zbWFs/bC9nb29nbGUtbG9n/by1vbi10cmFuc3Bh/cmVudC1iYWNrZ3Jv/dW5kLWZyZWUtcG5n/LnBuZw`}
+        src={photoURL}
         alt="Foto do Perfil"
         className="
           w-full

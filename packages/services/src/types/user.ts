@@ -115,19 +115,25 @@ export interface DeleteScheduleResult {
   status: number;
 }
 
+export interface TutorData {
+  id: number;
+  usuarioId: number;
+  nomePerfil: string;
+  estado: string;
+  cidade: string;
+  pontuacao: string;
+  fotoURL: string;
+  especialidades: Specialty[];
+  areas?: TutorArea[];
+}
+
 export interface GetTutorsResult {
   success: boolean;
   status: number;
-  data?: [
-    {
-      id: number;
-      usuarioId: number;
-      nomePerfil: string;
-      estado: string;
-      cidade: string;
-      pontuacao: string;
-      fotoURL: string;
-      especialidades: Specialty[];
-    },
-  ];
+  data?: {
+    count: number;
+    next: string;
+    previous: string;
+    results: TutorData[];
+  };
 }
