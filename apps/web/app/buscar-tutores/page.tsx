@@ -14,7 +14,6 @@ import { TutorCard } from "@repo/ui/tutorCard";
 import { Specialty, TutorArea, TutorData } from "@repo/services/userTypes";
 
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
-import { GetAreaById } from "@repo/services/userClient";
 
 export default function BuscaTutores() {
   const [resultsCount, setResultsCount] = useState<number | null>(null);
@@ -31,12 +30,6 @@ export default function BuscaTutores() {
   const [loadingTutors, setLoadingTutors] = useState<boolean>(false);
 
   const { showNotification } = useContext(NotificationContext);
-
-  const fetchArea = async (id: number) => {
-    const area = await GetAreaById(id);
-
-    return area.data;
-  };
 
   useEffect(() => {
     async function fetchAreas() {
@@ -64,46 +57,19 @@ export default function BuscaTutores() {
     fetchSpecialties();
   }, [queryAreaId]);
 
-const handleSubmit = async () => {
+  const handleSubmit = async () => {
     setLoadingTutors(true);
 
     const res = await GetTutors(1, queryAreaId, querySpecialtyId);
 
     if (res.success && res.data) {
-      const rawTutors = res.data.results;
+      const tutors = res.data.results;
 
-      // 1. Tratamos os dados dos tutores ANTES de salvar no estado
-      const processedTutors = await Promise.all(
-        rawTutors.map(async (tutor) => {
-          // Garante segurança caso o tutor venha sem especialidades do Back
-          if (!tutor.especialidades) {
-            return { ...tutor, areas: [] };
-          }
-
-          const uniqueAreaIds = Array.from(
-            new Set(tutor.especialidades.map((specialty) => specialty.areaId))
-          );
-
-          // Busca todas as áreas do tutor em paralelo
-          const areaPromises = uniqueAreaIds.map((areaId) => fetchArea(areaId));
-          const fetchedAreas = await Promise.all(areaPromises);
-
-          // Filtra apenas as áreas que retornaram dados válidos
-          const validAreas = fetchedAreas.filter((area): area is TutorArea => area !== null);
-
-          return {
-            ...tutor,
-            areas: validAreas,
-          };
-        })
-      );
-
-      setTutorsList(processedTutors);
+      setTutorsList(tutors);
       setResultsCount(res.data.count);
 
       nextPageURL = res.data.next;
       prevPageURL = res.data.previous;
-
     } else {
       showNotification("Não foi possível obter a lista de tutores", "error");
     }
@@ -377,7 +343,7 @@ const handleSubmit = async () => {
             )}
 
             {/* Grid de Tutores */}
-            {tutorsList && tutorsList?.length >= 1 && (
+            {tutorsList && tutorsList?.length >= 1 && !loadingTutors && (
               <div
                 className="
                   grid 
@@ -396,11 +362,18 @@ const handleSubmit = async () => {
                     location={`${tutor.cidade}, ${tutor.estado}`}
                     rating={5.0}
                     totalRatings={450}
-                    subjects={tutor.areas!.map((area) => area.nomeArea)}
+                    subjects={tutor.areas.map((area) => area.nomeArea)}
                     bio="aa"
                   />
                 ))}
               </div>
+            )}
+            {tutorsList && tutorsList?.length >= 1 && loadingTutors && (
+              <ClipLoader
+                color="#64748b"
+                className="relative left-[47%]"
+                size={120}
+              />
             )}
 
             <Link href={"/recomendacoes"}>

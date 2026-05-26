@@ -5,12 +5,7 @@ import { ClipLoader } from "react-spinners";
 
 import {
   GetUserDataClient,
-  GetAreaById,
-  InsertSpecialty,
   GetSchedule,
-  GetSpecialties,
-  InsertSchedule,
-  GetTutors,
 } from "@repo/services/userClient";
 
 import { userLevel } from "@repo/lib/userLevel";
@@ -175,13 +170,7 @@ export default function EditProfilePage() {
   );
 
   const router = useRouter();
-
-  const fetchArea = async (id: number) => {
-    const area = await GetAreaById(id);
-
-    return area.data;
-  };
-
+  
   const updateSpecialties = async () => {
     const newSpecialties: Specialty[] = [];
     const deletedSpecialties: Specialty[] = [];
@@ -217,12 +206,10 @@ export default function EditProfilePage() {
     const newSchedules: TimeSlot[] = [];
     const deletedSchedules: TimeSlot[] = [];
 
-    const allSchedules = await GetSchedule();
+    const tutorSchedules = await GetSchedule(userData?.perfilTutor?.id);
 
-    if (allSchedules.success && allSchedules.data != undefined) {
-      const profileSchedules = allSchedules.data.filter(
-        (schedule) => schedule.tutorId === userData?.perfilTutor?.id,
-      );
+    if (tutorSchedules.success && tutorSchedules.data != undefined) {
+      const profileSchedules = tutorSchedules.data
 
       //Verificar disponibilidade nova
       for (let i = 0; i < availabilities.length; i++) {
@@ -289,29 +276,14 @@ export default function EditProfilePage() {
         reset(results.data);
 
         if (results.data.perfilTutor) {
-          const fetchedSpecialties = results.data.perfilTutor.especialidades;
-          setSpecialties(fetchedSpecialties);
+          setSpecialties(results.data.perfilTutor.especialidades);
 
-          const uniqueAreaIds = Array.from(
-            new Set(fetchedSpecialties.map((specialty) => specialty.areaId)),
-          );
+          setTutorAreas(results.data.perfilTutor.areas);
 
-          const areaPromises = uniqueAreaIds.map((areaId) => fetchArea(areaId));
+          const tutorSchedules = await GetSchedule(results.data.perfilTutor.id);
 
-          const fetchedAreas = await Promise.all(areaPromises);
-
-          const validAreas = fetchedAreas.filter((area) => area !== null);
-
-          setTutorAreas(validAreas);
-
-          const allSchedules = await GetSchedule();
-
-          if (allSchedules.success && allSchedules.data != undefined) {
-            const profileSchedules = allSchedules.data.filter(
-              (schedule) => schedule.tutorId === results.data.perfilTutor!.id,
-            );
-
-            setAvailabilities(profileSchedules);
+          if (tutorSchedules.success && tutorSchedules.data != undefined) {
+            setAvailabilities(tutorSchedules.data);
           }
         }
       }

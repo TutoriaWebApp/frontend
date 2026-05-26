@@ -1,7 +1,6 @@
 import React from "react";
 
 import {
-  GetAreaById,
   GetSchedule,
   GetUserData,
 } from "@repo/services/userServer";
@@ -25,12 +24,6 @@ export default async function ProfilePage() {
   let specialties: Specialty[] = [];
   let availabilities: TimeSlot[] = [];
 
-  const fetchArea = async (id: number) => {
-    const area = await GetAreaById(id);
-
-    return area.data;
-  };
-
   const results = await GetUserData();
 
   if (!results.success) {
@@ -43,26 +36,12 @@ export default async function ProfilePage() {
     if (userData.perfilTutor) {
       specialties = userData.perfilTutor.especialidades;
 
-      const uniqueAreaIds = Array.from(
-        new Set(specialties.map((specialty) => specialty.areaId)),
-      );
+      tutorAreas = userData.perfilTutor.areas;
 
-      const areaPromises = uniqueAreaIds.map((areaId) => fetchArea(areaId));
+      const tutorSchedules = await GetSchedule(userData.perfilTutor.id);
 
-      const fetchedAreas = await Promise.all(areaPromises);
-
-      const validAreas = fetchedAreas.filter((area) => area !== null);
-
-      tutorAreas = validAreas;
-
-      const allSchedules = await GetSchedule();
-
-      if (allSchedules.success && allSchedules.data != undefined) {
-        const profileSchedules = allSchedules.data.filter(
-          (schedule) => schedule.tutorId === results.data.perfilTutor!.id,
-        );
-
-        availabilities = profileSchedules;
+      if (tutorSchedules.success && tutorSchedules.data != undefined) {
+        availabilities = tutorSchedules.data;
       }
     }
   }
