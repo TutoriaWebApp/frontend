@@ -1,9 +1,6 @@
 import React from "react";
 
-import {
-  GetSchedule,
-  GetUserData,
-} from "@repo/services/userServer";
+import { GetSchedule, GetUserData } from "@repo/services/userServer";
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
 
@@ -158,50 +155,63 @@ export default async function ProfilePage() {
                   >
                     <div
                       className="
-                    flex 
-                    gap-1
-                  text-slate-600
-                    items-center
-                  "
+                                flex 
+                                items-center 
+                                gap-1
+                                text-slate-600
+                              "
                     >
                       <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
                       <span
                         className="
-                      md:text-sm 
-                      font-medium 
-                      2xl:text-base
-                    "
+                                  md:text-sm 
+                                  font-medium
+                                  2xl:text-base
+                                "
                       >
-                        4.7 como{" "}
-                        <em className="text-slate-800 not-italic font-bold">
-                          Tutor
-                        </em>{" "}
-                        (123 avaliações)
-                      </span>
-                    </div>
-                    <div
-                      className="
-                    flex 
-                    items-center 
-                    gap-1
-                    text-slate-600
-                  "
-                    >
-                      <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
-                      <span
-                        className="
-                      md:text-sm 
-                      font-medium
-                      2xl:text-base
-                    "
-                      >
-                        4.9 como{" "}
+                        {Number.isInteger(userData.notaAvaliacao)
+                          ? userData.notaAvaliacao.toFixed(1)
+                          : userData.notaAvaliacao.toFixed(2)}{" "}
+                        como{" "}
                         <em className="text-slate-800 not-italic font-bold">
                           Aprendiz
                         </em>{" "}
-                        (45 avaliações)
+                        ({userData.totalAvaliacoes} avaliações)
                       </span>
                     </div>
+                    {userData.perfilTutor && (
+                      <div
+                        className="
+                                flex 
+                                gap-1
+                              text-slate-600
+                              items-center
+                              "
+                      >
+                        <Grade
+                          className="text-amber-400"
+                          sx={{ fontSize: 20 }}
+                        />
+                        <span
+                          className="
+                                  md:text-sm 
+                                  font-medium 
+                                  2xl:text-base
+                                "
+                        >
+                          {Number.isInteger(userData.perfilTutor.notaAvaliacao)
+                            ? userData.perfilTutor.notaAvaliacao.toFixed(1)
+                            : userData.perfilTutor.notaAvaliacao.toFixed(
+                                2,
+                              )}{" "}
+                          como{" "}
+                          <em className="text-slate-800 not-italic font-bold">
+                            Tutor
+                          </em>{" "}
+                          ({userData.perfilTutor.totalAvaliacoes} avaliações)
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -210,28 +220,29 @@ export default async function ProfilePage() {
                   <EditProfileButton />
                 </div>
               </div>
-              <h2
-                className="
-              text-xl 
-              font-bold 
-              text-slate-800 
-              mb-4
-              mt-8
-            "
-              >
-                Sobre Mim
-              </h2>
-              <p
-                className="
-              text-slate-600 
-              leading-relaxed 
-            "
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
-              </p>
+              {userData.sobremim && (
+                <>
+                  <h2
+                    className="
+                text-xl 
+                font-bold 
+                text-slate-800 
+                mb-4
+                mt-8
+                "
+                  >
+                    Sobre Mim
+                  </h2>
+                  <p
+                    className="
+                    text-slate-600 
+                      leading-relaxed 
+                  "
+                  >
+                    {userData.sobremim}
+                  </p>
+                </>
+              )}
             </section>
 
             {/* Seção Áreas de Tutoria e Especialidades */}

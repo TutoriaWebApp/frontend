@@ -3,10 +3,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { ClipLoader } from "react-spinners";
 
-import {
-  GetUserDataClient,
-  GetSchedule,
-} from "@repo/services/userClient";
+import { GetUserDataClient, GetSchedule } from "@repo/services/userClient";
 
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
@@ -91,6 +88,10 @@ const registerSchema = z.object({
       { message: "A data não pode ser futura." },
     )
     .nullable(),
+  sobreMim: z
+    .string()
+    .max(500, "O texto só pode conter até 500 caracteres.")
+    .nullable(),
   foto: z
     .any()
     .nullable()
@@ -170,7 +171,7 @@ export default function EditProfilePage() {
   );
 
   const router = useRouter();
-  
+
   const updateSpecialties = async () => {
     const newSpecialties: Specialty[] = [];
     const deletedSpecialties: Specialty[] = [];
@@ -209,7 +210,7 @@ export default function EditProfilePage() {
     const tutorSchedules = await GetSchedule(userData?.perfilTutor?.id);
 
     if (tutorSchedules.success && tutorSchedules.data != undefined) {
-      const profileSchedules = tutorSchedules.data
+      const profileSchedules = tutorSchedules.data;
 
       //Verificar disponibilidade nova
       for (let i = 0; i < availabilities.length; i++) {
@@ -391,6 +392,12 @@ export default function EditProfilePage() {
 
     if (data.foto) formData.append("foto", data.foto);
 
+    if (data.sobreMim) {
+      formData.append("sobremim", data.sobreMim);
+    } else {
+      formData.append("sobremim", "");
+    }
+
     const result = await EditProfileAction(formData);
 
     if (result.success) {
@@ -526,32 +533,6 @@ export default function EditProfilePage() {
                       <div
                         className="
                                 flex 
-                                gap-1
-                              text-slate-600
-                                items-center
-                              "
-                      >
-                        <Grade
-                          className="text-amber-400"
-                          sx={{ fontSize: 20 }}
-                        />
-                        <span
-                          className="
-                                  md:text-sm 
-                                  font-medium 
-                                  2xl:text-base
-                                "
-                        >
-                          4.7 como{" "}
-                          <em className="text-slate-800 not-italic font-bold">
-                            Tutor
-                          </em>{" "}
-                          (123 avaliações)
-                        </span>
-                      </div>
-                      <div
-                        className="
-                                flex 
                                 items-center 
                                 gap-1
                                 text-slate-600
@@ -568,13 +549,52 @@ export default function EditProfilePage() {
                                   2xl:text-base
                                 "
                         >
-                          4.9 como{" "}
+                          {Number.isInteger(userData.notaAvaliacao)
+                            ? userData.notaAvaliacao.toFixed(1)
+                            : userData.notaAvaliacao.toFixed(
+                                2,
+                              )}{" "} como {" "}
                           <em className="text-slate-800 not-italic font-bold">
-                            Aprendiz
+                             Aprendiz
                           </em>{" "}
-                          (45 avaliações)
+                          ({userData.totalAvaliacoes} avaliações)
                         </span>
                       </div>
+                      {userData.perfilTutor && (
+                        <div
+                          className="
+                                flex 
+                                gap-1
+                              text-slate-600
+                              items-center
+                              "
+                        >
+                          <Grade
+                            className="text-amber-400"
+                            sx={{ fontSize: 20 }}
+                          />
+                          <span
+                            className="
+                                  md:text-sm 
+                                  font-medium 
+                                  2xl:text-base
+                                "
+                          >
+                            {Number.isInteger(
+                              userData.perfilTutor.notaAvaliacao,
+                            )
+                              ? userData.perfilTutor.notaAvaliacao.toFixed(1)
+                              : userData.perfilTutor.notaAvaliacao.toFixed(
+                                  2,
+                                )}{" "}
+                            como{" "}
+                            <em className="text-slate-800 not-italic font-bold">
+                              Tutor
+                            </em>{" "}
+                            ({userData.perfilTutor.totalAvaliacoes} avaliações)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -782,6 +802,10 @@ export default function EditProfilePage() {
                     >
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
+                        defaultValue={
+                          userData.sobremim ? userData.sobremim : ""
+                        }
+                        {...register("sobreMim")}
                         rows={6}
                         className="
                       bg-white  

@@ -23,10 +23,28 @@ export interface UserData {
   aniversario: string;
   pontuacao: number;
   fotoURL: string;
+  sobremim: string;
+  notaAvaliacao: number;
+  totalAvaliacoes: number;
   perfilTutor?: {
     id: number;
     especialidades: Specialty[];
+    areas: TutorArea[];
+    notaAvaliacao: number;
+    totalAvaliacoes: number;
   } | null;
+}
+
+export interface SpecificUserData {
+  id: number;
+  nomePerfil: string;
+  estado: string;
+  cidade: string;
+  pontuacao: number;
+  fotoURL: string;
+  sobremim: string;
+  notaAvaliacao: number;
+  totalAvaliacoes: number;
 }
 
 export interface UserDataSuccessResult {
@@ -123,8 +141,11 @@ export interface TutorData {
   cidade: string;
   pontuacao: string;
   fotoURL: string;
+  sobremim: string;
+  notaAvaliacao: number;
+  totalAvaliacoes: number;
   especialidades: Specialty[];
-  areas?: TutorArea[];
+  areas: TutorArea[];
 }
 
 export interface GetTutorsResult {
@@ -136,4 +157,16 @@ export interface GetTutorsResult {
     previous: string;
     results: TutorData[];
   };
+}
+
+export interface GetSpecificUserResult {
+  success: boolean;
+  status: number;
+  data?: SpecificUserData;
+}
+
+export interface GetSpecificTutorResult {
+  success: boolean;
+  status: number;
+  data?: TutorData;
 }
