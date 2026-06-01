@@ -415,7 +415,7 @@ export async function GetTutors(
   pageNumber: number = 1,
   areaId?: number,
   specialtyId?: number,
-  page_size: number = 3
+  page_size: number = 6
 ): Promise<GetTutorsResult> {
   let URL = `${process.env.backendBaseURL}/tutores/?page=${pageNumber}`;
 

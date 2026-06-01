@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 import Link from "next/link";
 
@@ -21,8 +22,10 @@ export default function BuscaTutores() {
   const [specialtiesList, setSpecialtiesList] = useState<Specialty[]>();
   const [tutorsList, setTutorsList] = useState<TutorData[]>();
 
-  let nextPageURL: string = "";
-  let prevPageURL: string = "";
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(6);
+  const [hasNext, setHasNext] = useState<boolean>(false);
+  const [hasPrevious, setHasPrevious] = useState<boolean>(false);
 
   const [queryAreaId, setQueryAreaId] = useState<number>();
   const [querySpecialtyId, setQuerySpecialtyId] = useState<number>();
@@ -57,24 +60,49 @@ export default function BuscaTutores() {
     fetchSpecialties();
   }, [queryAreaId]);
 
-  const handleSubmit = async () => {
+  const fetchTutorsPage = async (page: number, currentSize: number) => {
     setLoadingTutors(true);
-
-    const res = await GetTutors(1, queryAreaId, querySpecialtyId);
+    const res = await GetTutors(
+      page,
+      queryAreaId,
+      querySpecialtyId,
+      currentSize,
+    );
 
     if (res.success && res.data) {
-      const tutors = res.data.results;
-
-      setTutorsList(tutors);
+      setTutorsList(res.data.results);
       setResultsCount(res.data.count);
 
-      nextPageURL = res.data.next;
-      prevPageURL = res.data.previous;
+      setHasNext(res.data.next !== null);
+      setHasPrevious(res.data.previous !== null);
+      setCurrentPage(page);
     } else {
       showNotification("Não foi possível obter a lista de tutores", "error");
     }
-
     setLoadingTutors(false);
+  };
+
+  const handleSubmit = async () => {
+    await fetchTutorsPage(1, pageSize);
+  };
+
+  const handleNextPage = async () => {
+    if (hasNext) {
+      await fetchTutorsPage(currentPage + 1, pageSize);
+    }
+  };
+
+  const handlePrevPage = async () => {
+    if (hasPrevious) {
+      await fetchTutorsPage(currentPage - 1, pageSize);
+    }
+  };
+
+  const handlePageSizeChange = async (newSize: number) => {
+    setPageSize(newSize);
+    if (resultsCount !== null) {
+      await fetchTutorsPage(1, newSize);
+    }
   };
 
   return (
@@ -312,33 +340,66 @@ export default function BuscaTutores() {
                 className="
                 bg-white 
                 p-6 
-                rounded-2xl
+                rounded-2xl 
                 border 
-                border-slate-100 
+                border-slate-100
                 shadow-sm 
-                mb-8
-            "
+                mb-8 
+                flex 
+                flex-col 
+                sm:flex-row 
+                justify-between 
+                items-start 
+                sm:items-center 
+                gap-4
+              "
               >
-                {resultsCount >= 1 && (
-                  <p className="text-slate-500">
-                    Foram encontrados{" "}
-                    <span
-                      className="
-                    font-bold 
-                    text-slate-800
-                    "
-                    >
-                      {resultsCount}
-                    </span>{" "}
-                    tutores de acordo com os critérios selecionados.
-                  </p>
-                )}
-                {resultsCount === 0 && (
-                  <p className="text-slate-500">
-                    Não foram encontrados tutores de acordo com os critérios
-                    selecionados.
-                  </p>
-                )}
+                <div>
+                  {resultsCount >= 1 && (
+                    <p className="text-slate-500">
+                      Foram encontrados{" "}
+                      <span
+                        className="
+                        font-bold 
+                        text-slate-800
+                      "
+                      >
+                        {resultsCount}
+                      </span>{" "}
+                      tutores de acordo com os critérios selecionados.
+                    </p>
+                  )}
+                  {resultsCount === 0 && (
+                    <p className="text-slate-500">
+                      Não foram encontrados tutores de acordo com os critérios
+                      selecionados.
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  className="
+                  flex 
+                  items-center 
+                  gap-2 
+                  text-slate-600 
+                  font-semibold 
+                  whitespace-nowrap
+                "
+                >
+                  <span>Exibir:</span>
+                  <select
+                    value={pageSize}
+                    onChange={(e) =>
+                      handlePageSizeChange(Number(e.target.value))
+                    }
+                    className="bg-slate-50 border-2 border-slate-300 rounded-lg p-1 outline-none text-slate-700 font-bold focus:border-indigo-600 transition-all"
+                  >
+                    <option value={6}>6 por página</option>
+                    <option value={12}>12 por página</option>
+                    <option value={18}>18 por página</option>
+                  </select>
+                </div>
               </div>
             )}
 
@@ -357,18 +418,19 @@ export default function BuscaTutores() {
                 {tutorsList.map((tutor) => (
                   <TutorCard
                     key={tutor.id}
+                    id={tutor.id}
                     name={tutor.nomePerfil}
                     photoURL={tutor.fotoURL}
                     location={`${tutor.cidade}, ${tutor.estado}`}
-                    rating={5.0}
-                    totalRatings={450}
+                    rating={Number(tutor.notaAvaliacao)}
+                    totalRatings={Number(tutor.totalAvaliacoes)}
                     subjects={tutor.areas.map((area) => area.nomeArea)}
-                    bio="aa"
+                    bio={tutor.sobremim}
                   />
                 ))}
               </div>
             )}
-            {tutorsList && tutorsList?.length >= 1 && loadingTutors && (
+            {loadingTutors && (
               <ClipLoader
                 color="#64748b"
                 className="relative left-[47%]"
@@ -376,27 +438,85 @@ export default function BuscaTutores() {
               />
             )}
 
+            {resultsCount && resultsCount > 0 && !loadingTutors && (
+              <div className="
+                bg-white border 
+                border-slate-100 
+                shadow-sm 
+                rounded-2xl 
+                p-4 
+                mb-12 
+                flex 
+                justify-center 
+                items-center 
+                gap-6 
+                max-w-md
+                mx-auto
+              ">
+                <button
+                  disabled={!hasPrevious}
+                  onClick={handlePrevPage}
+                  className={`
+                    p-2 
+                    rounded-xl 
+                    border-2 
+                    transition-all 
+                    flex 
+                    items-center 
+                    justify-center 
+                    ${hasPrevious ? "border-slate-300 text-slate-600 hover:bg-slate-100 active:scale-95 cursor-pointer" : "border-slate-100 text-slate-300 cursor-not-allowed"}`}
+                >
+                  <ArrowBackIosNewIcon sx={{ fontSize: 16 }} />
+                </button>
+
+                <span className="
+                  text-slate-600 
+                  font-black 
+                  text-sm 
+                  select-none
+                ">
+                  Página {currentPage}
+                </span>
+
+                <button
+                  disabled={!hasNext}
+                  onClick={handleNextPage}
+                  className={`
+                    p-2 
+                    rounded-xl 
+                    border-2 
+                    transition-all 
+                    flex 
+                    items-center 
+                    justify-center 
+                    ${hasNext ? "border-slate-300 text-slate-600 hover:bg-slate-100 active:scale-95 cursor-pointer" : "border-slate-100 text-slate-300 cursor-not-allowed"}`}
+                >
+                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+                </button>
+              </div>
+            )}
+
             <Link href={"/recomendacoes"}>
               <button
                 className="
-              group 
-              flex 
-              items-center 
-              gap-3 
-          bg-white 
-          border-2 
-          border-indigo-100 
-          text-indigo-600 
-          font-black 
-          py-3
-          px-6 
-          rounded-3xl 
-          hover:bg-indigo-800 
-          hover:text-white 
-          transition-all 
-          shadow-xl 
-          shadow-indigo-100
-          "
+                group 
+                flex 
+                items-center 
+                gap-3 
+                bg-white 
+                border-2 
+                border-indigo-100 
+                text-indigo-600 
+                font-black 
+                py-3
+                px-6 
+                rounded-3xl 
+                hover:bg-indigo-800 
+                hover:text-white 
+                transition-all 
+                shadow-xl 
+                shadow-indigo-100
+              "
               >
                 Ver Recomendações
                 <ArrowForwardIosIcon sx={{ fontSize: 14 }} />
