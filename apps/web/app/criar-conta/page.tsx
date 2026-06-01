@@ -48,6 +48,11 @@ const registerSchema = z
       .max(256, "A senha só pode possuir até 256 caracteres.")
       .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
       .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+    passwordConfirm: z
+      .string()
+      .min(10, "A senha deve possuir 10 ou mais caracteres.")
+      .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
+      .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
     nomePerfil: z
       .string()
       .min(1, "É obrigatório informar seu nome.")
@@ -88,11 +93,10 @@ const registerSchema = z
         (file) => file instanceof File,
         "A foto de perfil é obrigatória.",
       ),
-    passwordConfirm: z
+    sobreMim: z
       .string()
-      .min(10, "A senha deve possuir 10 ou mais caracteres.")
-      .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
-      .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+      .max(500, "O texto só pode conter até 500 caracteres.")
+      .nullable(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "As senhas devem ser iguais.",
@@ -230,6 +234,32 @@ export default function CreateAccountPage(): React.ReactNode {
     formData.append("cidade", rest.cidade);
     formData.append("aniversario", rest.aniversario || "");
     formData.append("foto", rest.foto);
+
+    if (rest.sobreMim) {
+      formData.append("sobremim", rest.sobreMim);
+    }
+
+    if (
+      (specialties.length >= 1 && availabilities.length == 0) ||
+      (specialties.length == 0 && availabilities.length >= 1)
+    ) {
+      showNotification(
+        "É necessário ter área, especialidade e disponibilidade para ser tutor!",
+        "error",
+      );
+      return;
+    }
+
+    if (specialties.length >= 1 && availabilities.length >= 1) {
+      const specialtiesIds = specialties.map((specialty) => specialty.id);
+
+      specialtiesIds.forEach((id) => {
+        formData.append("especialidades", JSON.stringify(id));
+      });
+      formData.append("agendas", JSON.stringify(availabilities));
+    }
+
+    console.log(specialties, availabilities);
 
     const result = await CreateAccountAction(formData);
 
@@ -924,6 +954,59 @@ export default function CreateAccountPage(): React.ReactNode {
                     </div>
                   </div>
                   <div></div>
+                  <div
+                    className="
+                    mt-4
+                    lg:mt-0
+                    flex
+                    flex-col 
+                  "
+                  >
+                    <label
+                      className="
+                      flex
+                      flex-col 
+                      pl-6 
+                      w-full
+                      gap-2
+                    "
+                    >
+                      <span className="font-semibold">Sobre Mim</span>
+                      <textarea
+                        maxLength={500}
+                        {...register("sobreMim")}
+                        className="
+                          resize-none
+                          w-[calc(100%-9%)]
+                          h-[150px]
+                          lg:w-[660px]
+                          lg:h-[200px]
+                          rounded-md
+                          border-2
+                          border-slate-300
+                        "
+                      />
+                    </label>
+                    <div
+                      className="
+                        pl-6
+                        mt-4
+                      "
+                    >
+                      <span className="
+                        text-xs 
+                        2xl:text-sm 
+                        text-slate-400
+                      ">
+                        {(watch("sobreMim") || "").length} / 500 caracteres restantes.
+                      </span>
+                      {errors.sobreMim && (
+                        <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                          {errors.sobreMim.message}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </form>
                 <div className="flex justify-between p-4">
                   <Link
