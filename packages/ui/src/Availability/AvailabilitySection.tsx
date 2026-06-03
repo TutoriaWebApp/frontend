@@ -31,21 +31,31 @@ export function AvailabilitySection({
   const daysStatus = useMemo(() => {
     return DAYS_MAP.map((day) => {
       const slotsForDay = availabilities.filter((slot) => slot.dia === day.key);
+      const hasSlots = slotsForDay.length > 0;
 
       return {
         key: day.key,
         name: day.name,
-        isAvailable: true,
-        hasSlots: slotsForDay.length > 0,
+        isAvailable: hasSlots,
+        hasSlots: hasSlots,
       };
     });
   }, [availabilities]);
 
+  useMemo(() => {
+    const currentDayValid = daysStatus.find(
+      (d) => d.key === selectedDayKey,
+    )?.hasSlots;
+    if (!currentDayValid) {
+      const firstAvailableDay = daysStatus.find((d) => d.hasSlots);
+      if (firstAvailableDay) {
+        setSelectedDayKey(firstAvailableDay.key);
+      }
+    }
+  }, [daysStatus, selectedDayKey]);
+
   const currentDaySlots = useMemo(() => {
-    return availabilities.filter((slot) => {
-      const diaStr = typeof slot.dia === "string" ? slot.dia : slot.dia;
-      return diaStr === selectedDayKey;
-    });
+    return availabilities.filter((slot) => slot.dia === selectedDayKey);
   }, [availabilities, selectedDayKey]);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -69,7 +79,14 @@ export function AvailabilitySection({
           <DaySelector
             days={daysStatus}
             selectedDay={selectedDayKey}
-            onSelect={setSelectedDayKey}
+            onSelect={(dayKey) => {
+              const dayTarget = daysStatus.find((d) => d.key === dayKey);
+
+              if (dayTarget?.isAvailable) {
+                setSelectedDayKey(dayKey as TimeSlot["dia"]);
+              }
+              
+            }}
           />
 
           {/* Componente de Horários e Botão de Ação */}
@@ -189,7 +206,7 @@ export function AvailabilitySection({
           </div>
         </div>
       </section>
-      <ScheduleModal isOpen={modalIsOpen} onClose={closeModal} />
+      <ScheduleModal isOpen={modalIsOpen} onClose={closeModal} availabilities={availabilities} />
     </>
   );
 }

@@ -32,6 +32,7 @@ export function DaySelector({ days, selectedDay, onSelect }: DaySelectorProps) {
           <button
             key={day.key}
             type="button"
+            disabled={!day.isAvailable}
             onClick={() => onSelect(day.key)}
             className={`
               relative
@@ -56,6 +57,11 @@ export function DaySelector({ days, selectedDay, onSelect }: DaySelectorProps) {
                   ? "bg-white border-indigo-600 text-slate-800 shadow-md shadow-indigo-50"
                   : "bg-white border-slate-200 text-slate-500 hover:border-slate-400"
               }
+              disabled:cursor-not-allowed
+							disabled:opacity-40
+							disabled:bg-slate-50
+							disabled:border-slate-200
+							disabled:text-slate-300
             `}
           >
             {/* Container flex para alinhar o texto e a bolinha horizontalmente */}
