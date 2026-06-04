@@ -2,6 +2,8 @@ import {
   BackendResponse,
   CreateUserResponse,
   GetAreaResult,
+  GetSpecificTutorResult,
+  GetSpecificUserResult,
   UserDataFailResult,
   UserDataSuccessResult,
 } from "./types/user";
@@ -143,6 +145,76 @@ export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> 
     return successBecomeTutor;
   } else {
     const failedRequest: GetScheduleResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetSpecificUserData(userId?: number): Promise<GetSpecificUserResult> {
+  let URL = `${process.env.backendBaseURL}/usuarios/${userId}`;
+
+  const cookieStore = await cookies();
+
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+      headers: {
+        Cookie: `access_token=${accessToken}; csrftoken=${csrfToken}`,
+      },
+    },
+    "Request Specific User Data (Server)",
+  );
+
+  if (res.success) {
+    const successUserData: GetSpecificUserResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return successUserData;
+  } else {
+    const failedRequest: GetSpecificUserResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetSpecificTutor(tutorId: number): Promise<GetSpecificTutorResult> {
+  let URL = `${process.env.backendBaseURL}/tutores/${tutorId}`;
+
+  const cookieStore = await cookies();
+
+  const accessToken = cookieStore.get("access_token")?.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+      headers: {
+        Cookie: `access_token=${accessToken}; csrftoken=${csrfToken}`,
+      },
+    },
+    "Request Specific Tutor Data (Server)",
+  );
+
+  if (res.success) {
+    const successTutorData: GetSpecificTutorResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return successTutorData;
+  } else {
+    const failedRequest: GetSpecificTutorResult = {
       success: false,
       status: res.status,
     };
