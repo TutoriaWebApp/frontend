@@ -44,6 +44,9 @@ export default async function ProfilePage({
     tutorData = resultsTutor.data!;
     specialties = resultsTutor.data?.especialidades!;
 
+    tutorAreas = resultsTutor.data!.areas;
+    specialties = resultsTutor.data!.especialidades;
+
     const resultsSchedule = await GetSchedule(resultsTutor.data!.id!);
 
     if (resultsSchedule.success) {
@@ -332,6 +335,8 @@ export default async function ProfilePage({
                 <AvailabilitySection
                   availabilities={availabilities}
                   ownProfile={false}
+                  areas={tutorAreas}
+                  specialties={specialties}
                 />
               </section>
             )}

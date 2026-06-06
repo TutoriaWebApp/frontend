@@ -6,15 +6,20 @@ import { TimePicker } from "./TimePicker/TimePicker";
 import { ScheduleModal } from "../Modals/ScheduleModal/ScheduleModal";
 
 import { TimeSlot } from "@repo/services/availabilityTypes";
+import { Specialty, TutorArea } from "@repo/services/userTypes";
 
 interface AvailabilitySectionProps {
   availabilities: TimeSlot[];
   ownProfile: boolean;
+  areas?: TutorArea[];
+  specialties?: Specialty[];
 }
 
 export function AvailabilitySection({
   availabilities,
   ownProfile,
+  areas,
+  specialties
 }: AvailabilitySectionProps) {
   const DAYS_MAP = [
     { key: "DOM", name: "Domingo" },
@@ -206,7 +211,7 @@ export function AvailabilitySection({
           </div>
         </div>
       </section>
-      <ScheduleModal isOpen={modalIsOpen} onClose={closeModal} availabilities={availabilities} />
+      <ScheduleModal isOpen={modalIsOpen} onClose={closeModal} availabilities={availabilities} areas={areas!} specialties={specialties!}/>
     </>
   );
 }

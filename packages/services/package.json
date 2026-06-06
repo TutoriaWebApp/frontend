@@ -10,9 +10,11 @@
 
     "./authAction": "./src/actions/auth.ts",
     "./userAction": "./src/actions/user.ts",
+    "./solicitationsAction": "./src/actions/solicitations.ts",
 
     "./userServer": "./src/userServer.ts",
     "./userClient": "./src/userClient.ts",
+    "./solicitations": "./src/solicitations.ts",
 
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
