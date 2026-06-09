@@ -15,6 +15,7 @@
     "./userServer": "./src/userServer.ts",
     "./userClient": "./src/userClient.ts",
     "./solicitations": "./src/solicitations.ts",
+    "./sessions": "./src/sessions.ts",
 
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
