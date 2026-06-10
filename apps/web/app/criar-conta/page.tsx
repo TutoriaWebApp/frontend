@@ -213,7 +213,7 @@ export default function CreateAccountPage(): React.ReactNode {
     ]);
 
     if (isValid) {
-      setStep(2);
+      setStep(3);
     } else {
       showNotification(
         "Preencha todos os campos obrigatórios corretamente.",
@@ -395,7 +395,7 @@ export default function CreateAccountPage(): React.ReactNode {
               </div>
 
               {/* Etapa 2: Perfil */}
-              <div
+              {/* <div
                 className="
                 relative 
                 z-10 
@@ -433,7 +433,7 @@ export default function CreateAccountPage(): React.ReactNode {
                 >
                   Áreas de Interesse (Opcional)
                 </span>
-              </div>
+              </div> */}
 
               {/* Etapa 3: Perfil de Tutor */}
               <div
@@ -463,14 +463,14 @@ export default function CreateAccountPage(): React.ReactNode {
                         : "bg-white border-slate-300 text-slate-400"
                     }`}
                 >
-                  3
+                2
                 </div>
                 <span
                   className={`
                       text-xs 
                       font-bold 
                       transition-all 
-                      ${step >= 3 ? "text-indigo-600" : "text-slate-400"}`}
+                      ${step >= 2 ? "text-indigo-600" : "text-slate-400"}`}
                 >
                   Perfil como Tutor (Opcional)
                 </span>
@@ -1393,7 +1393,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     "
                   >
                     <ArrowBackIcon className="mr-1" />
-                    <span>Voltar para o Passo 2</span>
+                    <span>Voltar para o Passo 1</span>
                   </div>
                   <button
                     className="
