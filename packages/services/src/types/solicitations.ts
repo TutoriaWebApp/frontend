@@ -9,6 +9,14 @@ export interface SolicitationPostData {
 
 export interface SolicitationGetData {
   id: number;
+  nomeArea: string;
+  nomeEspecialidade: string;
+  nomeUsuario: string;
+  nomeTutor: string;
+  horarioInicio: string;
+  horarioFim: string;
+  fotoAprendizURL: string;
+  fotoTutorURL: string;
   dataCriacao: string;
   dataPretendida: string;
   validade: string;
@@ -27,5 +35,10 @@ export interface SolicitationPostResult {
 export interface SolicitationGetResult {
   success: boolean;
   status: number;
-  data?: SolicitationGetData[];
+  data?: {
+    count: number;
+    next: string;
+    previous: string;
+    results: [SolicitationGetData];
+  };
 }

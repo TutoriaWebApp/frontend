@@ -7,12 +7,16 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { ClipLoader } from "react-spinners";
 
 import { SessionGetData } from "@repo/services/sessionTypes";
+import { TutorArea, Specialty } from "@repo/services/userTypes";
+import { SolicitationGetData } from "@repo/services/solicitationTypes";
 
 import { SolicitationCard } from "@repo/ui/SolicitationCard/SolicitationCard";
+
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+
 import { GetSessions } from "@repo/services/sessions";
 import { GetAreas, GetSpecialties } from "@repo/services/userClient";
-import { TutorArea, Specialty } from "@repo/services/userTypes";
+import { GetSolicitations } from "@repo/services/solicitations";
 
 export default function GerenciadorSolicitacoes() {
   const { showNotification } = useContext(NotificationContext);
@@ -26,6 +30,9 @@ export default function GerenciadorSolicitacoes() {
   >("");
 
   const [sessionsList, setSessionsList] = useState<SessionGetData[]>([]);
+  const [solicitationsList, setSolicitationsList] = useState<
+    SolicitationGetData[]
+  >([]);
   const [globalAreas, setGlobalAreas] = useState<TutorArea[]>([]);
   const [globalSpecialties, setGlobalSpecialties] = useState<Specialty[]>([]);
   const [resultsCount, setResultsCount] = useState<number | null>(null);
@@ -74,11 +81,13 @@ export default function GerenciadorSolicitacoes() {
     });
   }, [globalSpecialties, sessionsList, queryAreaId]);
 
-  const fetchSessionsPage = async (
+  const fetchSessions = async (
     page: number,
     currentSize: number,
     targetTab: string,
   ) => {
+    setSolicitationsList([]);
+
     if (
       targetTab == "" ||
       targetTab == "solicitacoes_tutor" ||
@@ -117,32 +126,115 @@ export default function GerenciadorSolicitacoes() {
     setLoading(false);
   };
 
+  const fetchSolicitations = async (
+    page: number,
+    currentSize: number,
+    targetTab: string,
+  ) => {
+    setSessionsList([]);
+
+    if (
+      targetTab == "" ||
+      targetTab == "sessoes_tutor" ||
+      targetTab == "sessoes_aprendiz"
+    ) {
+      return;
+    }
+
+    if (targetTab == "solicitacoes_tutor") {
+      targetTab = "tutor";
+    } else {
+      targetTab = "aprendiz";
+    }
+    setLoading(true);
+    const res = await GetSolicitations(
+      queryAreaId,
+      querySpecialtyId,
+      queryOrder,
+      targetTab,
+      page,
+      currentSize,
+    );
+
+    if (res.success && res.data) {
+      setSolicitationsList(res.data.results);
+      setResultsCount(res.data.count);
+      setHasNext(res.data.next !== null);
+      setHasPrevious(res.data.previous !== null);
+      setCurrentPage(page);
+    } else {
+      showNotification(
+        "Não foi possível carregar o histórico de solicitações.",
+        "error",
+      );
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     setQueryAreaId(undefined);
     setQuerySpecialtyId(undefined);
-    fetchSessionsPage(1, pageSize, activeTab);
+    if (activeTab == "sessoes_aprendiz" || activeTab == "sessoes_tutor") {
+      fetchSessions(1, pageSize, activeTab);
+    } else if (
+      activeTab == "solicitacoes_aprendiz" ||
+      activeTab == "solicitacoes_tutor"
+    ) {
+      fetchSolicitations(1, pageSize, activeTab);
+    }
   }, [activeTab]);
 
   const handleFilterSubmit = async () => {
-    await fetchSessionsPage(1, pageSize, activeTab);
+    if (activeTab == "sessoes_aprendiz" || activeTab == "sessoes_tutor") {
+      await fetchSessions(1, pageSize, activeTab);
+    } else if (
+      activeTab == "solicitacoes_aprendiz" ||
+      activeTab == "solicitacoes_tutor"
+    ) {
+      fetchSolicitations(1, pageSize, activeTab);
+    }
   };
 
   const handleNextPage = async () => {
-    if (hasNext) {
-      await fetchSessionsPage(currentPage + 1, pageSize, activeTab);
+    if (
+      (hasNext && activeTab == "sessoes_aprendiz") ||
+      activeTab == "sessoes_tutor"
+    ) {
+      await fetchSessions(currentPage + 1, pageSize, activeTab);
+    } else if (
+      (hasNext && activeTab == "solicitacoes_aprendiz") ||
+      activeTab == "solicitacoes_tutor"
+    ) {
+      await fetchSolicitations(currentPage + 1, pageSize, activeTab);
     }
   };
 
   const handlePrevPage = async () => {
-    if (hasPrevious) {
-      await fetchSessionsPage(currentPage - 1, pageSize, activeTab);
+    if (
+      (hasPrevious && activeTab == "sessoes_aprendiz") ||
+      activeTab == "sessoes_tutor"
+    ) {
+      await fetchSessions(currentPage - 1, pageSize, activeTab);
+    } else if (
+      (hasPrevious && activeTab == "solicitacoes_aprendiz") ||
+      activeTab == "solicitacoes_tutor"
+    ) {
+      await fetchSolicitations(currentPage - 1, pageSize, activeTab);
     }
   };
 
   const handlePageSizeChange = async (newSize: number) => {
     setPageSize(newSize);
-    if (resultsCount !== null) {
-      await fetchSessionsPage(1, newSize, activeTab);
+    if (
+      (resultsCount !== null && activeTab == "sessoes_aprendiz") ||
+      activeTab == "sessoes_tutor"
+    ) {
+      await fetchSessions(1, newSize, activeTab);
+    } else if (
+      (resultsCount !== null && activeTab == "solicitacoes_aprendiz") ||
+      activeTab == "solicitacoes_tutor"
+    ) {
+      await fetchSolicitations(1, newSize, activeTab);
     }
   };
 
@@ -493,19 +585,34 @@ export default function GerenciadorSolicitacoes() {
 					font-medium
 				"
                 >
-                  {(resultsCount > 0 && activeTab == "sessoes_aprendiz") ||
-                    (activeTab == "sessoes_tutor" && (
+                  {(resultsCount > 0 && activeTab == "sessoes_aprendiz" ||
+                    activeTab == "sessoes_tutor" && (
                       <>
                         Foram encontradas{" "}
                         <span
                           className="
-					  	font-bold 
-						text-slate-800
-					  "
+                            font-bold 
+                          text-slate-800
+					              "
                         >
                           {resultsCount}
                         </span>{" "}
                         sessões confirmadas.
+                      </>
+                    ))}
+                  {(resultsCount > 0 && activeTab == "solicitacoes_aprendiz") ||
+                    (activeTab == "solicitacoes_tutor" && (
+                      <>
+                        Foram encontradas{" "}
+                        <span
+                          className="
+                            font-bold 
+                          text-slate-800
+					              "
+                        >
+                          {resultsCount}
+                        </span>{" "}
+                        solicitações.
                       </>
                     ))}
                   {resultsCount == 0 && (
@@ -517,15 +624,15 @@ export default function GerenciadorSolicitacoes() {
 
                 <div
                   className="
-					flex 
-					items-center 
-					gap-2 
-					text-slate-600 
-					font-semibold 
-					whitespace-nowrap 
-					text-sm
-					2xl:text-base
-				"
+                    flex 
+                    items-center 
+                    gap-2 
+                    text-slate-600 
+                    font-semibold 
+                    whitespace-nowrap 
+                    text-sm
+                    2xl:text-base
+                "
                 >
                   <span>Exibir:</span>
                   <select
@@ -565,34 +672,70 @@ export default function GerenciadorSolicitacoes() {
 				mb-12
 			"
             >
-              {sessionsList.length > 0 && activeTab == "sessoes_aprendiz" &&
+              {sessionsList.length > 0 &&
+                activeTab == "sessoes_aprendiz" &&
                 sessionsList.map((session) => (
                   <SolicitationCard
                     key={session.id}
-					area={session.nomeArea}
-					speciality={session.nomeEspecialidade}
-					photoURL={session.fotoTutorURL}
-					date={session.dataSessao}
-					name={session.nomeTutor}
-					startTime={session.horarioInicio}
-					endTime={session.horarioFim}
-					status={"Aceita"}
-					mode={activeTab}
+                    area={session.nomeArea}
+                    speciality={session.nomeEspecialidade}
+                    photoURL={session.fotoTutorURL}
+                    date={session.dataSessao}
+                    name={session.nomeTutor}
+                    startTime={session.horarioInicio}
+                    endTime={session.horarioFim}
+                    status={"ACEITO"}
+                    mode={activeTab}
                   />
                 ))}
-			  {sessionsList.length > 0 && activeTab == "sessoes_tutor" &&
+              {sessionsList.length > 0 &&
+                activeTab == "sessoes_tutor" &&
                 sessionsList.map((session) => (
                   <SolicitationCard
                     key={session.id}
-					area={session.nomeArea}
-					speciality={session.nomeEspecialidade}
-					photoURL={session.fotoAprendizURL}
-					date={session.dataSessao}
-					name={session.nomeUsuario}
-					startTime={session.horarioInicio}
-					endTime={session.horarioFim}
-					status={"Aceita"}
-					mode={activeTab}
+                    area={session.nomeArea}
+                    speciality={session.nomeEspecialidade}
+                    photoURL={session.fotoAprendizURL}
+                    date={session.dataSessao}
+                    name={session.nomeUsuario}
+                    startTime={session.horarioInicio}
+                    endTime={session.horarioFim}
+                    status={"Aceita"}
+                    mode={activeTab}
+                  />
+                ))}
+              {solicitationsList.length > 0 &&
+                activeTab == "solicitacoes_aprendiz" &&
+                solicitationsList.map((solicitation) => (
+                  <SolicitationCard
+                    key={solicitation.id}
+                    area={solicitation.nomeArea}
+                    speciality={solicitation.nomeEspecialidade}
+                    photoURL={solicitation.fotoTutorURL}
+                    date={solicitation.dataPretendida}
+                    name={solicitation.nomeTutor}
+                    startTime={solicitation.horarioInicio}
+                    endTime={solicitation.horarioFim}
+                    status={solicitation.estado}
+                    mode={activeTab}
+                  />
+                ))}
+              {solicitationsList.length > 0 &&
+                activeTab == "solicitacoes_tutor" &&
+                solicitationsList.map((solicitation) => (
+                  <SolicitationCard
+                    key={solicitation.id}
+                    area={solicitation.nomeArea}
+                    speciality={solicitation.nomeEspecialidade}
+                    photoURL={solicitation.fotoAprendizURL}
+                    date={solicitation.dataPretendida}
+                    name={solicitation.nomeUsuario}
+                    startTime={solicitation.horarioInicio}
+                    endTime={solicitation.horarioFim}
+                    expirationTime={solicitation.validade}
+                    recurrent={solicitation.recorrente}
+                    status={solicitation.estado}
+                    mode={activeTab}
                   />
                 ))}
             </div>

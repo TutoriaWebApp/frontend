@@ -8,6 +8,8 @@ interface SolicitationCardProps {
   name: string;
   startTime: string;
   endTime: string;
+  expirationTime?: string;
+  recurrent?: boolean;
   status?: string;
   mode: string;
 }
@@ -20,6 +22,8 @@ export const SolicitationCard = ({
   name,
   startTime,
   endTime,
+  expirationTime,
+  recurrent,
   status,
   mode,
 }: SolicitationCardProps) => (
@@ -132,7 +136,7 @@ export const SolicitationCard = ({
         Horário de Início:{" "}
         <span className="text-slate-800 font-bold">{`${startTime[0]}${startTime[1]}:${startTime[3]}${startTime[4]}`}</span>
       </p>
-            <p
+      <p
         className="
           text-base 
           text-slate-500 
@@ -142,6 +146,22 @@ export const SolicitationCard = ({
         Horário de Fim:{" "}
         <span className="text-slate-800 font-bold">{`${endTime[0]}${endTime[1]}:${endTime[3]}${endTime[4]}`}</span>
       </p>
+      {mode == "solicitacoes_tutor" && (
+        <p
+          className="
+        text-base 
+        text-slate-500 
+        font-medium
+        "
+        >
+          Recorrente:{" "}
+          {recurrent == true ? (
+            <span className="text-slate-800 font-bold">Sim</span>
+          ) : (
+            <span className="text-slate-800 font-bold">Não</span>
+          )}
+        </p>
+      )}
       <p
         className="
             text-base 
@@ -151,6 +171,25 @@ export const SolicitationCard = ({
       >
         Status: <span className="text-slate-800 font-bold">{status}</span>
       </p>
+      {mode == "solicitacoes_tutor" && (
+        <p
+          className="
+          text-base 
+          text-red-500 
+          text-center
+        "
+        >
+          Restam{" "}
+          {expirationTime &&
+            <>
+            <span className="text-red-600 font-bold">
+              {`${expirationTime[0]}${expirationTime[1]} horas e ${expirationTime[3]}${expirationTime[4]} minutos`}
+            </span>{" "}
+            para responder
+            </>
+          }
+        </p>
+      )}
     </div>
 
     {mode == "sessoes_tutor" && (
@@ -174,7 +213,7 @@ export const SolicitationCard = ({
         Cancelar
       </button>
     )}
-    {mode == "minhas" && (
+    {/* {mode == "minhas" && (
       <button
         className="
         mt-6
@@ -194,8 +233,8 @@ export const SolicitationCard = ({
       >
         Cancelar
       </button>
-    )}
-    {mode == "pendentes" && (
+    )} */}
+    {mode == "solicitacoes_tutor" && (
       <div className="flex gap-4">
         <button
           className="

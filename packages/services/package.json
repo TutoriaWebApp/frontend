@@ -20,7 +20,8 @@
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
     "./availabilityTypes": "./src/types/availability.ts",
-    "./sessionTypes": "./src/types/sessions.ts"
+    "./sessionTypes": "./src/types/sessions.ts",
+    "./solicitationTypes": "./src/types/solicitations.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",

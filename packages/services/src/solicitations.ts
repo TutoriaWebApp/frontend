@@ -49,34 +49,53 @@ export async function CreateSolicitation(
   }
 }
 
-export async function GetSolicitations(): Promise<SolicitationGetResult>{
-  const baseURL = `${process.env.backendBaseURL}/solicitacoes/`;
+export async function GetSolicitations(
+  areaId?: number,
+  specialtyId?: number,
+  order?: string,
+  type?: string,
+  pageNumber: number = 1,
+  page_size: number = 6,
+): Promise<SolicitationGetResult> {
+  let URL = `${process.env.backendBaseURL}/solicitacoes/?page=${pageNumber}`;
+
+  if (areaId) {
+    URL += `&area=${areaId}`;
+  }
+  if (specialtyId) {
+    URL += `&especialidade=${specialtyId}`;
+  }
+  if (order) {
+    URL += `&ordem=${order}`;
+  }
+  if (type) {
+    URL += `&tipo=${type}`;
+  }
   
-  try{
+  URL += `&page_size=${page_size}`;
+  try {
     const res = await authRequestWrapper(
-      baseURL,
+      URL,
       { method: "GET" },
       "Request Solicitations Data",
     );
 
-    if(res.success){
+    if (res.success) {
       return {
         success: true,
         status: res.status,
-        data: res.data
-      }
-    }
-    else{
-      return{
+        data: res.data,
+      };
+    } else {
+      return {
         success: false,
-        status: res.status
-      }
+        status: res.status,
+      };
     }
-  }
-  catch(e){
-    return{
+  } catch (e) {
+    return {
       success: false,
-      status: 500
-    }
+      status: 500,
+    };
   }
 }
