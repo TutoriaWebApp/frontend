@@ -19,7 +19,8 @@
 
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
-    "./availabilityTypes": "./src/types/availability.ts"
+    "./availabilityTypes": "./src/types/availability.ts",
+    "./sessionTypes": "./src/types/sessions.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",
