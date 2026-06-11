@@ -42,3 +42,8 @@ export interface SolicitationGetResult {
     results: [SolicitationGetData];
   };
 }
+
+export interface SolicitationPatchResult {
+  success: boolean;
+  status: number;
+}

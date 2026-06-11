@@ -2,6 +2,7 @@
 
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListOffIcon from "@mui/icons-material/FilterListOff";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { ClipLoader } from "react-spinners";
@@ -17,6 +18,9 @@ import { NotificationContext } from "@repo/ui/contexts/NotificationContext/Notif
 import { GetSessions } from "@repo/services/sessions";
 import { GetAreas, GetSpecialties } from "@repo/services/userClient";
 import { GetSolicitations } from "@repo/services/solicitations";
+
+import AcceptSolicitationModal from "@repo/ui/acceptSolicitationModal";
+import RejectSolicitationModal from "@repo/ui/rejectSolicitationModal";
 
 export default function GerenciadorSolicitacoes() {
   const { showNotification } = useContext(NotificationContext);
@@ -68,23 +72,37 @@ export default function GerenciadorSolicitacoes() {
   }, []);
 
   const filteredSelectAreas = useMemo(() => {
-    const trackingIds = new Set(sessionsList.map((s) => s.areaId));
+    let trackingIds: Set<number> = new Set();
+    if (sessionsList.length > 0) {
+      trackingIds = new Set(sessionsList.map((s) => s.areaId));
+    } else if (solicitationsList.length > 0) {
+      trackingIds = new Set(solicitationsList.map((s) => s.areaId));
+    }
     return globalAreas.filter((area) => trackingIds.has(area.id));
-  }, [globalAreas, sessionsList]);
+  }, [globalAreas, sessionsList, solicitationsList]);
 
   const filteredSelectSpecialties = useMemo(() => {
-    const trackingIds = new Set(sessionsList.map((s) => s.especialidadeId));
+    let trackingIds: Set<number> = new Set();
+
+    if (sessionsList.length > 0) {
+      trackingIds = new Set(sessionsList.map((s) => s.especialidadeId));
+    } else if (solicitationsList.length > 0) {
+      trackingIds = new Set(solicitationsList.map((s) => s.especialidadeId));
+    }
     return globalSpecialties.filter((spec) => {
       const matchSession = trackingIds.has(spec.id);
       const matchArea = !queryAreaId || spec.areaId === queryAreaId;
       return matchSession && matchArea;
     });
-  }, [globalSpecialties, sessionsList, queryAreaId]);
+  }, [globalSpecialties, sessionsList, queryAreaId, solicitationsList]);
 
   const fetchSessions = async (
     page: number,
     currentSize: number,
     targetTab: string,
+    overrideArea?: number,
+    overrideSpecialty?: number,
+    overrideOrder?: string,
   ) => {
     setSolicitationsList([]);
 
@@ -102,10 +120,16 @@ export default function GerenciadorSolicitacoes() {
       targetTab = "aprendiz";
     }
     setLoading(true);
+
+    const area = overrideArea !== undefined ? undefined : queryAreaId;
+    const specialty =
+      overrideSpecialty !== undefined ? undefined : querySpecialtyId;
+    const order = overrideOrder !== undefined ? overrideOrder : queryOrder;
+
     const res = await GetSessions(
-      queryAreaId,
-      querySpecialtyId,
-      queryOrder,
+      area,
+      specialty,
+      order,
       targetTab,
       page,
       currentSize,
@@ -130,6 +154,9 @@ export default function GerenciadorSolicitacoes() {
     page: number,
     currentSize: number,
     targetTab: string,
+    overrideArea?: number,
+    overrideSpecialty?: number,
+    overrideOrder?: string,
   ) => {
     setSessionsList([]);
 
@@ -147,10 +174,16 @@ export default function GerenciadorSolicitacoes() {
       targetTab = "aprendiz";
     }
     setLoading(true);
+
+    const area = overrideArea !== undefined ? undefined : queryAreaId;
+    const specialty =
+      overrideSpecialty !== undefined ? undefined : querySpecialtyId;
+    const order = overrideOrder !== undefined ? overrideOrder : queryOrder;
+
     const res = await GetSolicitations(
-      queryAreaId,
-      querySpecialtyId,
-      queryOrder,
+      area,
+      specialty,
+      order,
       targetTab,
       page,
       currentSize,
@@ -193,6 +226,33 @@ export default function GerenciadorSolicitacoes() {
     ) {
       fetchSolicitations(1, pageSize, activeTab);
     }
+  };
+
+  const handleClearFilters = async () => {
+    setQueryAreaId(undefined);
+    setQuerySpecialtyId(undefined);
+    setQueryOrder("desc");
+
+    if (activeTab == "sessoes_aprendiz" || activeTab == "sessoes_tutor") {
+      await fetchSessions(
+        1,
+        pageSize,
+        activeTab,
+        null as any,
+        null as any,
+        "desc",
+      );
+    } else {
+      await fetchSolicitations(
+        1,
+        pageSize,
+        activeTab,
+        null as any,
+        null as any,
+        "desc",
+      );
+    }
+    showNotification("Filtros limpos com sucesso!", "success");
   };
 
   const handleNextPage = async () => {
@@ -248,13 +308,13 @@ export default function GerenciadorSolicitacoes() {
     >
       <main
         className="
-	  	p-6 
+		p-6 
 		md:p-12 
 		max-w-7xl 
 		mx-auto 
 		w-full 
 		flex-1
-	  "
+	"
       >
         <section
           className="
@@ -269,11 +329,11 @@ export default function GerenciadorSolicitacoes() {
         >
           <div
             className="
-		  	p-8 
+			p-8 
 			md:p-10 
 			border-b-2 
 			border-slate-200
-		  "
+		"
           >
             <h1
               className="
@@ -375,16 +435,16 @@ export default function GerenciadorSolicitacoes() {
           {/* Inputs de Controle */}
           <div
             className="
-		  	p-8 
+			p-8 
 			md:p-10 
 			bg-slate-50/30
-		  "
+		"
           >
             <div
               className="
 				grid 
 				grid-cols-1 
-				md:grid-cols-4 
+				md:grid-cols-3 
 				gap-6 
 				items-end
 			"
@@ -412,7 +472,7 @@ export default function GerenciadorSolicitacoes() {
                     setQuerySpecialtyId(undefined);
                   }}
                   className="
-				  	w-full 
+					w-full 
 					bg-white 
 					border-2 
 					border-slate-300 
@@ -458,7 +518,7 @@ export default function GerenciadorSolicitacoes() {
                     )
                   }
                   className="
-				  	w-full 
+					w-full 
 					bg-white 
 					border-2 
 					border-slate-300 
@@ -500,7 +560,7 @@ export default function GerenciadorSolicitacoes() {
                   value={queryOrder}
                   onChange={(e) => setQueryOrder(e.target.value)}
                   className="
-				  	w-full 
+					w-full 
 					bg-white 
 					border-2 
 					border-slate-300 
@@ -520,38 +580,66 @@ export default function GerenciadorSolicitacoes() {
                 </select>
               </div>
 
-              <button
-                onClick={handleFilterSubmit}
-                className="
-					bg-emerald-600 
-					hover:bg-emerald-700 
-					text-white 
-					font-black 
-					py-2.5 
-					rounded-xl 
-					shadow-lg 
-					shadow-emerald-100 
-					transition-all 
-					flex 
-					items-center 
-					justify-center 
-					gap-2 
-					w-full 
-					cursor-pointer
-			  "
-              >
-                <FilterListIcon fontSize="small" />
-                Aplicar Filtros
-              </button>
+              <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                <button
+                  onClick={handleFilterSubmit}
+                  className="
+										bg-emerald-600 
+										hover:bg-emerald-700 
+										text-white 
+										font-black 
+										py-2.5 
+										rounded-xl 
+										shadow-lg 
+										shadow-emerald-100 
+										transition-all 
+										flex 
+										items-center 
+										justify-center 
+										gap-2 
+										w-full 
+										cursor-pointer
+										text-sm
+										2xl:text-base
+									"
+                >
+                  <FilterListIcon fontSize="small" />
+                  Aplicar Filtros
+                </button>
+                <button
+                  onClick={handleClearFilters}
+                  className="
+										bg-slate-200 
+										hover:bg-slate-300 
+										text-slate-600 
+										font-black 
+										py-2.5 
+										rounded-xl 
+										transition-all 
+										flex 
+										items-center 
+										justify-center 
+										gap-2 
+										w-full 
+										cursor-pointer 
+										text-sm 
+										2xl:text-base
+										border 
+										border-slate-300
+									"
+                >
+                  <FilterListOffIcon fontSize="small" />
+                  Limpar Filtros
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Visual de Carregamento ou Listagem */}
         {loading ? (
           <div
             className="
-		  	flex 
+			flex 
 			justify-center 
 			items-center 
 			py-20
@@ -564,7 +652,7 @@ export default function GerenciadorSolicitacoes() {
             {resultsCount !== null && (
               <div
                 className="
-			  	bg-white 
+				bg-white 
 				p-6 
 				rounded-2xl 
 				border 
@@ -585,8 +673,8 @@ export default function GerenciadorSolicitacoes() {
 					font-medium
 				"
                 >
-                  {(resultsCount > 0 && activeTab == "sessoes_aprendiz" ||
-                    activeTab == "sessoes_tutor" && (
+                  {(resultsCount > 0 && activeTab == "sessoes_aprendiz") ||
+                    (activeTab == "sessoes_tutor" && (
                       <>
                         Foram encontradas{" "}
                         <span
@@ -661,7 +749,6 @@ export default function GerenciadorSolicitacoes() {
               </div>
             )}
 
-            {/* Grid dos Cards de Sessões */}
             <div
               className="
 				grid 
@@ -700,7 +787,7 @@ export default function GerenciadorSolicitacoes() {
                     name={session.nomeUsuario}
                     startTime={session.horarioInicio}
                     endTime={session.horarioFim}
-                    status={"Aceita"}
+                    status={"ACEITO"}
                     mode={activeTab}
                   />
                 ))}
@@ -740,11 +827,10 @@ export default function GerenciadorSolicitacoes() {
                 ))}
             </div>
 
-            {/* Paginação */}
             {resultsCount !== null && resultsCount > 0 && (
               <div
                 className="
-			  		bg-white 
+					bg-white 
 					border 
 					border-slate-100 
 					shadow-sm 

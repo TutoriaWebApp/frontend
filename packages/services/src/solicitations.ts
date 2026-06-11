@@ -3,6 +3,7 @@ import {
   SolicitationGetResult,
   SolicitationPostData,
   SolicitationPostResult,
+  SolicitationPatchResult
 } from "./types/solicitations";
 
 export async function CreateSolicitation(
@@ -93,6 +94,90 @@ export async function GetSolicitations(
       };
     }
   } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function AcceptSolicitation(
+  id: number,
+  cookieString: string,
+  csrfTokenString: string,
+): Promise<SolicitationPostResult> {
+  let URL = `${process.env.backendBaseURL}/solicitacoes/aceitar/${id}/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Cookie: cookieString,
+          "X-CSRFToken": csrfTokenString,
+        },
+      },
+      "Accept Solicitation",
+    );
+
+    if (res.success) {
+      return {
+        success: res.success,
+        status: res.status,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    console.error("Accept Solicitation Request Error:", e);
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function RejectSolicitation(
+  id: number,
+  cookieString: string,
+  csrfTokenString: string,
+): Promise<SolicitationPostResult> {
+  let URL = `${process.env.backendBaseURL}/solicitacoes/recusar/${id}/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Cookie: cookieString,
+          "X-CSRFToken": csrfTokenString,
+        },
+      },
+      "Reject Solicitation",
+    );
+
+    if (res.success) {
+      return {
+        success: res.success,
+        status: res.status,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    console.error("Reject Solicitation Request Error:", e);
     return {
       success: false,
       status: 500,
