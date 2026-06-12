@@ -12,6 +12,8 @@ interface SolicitationCardProps {
   recurrent?: boolean;
   status?: string;
   mode: string;
+  onReject?: any;
+  onAccept?: any;
 }
 
 export const SolicitationCard = ({
@@ -26,6 +28,8 @@ export const SolicitationCard = ({
   recurrent,
   status,
   mode,
+  onReject,
+  onAccept
 }: SolicitationCardProps) => (
   <div
     className="
@@ -237,6 +241,7 @@ export const SolicitationCard = ({
     {mode == "solicitacoes_tutor" && (
       <div className="flex gap-4">
         <button
+          onClick={onAccept}
           className="
             mt-6
             mb-2
@@ -256,6 +261,7 @@ export const SolicitationCard = ({
           Confirmar
         </button>
         <button
+          onClick={onReject}
           className="
             mt-6
             mb-2

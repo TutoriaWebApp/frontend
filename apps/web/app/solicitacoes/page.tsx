@@ -19,8 +19,8 @@ import { GetSessions } from "@repo/services/sessions";
 import { GetAreas, GetSpecialties } from "@repo/services/userClient";
 import { GetSolicitations } from "@repo/services/solicitations";
 
-import AcceptSolicitationModal from "@repo/ui/acceptSolicitationModal";
-import RejectSolicitationModal from "@repo/ui/rejectSolicitationModal";
+import {AcceptSolicitationModal} from "@repo/ui/acceptSolicitationModal";
+import { RejectSolicitationModal } from "@repo/ui/rejectSolicitationModal";
 
 export default function GerenciadorSolicitacoes() {
   const { showNotification } = useContext(NotificationContext);
@@ -53,6 +53,14 @@ export default function GerenciadorSolicitacoes() {
   const [queryOrder, setQueryOrder] = useState<string>("desc");
 
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [solicitationToReject, setSolicitationToReject] =
+    useState<SolicitationGetData | null>(null);
+
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [solicitationToAccept, setSolicitationToAccept] =
+    useState<SolicitationGetData | null>(null);
 
   useEffect(() => {
     async function fetchFormBases() {
@@ -296,6 +304,16 @@ export default function GerenciadorSolicitacoes() {
     ) {
       await fetchSolicitations(1, newSize, activeTab);
     }
+  };
+
+  const handleOpenRejectModal = (solicitation: SolicitationGetData) => {
+    setSolicitationToReject(solicitation);
+    setIsRejectModalOpen(true);
+  };
+
+  const handleOpenAcceptModal = (solicitation: SolicitationGetData) => {
+    setSolicitationToAccept(solicitation);
+    setIsAcceptModalOpen(true);
   };
 
   return (
@@ -823,6 +841,8 @@ export default function GerenciadorSolicitacoes() {
                     recurrent={solicitation.recorrente}
                     status={solicitation.estado}
                     mode={activeTab}
+                    onReject={() => handleOpenRejectModal(solicitation)}
+                    onAccept={() => handleOpenAcceptModal(solicitation)}
                   />
                 ))}
             </div>
@@ -886,6 +906,24 @@ export default function GerenciadorSolicitacoes() {
           </>
         )}
       </main>
+      <RejectSolicitationModal
+        isOpen={isRejectModalOpen}
+        onClose={() => {
+          setIsRejectModalOpen(false);
+          setSolicitationToReject(null);
+        }}
+        solicitation={solicitationToReject}
+        setSolicitationsList={setSolicitationsList} 
+      />
+      <AcceptSolicitationModal
+        isOpen={isAcceptModalOpen}
+        onClose={() => {
+          setIsAcceptModalOpen(false);
+          setSolicitationToAccept(null);
+        }}
+        solicitation={solicitationToAccept}
+        setSolicitationsList={setSolicitationsList} 
+      />
     </div>
   );
 }
