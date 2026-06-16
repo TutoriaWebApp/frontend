@@ -19,7 +19,7 @@ import { GetSessions } from "@repo/services/sessions";
 import { GetAreas, GetSpecialties } from "@repo/services/userClient";
 import { GetSolicitations } from "@repo/services/solicitations";
 
-import {AcceptSolicitationModal} from "@repo/ui/acceptSolicitationModal";
+import { AcceptSolicitationModal } from "@repo/ui/acceptSolicitationModal";
 import { RejectSolicitationModal } from "@repo/ui/rejectSolicitationModal";
 
 export default function GerenciadorSolicitacoes() {
@@ -654,6 +654,7 @@ export default function GerenciadorSolicitacoes() {
           </div>
         </section>
 
+        {/* Visual de Carregamento ou Listagem */}
         {loading ? (
           <div
             className="
@@ -685,45 +686,25 @@ export default function GerenciadorSolicitacoes() {
 				gap-4
 			  "
               >
-                <p
-                  className="
-					text-slate-500 
-					font-medium
-				"
-                >
-                  {(resultsCount > 0 && activeTab == "sessoes_aprendiz") ||
-                    (activeTab == "sessoes_tutor" && (
-                      <>
-                        Foram encontradas{" "}
-                        <span
-                          className="
-                            font-bold 
-                          text-slate-800
-					              "
-                        >
-                          {resultsCount}
-                        </span>{" "}
-                        sessões confirmadas.
-                      </>
-                    ))}
-                  {(resultsCount > 0 && activeTab == "solicitacoes_aprendiz") ||
-                    (activeTab == "solicitacoes_tutor" && (
-                      <>
-                        Foram encontradas{" "}
-                        <span
-                          className="
-                            font-bold 
-                          text-slate-800
-					              "
-                        >
-                          {resultsCount}
-                        </span>{" "}
-                        solicitações.
-                      </>
-                    ))}
-                  {resultsCount == 0 && (
+                {/* 🚀 CORRIGIDO: Validação limpa e simplificada para as mensagens de contagem e resultados vazios */}
+                <p className="text-slate-500 font-medium">
+                  {resultsCount === 0 ? (
+                    <span>Nenhum resultado encontrado.</span>
+                  ) : activeTab.startsWith("sessoes_") ? (
                     <>
-                      <span>Nenhum resultado encontrado.</span>
+                      Foram encontradas{" "}
+                      <span className="font-bold text-slate-800">
+                        {resultsCount}
+                      </span>{" "}
+                      sessões confirmadas.
+                    </>
+                  ) : (
+                    <>
+                      Foram encontradas{" "}
+                      <span className="font-bold text-slate-800">
+                        {resultsCount}
+                      </span>{" "}
+                      solicitações.
                     </>
                   )}
                 </p>
@@ -767,6 +748,7 @@ export default function GerenciadorSolicitacoes() {
               </div>
             )}
 
+            {/* Grid dos Cards de Sessões */}
             <div
               className="
 				grid 
@@ -847,6 +829,7 @@ export default function GerenciadorSolicitacoes() {
                 ))}
             </div>
 
+            {/* Paginação */}
             {resultsCount !== null && resultsCount > 0 && (
               <div
                 className="
@@ -913,7 +896,7 @@ export default function GerenciadorSolicitacoes() {
           setSolicitationToReject(null);
         }}
         solicitation={solicitationToReject}
-        setSolicitationsList={setSolicitationsList} 
+        setSolicitationsList={setSolicitationsList}
       />
       <AcceptSolicitationModal
         isOpen={isAcceptModalOpen}
@@ -922,7 +905,7 @@ export default function GerenciadorSolicitacoes() {
           setSolicitationToAccept(null);
         }}
         solicitation={solicitationToAccept}
-        setSolicitationsList={setSolicitationsList} 
+        setSolicitationsList={setSolicitationsList}
       />
     </div>
   );
