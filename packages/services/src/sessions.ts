@@ -1,5 +1,9 @@
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
-import { SessionsGetResult, SpecificTutorSessionGetResult } from "./types/sessions";
+import {
+  SessionsGetResult,
+  SpecificTutorSessionGetResult,
+} from "./types/sessions";
+import { GetUserDataClient } from "./userClient";
 
 export async function GetSessions(
   areaId?: number,
@@ -7,7 +11,7 @@ export async function GetSessions(
   order?: string,
   type?: string,
   pageNumber: number = 1,
-  page_size: number = 6
+  page_size: number = 6,
 ): Promise<SessionsGetResult> {
   let URL = `${process.env.backendBaseURL}/sessoes/?page=${pageNumber}`;
 
@@ -23,7 +27,7 @@ export async function GetSessions(
   if (type) {
     URL += `&tipo=${type}`;
   }
-  
+
   URL += `&page_size=${page_size}`;
 
   try {
@@ -59,7 +63,7 @@ export async function GetSpecificTutorSessions(
   let URL = `${process.env.backendBaseURL}/sessoes-tutor/`;
 
   URL += `?tutor_id=${tutorId}`;
-  
+
   try {
     const res = await authRequestWrapper(
       URL,
@@ -78,6 +82,46 @@ export async function GetSpecificTutorSessions(
         success: false,
         status: res.status,
       };
+    }
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function GetAllUserSessions(
+): Promise<SpecificTutorSessionGetResult | boolean> {
+  try {
+    const res = await GetUserDataClient();
+
+    if (res.success && res.data.perfilTutor != null) {
+      let URL = `${process.env.backendBaseURL}/sessoes-tutor/`;
+
+      URL += `?tutor_id=${res.data.perfilTutor.id}`;
+
+      const sessionRes = await authRequestWrapper(
+        URL,
+        { method: "GET" },
+        "Request Specific Tutor Sessions Data",
+      );
+
+      if (sessionRes.success) {
+        return {
+          success: true,
+          status: sessionRes.status,
+          data: sessionRes.data,
+        };
+      } else {
+        return {
+          success: false,
+          status: sessionRes.status,
+        };
+      }
+    }
+    else{
+      return false;
     }
   } catch (e) {
     return {
