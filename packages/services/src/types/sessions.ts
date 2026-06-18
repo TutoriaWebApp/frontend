@@ -25,3 +25,9 @@ export interface SessionsGetResult {
     results: SessionGetData[];
   };
 }
+
+export interface SpecificTutorSessionGetResult{
+  success: boolean;
+  status: number;
+  data?: SessionGetData[];
+}

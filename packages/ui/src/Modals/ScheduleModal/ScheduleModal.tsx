@@ -1,15 +1,19 @@
 "use client";
 
-import { useState, useContext, useMemo } from "react";
+import { useState, useContext, useMemo, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
 
 import { CreateSolicitationAction } from "@repo/services/solicitationsAction";
+import { GetSolicitations } from "@repo/services/solicitations";
+import { GetSessions, GetSpecificTutorSessions } from "@repo/services/sessions";
 
 import { TimeSlot } from "@repo/services/availabilityTypes";
 import { TutorArea, Specialty } from "@repo/services/userTypes";
+import { GetUserDataClient } from "@repo/services/userClient";
+import { SessionGetData } from "@repo/services/sessionTypes";
 
 interface ScheduleModalProps {
   isOpen: boolean;
@@ -17,6 +21,7 @@ interface ScheduleModalProps {
   availabilities: TimeSlot[];
   areas: TutorArea[];
   specialties: Specialty[];
+  tutorId: number;
 }
 
 const indexToWeekday: Record<number, TimeSlot["dia"]> = {
@@ -50,6 +55,7 @@ export function ScheduleModal({
   availabilities,
   areas,
   specialties,
+  tutorId,
 }: ScheduleModalProps) {
   const { showNotification } = useContext(NotificationContext);
 
@@ -65,6 +71,29 @@ export function ScheduleModal({
   const [selectedSpecialtyId, setSelectedSpecialtyId] = useState<number | null>(
     null,
   );
+
+  const [tutorSessions, setTutorSessions] = useState<SessionGetData[]>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLoading(true);
+
+    const fetchTutorSessions = async () => {
+      const res = await GetSpecificTutorSessions(tutorId);
+
+      if (res.success) {
+        setTutorSessions(res.data);
+        setLoading(false);
+      } else {
+        showNotification(
+          "Não foi possível carregar os dados do tutor.",
+          "error",
+        );
+        handleCancel();
+      }
+    };
+    fetchTutorSessions();
+  }, [tutorId]);
 
   const targetMonthData = useMemo(() => {
     const targetMonth = (currentMonth + monthOffset) % 12;
@@ -111,28 +140,53 @@ export function ScheduleModal({
         today.getDate(),
       );
       const weekdayKey = indexToWeekday[dateInstance.getDay()];
+      const slotsForDay = availabilities.filter(
+        (slot) => slot.dia === weekdayKey,
+      );
 
-      let status: "free" | "busy" = "busy";
+      let status: "free" | "busy" | "disabled";
 
       if (dateCompare >= todayCompare) {
-        const hasTutorSlot = availabilities.some(
-          (slot) => slot.dia === weekdayKey,
-        );
-        if (hasTutorSlot) {
-          status = "free";
+        if (slotsForDay.length > 0) {
+          const dateStr = dateInstance.toISOString().split("T")[0];
+          if (tutorSessions) {
+            const occupiedSessionsThisDay = tutorSessions.filter(
+              (s) => s.dataSessao === dateStr,
+            );
+
+            const allSlotsOccupied = slotsForDay.every((slot) =>
+              occupiedSessionsThisDay.some(
+                (s) =>
+                  s.horarioInicio.slice(0, 5) ===
+                  slot.horarioInicio.slice(0, 5),
+              ),
+            );
+
+            if (allSlotsOccupied) {
+              status = "busy";
+            } else {
+              status = "free";
+            }
+            daysArray.push({
+              dayNumber: day,
+              status,
+              dateInstance,
+              weekdayKey,
+            });
+          }
+        } else {
+          daysArray.push({
+            dayNumber: day,
+            status: "disabled",
+            dateInstance,
+            weekdayKey,
+          });
         }
       }
-
-      daysArray.push({
-        dayNumber: day,
-        status,
-        dateInstance,
-        weekdayKey,
-      });
     }
 
     return daysArray;
-  }, [targetMonthData, availabilities, today]);
+  }, [targetMonthData, availabilities, today, tutorSessions]);
 
   const availableTimesForSelectedDay = useMemo(() => {
     if (!selectedDate) return [];
@@ -388,6 +442,18 @@ export function ScheduleModal({
                   selectedDate.getFullYear() ===
                     item.dateInstance.getFullYear();
 
+                // let dayClass = "";
+                // if (item.status === "disabled") {
+                //   dayClass = "bg-slate-100 text-slate-300 cursor-not-allowed";
+                // } else if (item.status === "busy") {
+                //   dayClass =
+                //     "bg-red-500 text-white cursor-not-allowed font-semibold shadow-sm";
+                // } else {
+                //   dayClass = isSelected
+                //     ? "bg-brand-primary text-white font-bold scale-105 shadow-md shadow-brand-primary/20"
+                //     : "bg-white text-slate-700 hover:border-brand-primary/50 hover:bg-slate-50 border border-slate-200 cursor-pointer";
+                // }
+
                 if (item.dayNumber === null) {
                   return <div key={`empty-${idx}`} className="h-10" />;
                 }
@@ -395,7 +461,9 @@ export function ScheduleModal({
                 return (
                   <button
                     key={`day-${idx}`}
-                    disabled={item.status === "busy"}
+                    disabled={
+                      item.status === "busy" || item.status === "disabled"
+                    }
                     onClick={() => handleDayClick(item)}
                     className={`
 						h-10 
@@ -404,8 +472,8 @@ export function ScheduleModal({
 						text-sm 
 						font-bold 
 						transition-all
-						${item.status === "busy" ? "bg-slate-400 border-slate-100 text-slate-800 cursor-not-allowed opacity-60" : "hover:border-indigo-500 cursor-pointer"}
-						${isSelected ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100 scale-105" : item.status !== "busy" ? "bg-white border-slate-200 text-slate-700" : ""}
+						${item.status === "disabled" ? "bg-slate-500 border-slate-100 text-black cursor-not-allowed opacity-60" : "hover:border-indigo-500 cursor-pointer"}
+            ${isSelected ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100 scale-105" : item.status !== "busy" ? "bg-white border-slate-200 text-slate-700" : ""}
 				    `}
                   >
                     {item.dayNumber}
@@ -581,6 +649,10 @@ export function ScheduleModal({
               <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
                 <div className="w-3 h-3 rounded-md bg-slate-400 border border-slate-100 opacity-60" />
                 <span>Sem Horários</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
+                <div className="w-3 h-3 rounded-md bg-red-600 border border-slate-100 opacity-60" />
+                <span>Ocupado</span>
               </div>
             </div>
           </div>

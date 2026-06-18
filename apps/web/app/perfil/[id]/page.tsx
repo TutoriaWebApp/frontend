@@ -337,6 +337,7 @@ export default async function ProfilePage({
                   ownProfile={false}
                   areas={tutorAreas}
                   specialties={specialties}
+                  tutorId={id}
                 />
               </section>
             )}

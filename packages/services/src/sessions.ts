@@ -1,5 +1,5 @@
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
-import { SessionsGetResult } from "./types/sessions";
+import { SessionsGetResult, SpecificTutorSessionGetResult } from "./types/sessions";
 
 export async function GetSessions(
   areaId?: number,
@@ -31,6 +31,40 @@ export async function GetSessions(
       URL,
       { method: "GET" },
       "Request Sessions Data",
+    );
+
+    if (res.success) {
+      return {
+        success: true,
+        status: res.status,
+        data: res.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function GetSpecificTutorSessions(
+  tutorId: number,
+): Promise<SpecificTutorSessionGetResult> {
+  let URL = `${process.env.backendBaseURL}/sessoes-tutor/`;
+
+  URL += `?tutor_id=${tutorId}`;
+  
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      { method: "GET" },
+      "Request Specific Tutor Sessions Data",
     );
 
     if (res.success) {
