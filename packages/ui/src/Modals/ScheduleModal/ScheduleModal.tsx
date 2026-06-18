@@ -442,18 +442,6 @@ export function ScheduleModal({
                   selectedDate.getFullYear() ===
                     item.dateInstance.getFullYear();
 
-                // let dayClass = "";
-                // if (item.status === "disabled") {
-                //   dayClass = "bg-slate-100 text-slate-300 cursor-not-allowed";
-                // } else if (item.status === "busy") {
-                //   dayClass =
-                //     "bg-red-500 text-white cursor-not-allowed font-semibold shadow-sm";
-                // } else {
-                //   dayClass = isSelected
-                //     ? "bg-brand-primary text-white font-bold scale-105 shadow-md shadow-brand-primary/20"
-                //     : "bg-white text-slate-700 hover:border-brand-primary/50 hover:bg-slate-50 border border-slate-200 cursor-pointer";
-                // }
-
                 if (item.dayNumber === null) {
                   return <div key={`empty-${idx}`} className="h-10" />;
                 }
@@ -472,7 +460,9 @@ export function ScheduleModal({
 						text-sm 
 						font-bold 
 						transition-all
-						${item.status === "disabled" ? "bg-slate-500 border-slate-100 text-black cursor-not-allowed opacity-60" : "hover:border-indigo-500 cursor-pointer"}
+            hover:border-indigo-500
+            ${item.status === "busy" && "bg-red-500 text-white cursor-not-allowed font-semibold shadow-sm hover:border-none"}
+						${item.status === "disabled" && "bg-gray-400 border-slate-100 text-slate-800 cursor-not-allowed opacity-60 hover:border-none"}
             ${isSelected ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100 scale-105" : item.status !== "busy" ? "bg-white border-slate-200 text-slate-700" : ""}
 				    `}
                   >
@@ -647,7 +637,7 @@ export function ScheduleModal({
                 <span>Livre</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
-                <div className="w-3 h-3 rounded-md bg-slate-400 border border-slate-100 opacity-60" />
+                <div className="w-3 h-3 rounded-md bg-gray-400 border border-slate-100 opacity-60" />
                 <span>Sem Horários</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
