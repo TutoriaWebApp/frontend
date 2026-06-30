@@ -31,3 +31,10 @@ export interface SpecificTutorSessionGetResult{
   status: number;
   data?: SessionGetData[];
 }
+
+export interface AllUserSessionGetResult{
+  success: boolean;
+  status: number;
+  data?: SessionGetData[];
+}
+

@@ -3,7 +3,8 @@ import {
   SolicitationGetResult,
   SolicitationPostData,
   SolicitationPostResult,
-  SolicitationPatchResult
+  SolicitationPatchResult,
+  AllSolicitationsGetResult
 } from "./types/solicitations";
 
 export async function CreateSolicitation(
@@ -100,6 +101,37 @@ export async function GetSolicitations(
     };
   }
 }
+
+export async function GetAllSolicitations(): Promise<AllSolicitationsGetResult> {
+  const URL = `${process.env.backendBaseURL}/todas-solicitacoes/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      { method: "GET" },
+      "Request All Solicitations Data",
+    );
+
+    if (res.success) {
+      return {
+        success: true,
+        status: res.status,
+        data: res.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
 
 export async function AcceptSolicitation(
   id: number,

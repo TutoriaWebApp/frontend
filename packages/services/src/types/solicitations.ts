@@ -39,11 +39,17 @@ export interface SolicitationGetResult {
     count: number;
     next: string;
     previous: string;
-    results: [SolicitationGetData];
+    results: SolicitationGetData[];
   };
 }
 
 export interface SolicitationPatchResult {
   success: boolean;
   status: number;
+}
+
+export interface AllSolicitationsGetResult {
+  success: boolean;
+  status: number;
+  data?: SolicitationGetData[];
 }

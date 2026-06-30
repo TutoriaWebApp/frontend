@@ -7,7 +7,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
 
 import { CreateSolicitationAction } from "@repo/services/solicitationsAction";
-import { GetSolicitations } from "@repo/services/solicitations";
+import { GetAllSolicitations } from "@repo/services/solicitations";
 import {
   GetSpecificTutorSessions,
   GetAllUserSessions,
@@ -15,10 +15,9 @@ import {
 
 import { TimeSlot } from "@repo/services/availabilityTypes";
 import { TutorArea, Specialty } from "@repo/services/userTypes";
-import { GetUserDataClient } from "@repo/services/userClient";
 import { SessionGetData } from "@repo/services/sessionTypes";
 import { ClipLoader } from "react-spinners";
-import { setLazyProp } from "next/dist/server/api-utils";
+import { SolicitationGetData } from "@repo/services/solicitationTypes";
 
 interface ScheduleModalProps {
   isOpen: boolean;
@@ -79,6 +78,8 @@ export function ScheduleModal({
 
   const [tutorSessions, setTutorSessions] = useState<SessionGetData[]>();
   const [userSessions, setUserSessions] = useState<SessionGetData[]>();
+  const [userSolicitations, setUserSolicitations] = useState<SolicitationGetData[]>();
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchTutorSessions = async () => {
@@ -103,9 +104,19 @@ export function ScheduleModal({
   const fetchUserSessions = async () => {
     try {
       const res = await GetAllUserSessions();
-      console.log(res);
       if (res.success) {
         setUserSessions(res.data);
+      }
+    } catch (e) {
+      console.error("Erro ao buscar sessões do usuário", e);
+    }
+  };
+
+  const fetchUserSolicitations = async () => {
+    try {
+      const res = await GetAllSolicitations();
+      if (res.success) {
+        setUserSolicitations(res.data);
       }
     } catch (e) {
       console.error("Erro ao buscar sessões do usuário", e);
@@ -118,7 +129,12 @@ export function ScheduleModal({
         setLoading(true);
 
         try {
-          await Promise.all([fetchTutorSessions(), fetchUserSessions()]);
+          await Promise.all(
+            [fetchTutorSessions(), 
+            fetchUserSessions(),
+            fetchUserSolicitations()
+            ]
+          );
         } catch (e) {
           console.error("Erro no Promise.all", e);
         } finally {
@@ -147,7 +163,7 @@ export function ScheduleModal({
       label: `${monthNames[targetMonth]} ${targetYear}`,
     };
   }, [currentMonth, currentYear, monthOffset]);
-const calendarDays = useMemo(() => {
+  const calendarDays = useMemo(() => {
     const daysArray = [];
     const { year, monthIndex, startDayOfWeek, totalDaysInMonth } =
       targetMonthData;
@@ -184,15 +200,16 @@ const calendarDays = useMemo(() => {
       if (dateCompare >= todayCompare) {
         if (slotsForDay.length > 0) {
           const dateStr = dateInstance.toISOString().split("T")[0];
-          
-          const occupiedSessionsThisDay = tutorSessions 
+
+          const occupiedSessionsThisDay = tutorSessions
             ? tutorSessions.filter((s) => s.dataSessao === dateStr)
             : [];
 
           const allSlotsOccupied = slotsForDay.every((slot) =>
             occupiedSessionsThisDay.some(
-              (s) => s.horarioInicio.slice(0, 5) === slot.horarioInicio.slice(0, 5),
-            )
+              (s) =>
+                s.horarioInicio.slice(0, 5) === slot.horarioInicio.slice(0, 5),
+            ),
           );
 
           if (tutorSessions && allSlotsOccupied) {
@@ -231,17 +248,79 @@ const calendarDays = useMemo(() => {
   const availableTimesForSelectedDay = useMemo(() => {
     if (!selectedDate) return [];
 
+    const dateStr = selectedDate.toISOString().split("T")[0];
     const weekdayKey = indexToWeekday[selectedDate.getDay()];
 
-    return availabilities
-      .filter((slot) => slot.dia === weekdayKey)
-      .map((slot) => ({
+    const todayDate = new Date();
+
+		const isToday = selectedDate.getDate() === todayDate.getDate() &&
+			selectedDate.getMonth() === todayDate.getMonth() &&
+			selectedDate.getFullYear() === todayDate.getFullYear();
+
+    const currentHourStr = `${String(todayDate.getHours()).padStart(2, "0")}:${String(todayDate.getMinutes()).padStart(2, "0")}`;
+
+    const dayAvailabilities = availabilities.filter(
+      (slot) => slot.dia === weekdayKey,
+    );
+
+    const daySessions = userSessions
+      ? userSessions.filter((session) => session.dataSessao === dateStr)
+      : [];
+    
+    const daySolicitations = userSolicitations
+        ? userSolicitations.filter((solicitation) => solicitation.dataPretendida === dateStr)
+        : [];
+
+    const tutorDaySessions = tutorSessions
+      ? tutorSessions.filter((session) => session.dataSessao === dateStr)
+      : [];
+
+
+    const formatAvailabilities = dayAvailabilities.map((slot) => {
+      const timeFormatted = slot.horarioInicio.slice(0, 5);
+
+      const isPastTime = isToday && timeFormatted.localeCompare(currentHourStr) <= 0;
+
+      const isUserOccupied = daySessions.some(
+        (session) => session.horarioInicio.slice(0, 5) === timeFormatted,
+      );
+
+      const isTutorOccupied = tutorDaySessions.some(
+        (session) => session.horarioInicio.slice(0, 5) === timeFormatted,
+      );
+
+      const isAlreadyRequested = daySolicitations?.some(
+        (solicitation) => solicitation.horarioInicio.slice(0,5) === timeFormatted
+        && solicitation.agendaId === slot.id
+      )
+
+      let status;
+
+      if (isPastTime) {
+				status = "busy";
+			} 
+      else if (isUserOccupied) {
+				status = "userOccupied";
+			} 
+      else if (isTutorOccupied) {
+				status = "busy";
+			} 
+      else if (isAlreadyRequested) {
+				status = "alreadyRequested";
+			} 
+      else {
+				status = "free";
+			}
+
+      return {
         id: slot.id!,
-        time: slot.horarioInicio.slice(0, 5),
-        status: "free",
-      }))
-      .sort((a, b) => a.time.localeCompare(b.time));
-  }, [selectedDate, availabilities]);
+        time: timeFormatted,
+        status: status,
+      };
+    });
+
+    return formatAvailabilities.sort((a, b) => a.time.localeCompare(b.time));
+  }, [selectedDate, availabilities, userSessions, tutorSessions, userSolicitations]);
 
   const filteredSpecialties = useMemo(() => {
     if (!selectedAreaId) return [];
@@ -306,6 +385,7 @@ const calendarDays = useMemo(() => {
 
       if (res.success) {
         showNotification("Solicitação enviada com sucesso!", "success");
+        await fetchUserSolicitations();
         handleCancel();
       } else {
         showNotification("Não foi possível realizar a solicitação.", "error");
@@ -552,19 +632,19 @@ const calendarDays = useMemo(() => {
                   value={selectedAreaId || ""}
                   onChange={(e) => handleAreaChange(Number(e.target.value))}
                   className="
-					w-full 
-					bg-white 
-					border-2 
-					border-slate-200 
-					rounded-xl 
-					p-2 
-					text-sm 
-					text-slate-700 
-					outline-none 
-					focus:border-indigo-500 
-					font-bold 
-					transition-all
-				"
+                    w-full 
+                    bg-white 
+                    border-2 
+                    border-slate-200 
+                    rounded-xl 
+                    p-2 
+                    text-sm 
+                    text-slate-700 
+                    outline-none 
+                    focus:border-indigo-500 
+                    font-bold 
+                    transition-all
+                  "
                 >
                   <option value="">Selecione uma área</option>
                   {areas.map((area) => (
@@ -656,21 +736,25 @@ const calendarDays = useMemo(() => {
                       <button
                         key={`time-${t.id}`}
                         onClick={() => setSelectedAgendaId(t.id)}
-                        className={`
-												px-4 
-												py-2 
-												rounded-xl 
-												border-2 
-												font-black 
-												text-xs 
-												transition-all
-												cursor-pointer
-												${
-                          selectedAgendaId === t.id
-                            ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-indigo-400 hover:bg-indigo-50/20"
+                        disabled={
+                          t.status === "userOccupied" ||
+                          t.status === "busy" ||
+                          t.status === "alreadyRequested"
                         }
-											`}
+                        className={`
+                          px-4 
+                          py-2 
+                          rounded-xl 
+                          border-2 
+                          font-black 
+                          text-xs 
+                          transition-all
+                          ${t.status === "busy" ? "bg-red-600 border-red-800 text-white cursor-not-allowed" : ""}
+                          ${t.status === "userOccupied" ? "bg-blue-600 border-blue-800 text-white cursor-not-allowed opacity-80" : ""}
+                          ${t.status === "alreadyRequested" ? "bg-amber-500 border-amber-800 text-white cursor-not-allowed opacity-80" : ""}
+                          ${t.status === "free" && selectedAgendaId === t.id ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100" : ""}
+                          ${t.status === "free" && selectedAgendaId !== t.id ? "bg-white border-slate-200 text-slate-600 hover:border-indigo-400 hover:bg-indigo-50/20 cursor-pointer" : ""}
+                        `}
                       >
                         {t.time}
                       </button>
@@ -694,6 +778,14 @@ const calendarDays = useMemo(() => {
                 <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
                   <div className="w-3 h-3 rounded-md bg-red-600 border border-slate-100 opacity-60" />
                   <span>Ocupado</span>
+                </div>
+                  <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
+                  <div className="w-3 h-3 rounded-md bg-amber-600 border border-slate-100 opacity-60" />
+                  <span>Já solicitado.</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
+                  <div className="w-4 h-4 rounded-md bg-blue-600 border border-slate-100 opacity-60" />
+                  <span>Você já possui sessão este horário.</span>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
 import {
   SessionsGetResult,
   SpecificTutorSessionGetResult,
+  AllUserSessionGetResult
 } from "./types/sessions";
 import { GetUserDataClient } from "./userClient";
 
@@ -91,20 +92,17 @@ export async function GetSpecificTutorSessions(
   }
 }
 
-export async function GetAllUserSessions(
-): Promise<SpecificTutorSessionGetResult | boolean> {
+export async function GetAllUserSessions(): Promise<AllUserSessionGetResult | boolean> {
   try {
     const res = await GetUserDataClient();
 
     if (res.success && res.data.perfilTutor != null) {
-      let URL = `${process.env.backendBaseURL}/sessoes-tutor/`;
-
-      URL += `?tutor_id=${res.data.perfilTutor.id}`;
+      let URL = `${process.env.backendBaseURL}/todas-sessoes-usuario/`;
 
       const sessionRes = await authRequestWrapper(
         URL,
         { method: "GET" },
-        "Request Specific Tutor Sessions Data",
+        "Request All User Sessions Data",
       );
 
       if (sessionRes.success) {
