@@ -53,6 +53,11 @@ import {
 } from "@repo/services/userAction";
 import { TimeSlot } from "@repo/services/availabilityTypes";
 
+import { GetAllSolicitations } from "@repo/services/solicitations";
+import { GetSpecificTutorSessions } from "@repo/services/sessions";
+import { SolicitationGetData } from "@repo/services/solicitationTypes";
+import { SessionGetData } from "@repo/services/sessionTypes";
+
 const registerSchema = z.object({
   nomePerfil: z
     .string()
@@ -124,10 +129,6 @@ export default function EditProfilePage() {
     useState(false);
   const [states, setStates] = useState<StateResult[]>([]);
   const [cities, setCities] = useState<CityResult[]>([]);
-  // const [studentAreas, setStudentAreas] = useState<StudentArea[]>([
-  //   { id: 1, area: "Matemática" },
-  //   { id: 2, area: "Matemática" },
-  // ]);
 
   const [validTutorAreas, setValidTutorAreas] = useState<boolean | null>(null);
 
@@ -136,10 +137,19 @@ export default function EditProfilePage() {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
 
   const [availabilities, setAvailabilities] = useState<TimeSlot[]>([]);
+
+  const [userSolicitations, setUserSolicitations] = useState<SolicitationGetData[]>();
+
+  const [tutorSessions, setTutorSessions] = useState<SessionGetData[]>();
+
   const selectedEstado = watch("estado", userData?.estado);
 
   const { showNotification } = useContext(NotificationContext);
 
+  const todayDate = new Date();
+
+  const todayDateString = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+  
   // Change Password Modal
   const openChangePasswordModal = () => setChangePasswordModalIsOpen(true);
   const closeChangePasswordModal = () => setChangePasswordModalIsOpen(false);
@@ -177,14 +187,12 @@ export default function EditProfilePage() {
     const deletedSpecialties: Specialty[] = [];
 
     specialties.forEach((specialty) => {
-      //Área nova (não estava incluida)
       if (!userData?.perfilTutor?.especialidades.includes(specialty)) {
         newSpecialties.push(specialty);
       }
     });
 
     userData?.perfilTutor?.especialidades.forEach((specialty) => {
-      //Área deletada
       if (!specialties.includes(specialty)) {
         deletedSpecialties.push(specialty);
       }
@@ -212,7 +220,6 @@ export default function EditProfilePage() {
     if (tutorSchedules.success && tutorSchedules.data != undefined) {
       const profileSchedules = tutorSchedules.data;
 
-      //Verificar disponibilidade nova
       for (let i = 0; i < availabilities.length; i++) {
         let alreadyExists: boolean = false;
 
@@ -228,7 +235,6 @@ export default function EditProfilePage() {
         }
       }
 
-      //Verificar disponibilidade para deletar
       for (let i = 0; i < profileSchedules.length; i++) {
         let exists: boolean = false;
 
@@ -286,6 +292,26 @@ export default function EditProfilePage() {
           if (tutorSchedules.success && tutorSchedules.data != undefined) {
             setAvailabilities(tutorSchedules.data);
           }
+
+          const responseTutorSessions = await GetSpecificTutorSessions(results.data.perfilTutor.id);
+        
+          if(responseTutorSessions.data){
+
+            setTutorSessions((responseTutorSessions.data).filter(
+              (session) => session.tutorId === results.data.perfilTutor?.id 
+                && session.dataSessao >= todayDateString 
+            ))
+          }
+
+          const responseSolicitations = await GetAllSolicitations();
+
+          if(responseSolicitations.data){
+            
+            setUserSolicitations((responseSolicitations.data).filter(
+              (solicitation) => solicitation.dataPretendida >= todayDateString
+                            && solicitation.estado == "PENDENTE" 
+            ))
+          }
         }
       }
       setLoading(false);
@@ -329,7 +355,6 @@ export default function EditProfilePage() {
   }, [selectedEstado]);
 
   useEffect(() => {
-    // Se tiver os dados do usuário e a lista de cidades tiver carregado
     if (userData?.cidade && cities.length > 0) {
       setValue("cidade", userData.cidade);
     }
@@ -1049,6 +1074,8 @@ export default function EditProfilePage() {
                   <AvailabilityManager
                     availabilities={availabilities}
                     setAvailabilities={setAvailabilities}
+                    sessions={tutorSessions}
+                    solicitations={userSolicitations}
                   />
                 </section>
                 <div className="flex justify-between">

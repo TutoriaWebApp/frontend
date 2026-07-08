@@ -3,20 +3,27 @@
 import { useState, useMemo } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { DaySelector } from "./DaySelector/DaySelector";
 
 import { AddScheduleModal } from "../Modals/ScheduleModal/AddScheduleModal";
 import { DeleteScheduleModal } from "../Modals/ScheduleModal/DeleteScheduleModal";
 import { TimeSlot } from "@repo/services/availabilityTypes";
+import { SessionGetData } from "@repo/services/sessionTypes";
+import { SolicitationGetData } from "@repo/services/solicitationTypes";
 
 interface AvailabilityManagerProps {
   availabilities: TimeSlot[];
   setAvailabilities: React.Dispatch<React.SetStateAction<TimeSlot[]>>;
+  sessions?: SessionGetData[];
+  solicitations?: SolicitationGetData[];
 }
 
 export function AvailabilityManager({
   availabilities,
   setAvailabilities,
+  sessions = [],
+  solicitations = []
 }: AvailabilityManagerProps) {
   const DAYS_MAP = [
     { key: "DOM", name: "Domingo" },
@@ -34,7 +41,47 @@ export function AvailabilityManager({
   const [availabilityToDelete, setAvailabilityToDelete] = useState<TimeSlot>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-const daysStatus = useMemo(() => {
+  const getDayKeyFromDateString = (dateStr: string): string => {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    const date = new Date(year!, month! - 1, day!);
+    const dayIndex = date.getDay();
+    return DAYS_MAP[dayIndex]?.key || "";
+  };
+
+  const formatTime = (timeStr: string) => timeStr.slice(0, 5);
+
+  const checkSlotConflict = (slot: TimeSlot) => {
+    const hasSessionConflict = sessions.some((session) => {
+      if (!session.dataSessao) return false;
+      const sessionDayKey = getDayKeyFromDateString(session.dataSessao);
+      return (
+        sessionDayKey === slot.dia &&
+        formatTime(session.horarioInicio) === formatTime(slot.horarioInicio) &&
+        formatTime(session.horarioFim) === formatTime(slot.horarioFim)
+      );
+    });
+
+    const hasSolicitationConflict = solicitations.some((solicitation) => {
+      if (!solicitation.dataPretendida) return false;
+      const solDayKey = getDayKeyFromDateString(solicitation.dataPretendida);
+      return (
+        solDayKey === slot.dia &&
+        formatTime(solicitation.horarioInicio) === formatTime(slot.horarioInicio) &&
+        formatTime(solicitation.horarioFim) === formatTime(slot.horarioFim) &&
+        solicitation.estado === "PENDENTE"
+      );
+    });
+
+    return hasSessionConflict || hasSolicitationConflict;
+  };
+
+  const currentDayHasAnyConflict = useMemo(() => {
+    return availabilities
+      .filter((slot) => slot.dia === selectedDayKey)
+      .some((slot) => checkSlotConflict(slot));
+  }, [availabilities, selectedDayKey, sessions, solicitations]);
+
+  const daysStatus = useMemo(() => {
     return DAYS_MAP.map((day) => {
       const slotsForDay = availabilities.filter(
         (slot) => slot.dia === day.key
@@ -43,8 +90,8 @@ const daysStatus = useMemo(() => {
       return {
         key: day.key,
         name: day.name,
-        isAvailable: true, 
-        hasSlots: slotsForDay.length > 0, 
+        isAvailable: true,
+        hasSlots: slotsForDay.length > 0,
       };
     });
   }, [availabilities]);
@@ -57,6 +104,8 @@ const daysStatus = useMemo(() => {
   }, [availabilities, selectedDayKey]);
 
   const handleOpenDeleteModal = (availability: TimeSlot) => {
+    if (checkSlotConflict(availability)) return;
+
     setAvailabilityToDelete(availability);
     setDeleteScheduleModal(true);
   };
@@ -107,6 +156,15 @@ const daysStatus = useMemo(() => {
                 {DAYS_MAP.find((d) => d.key === selectedDayKey)?.name}):
               </p>
 
+              {currentDayHasAnyConflict && (
+                <div className="mb-4 flex items-center gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs md:text-sm font-medium">
+                  <ReportProblemIcon sx={{ fontSize: 18 }} />
+                  <span>
+                    Os horários destacados em vermelho possuem sessões como tutor confirmadas ou solicitações pendentes e não podem ser apagados.
+                  </span>
+                </div>
+              )}
+
               <div className="
                 flex 
                 flex-wrap 
@@ -123,42 +181,58 @@ const daysStatus = useMemo(() => {
                     Nenhum horário cadastrado para este dia da semana.
                   </p>
                 ) : (
-                  currentDaySlots.map((slot) => (
-                    <div
-                      key={slot.id}
-                      className="
-                        bg-slate-200 
-                        text-[15px] 
-                        py-1.5 
-                        px-3 
-                        flex 
-                        items-center 
-                        gap-2 
-                        rounded-xl 
-                        border 
-                        border-slate-300/40 
-                        shadow-sm
-                    ">
-                      <span className="
-                        text-slate-800 
-                        text-[15px] 
-                        font-black
-                      ">
-                        {slot.horarioInicio.slice(0, 5)} -{" "}
-                        {slot.horarioFim.slice(0, 5)}
-                      </span>
-                      <DeleteIcon
-                        onClick={() => handleOpenDeleteModal(slot)}
-                        className="
-                          text-rose-500 
-                          cursor-pointer 
-                          hover:text-rose-700 
+                  currentDaySlots.map((slot) => {
+                    const isBlocked = checkSlotConflict(slot);
+
+                    return (
+                      <div
+                        key={slot.id}
+                        className={`
+                          text-[15px] 
+                          py-1.5 
+                          px-3 
+                          flex 
+                          items-center 
+                          gap-2 
+                          rounded-xl 
+                          border 
+                          shadow-sm
                           transition-all
-                        "
-                        sx={{ fontSize: 18 }}
-                      />
-                    </div>
-                  ))
+                          ${isBlocked 
+                            ? "bg-rose-100 border-rose-300 text-rose-950" 
+                            : "bg-slate-200 border-slate-300/40 text-slate-800"
+                          }
+                      `}>
+                        <span className={`
+                          text-[15px] 
+                          font-black
+                          ${isBlocked ? "text-rose-900" : "text-slate-800"}
+                        `}>
+                          {slot.horarioInicio.slice(0, 5)} -{" "}
+                          {slot.horarioFim?.slice(0, 5) || slot.horarioFim.slice(0, 5)}
+                        </span>
+                        
+                        {!isBlocked ? (
+                          <DeleteIcon
+                            onClick={() => handleOpenDeleteModal(slot)}
+                            className="
+                              text-rose-500 
+                              cursor-pointer 
+                              hover:text-rose-700 
+                              transition-all
+                            "
+                            sx={{ fontSize: 18 }}
+                          />
+                        ) : (
+                          <ReportProblemIcon 
+                            className="text-rose-400" 
+                            sx={{ fontSize: 16 }} 
+                            titleAccess="Horário bloqueado devido a compromisso agendado"
+                          />
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
