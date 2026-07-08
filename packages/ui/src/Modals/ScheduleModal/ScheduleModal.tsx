@@ -75,10 +75,12 @@ export function ScheduleModal({
   const [selectedSpecialtyId, setSelectedSpecialtyId] = useState<number | null>(
     null,
   );
+  const [recurrent, setRecurrent] = useState<boolean>(false);
 
   const [tutorSessions, setTutorSessions] = useState<SessionGetData[]>();
   const [userSessions, setUserSessions] = useState<SessionGetData[]>();
-  const [userSolicitations, setUserSolicitations] = useState<SolicitationGetData[]>();
+  const [userSolicitations, setUserSolicitations] =
+    useState<SolicitationGetData[]>();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -129,12 +131,11 @@ export function ScheduleModal({
         setLoading(true);
 
         try {
-          await Promise.all(
-            [fetchTutorSessions(), 
+          await Promise.all([
+            fetchTutorSessions(),
             fetchUserSessions(),
-            fetchUserSolicitations()
-            ]
-          );
+            fetchUserSolicitations(),
+          ]);
         } catch (e) {
           console.error("Erro no Promise.all", e);
         } finally {
@@ -253,9 +254,10 @@ export function ScheduleModal({
 
     const todayDate = new Date();
 
-		const isToday = selectedDate.getDate() === todayDate.getDate() &&
-			selectedDate.getMonth() === todayDate.getMonth() &&
-			selectedDate.getFullYear() === todayDate.getFullYear();
+    const isToday =
+      selectedDate.getDate() === todayDate.getDate() &&
+      selectedDate.getMonth() === todayDate.getMonth() &&
+      selectedDate.getFullYear() === todayDate.getFullYear();
 
     const currentHourStr = `${String(todayDate.getHours()).padStart(2, "0")}:${String(todayDate.getMinutes()).padStart(2, "0")}`;
 
@@ -266,20 +268,22 @@ export function ScheduleModal({
     const daySessions = userSessions
       ? userSessions.filter((session) => session.dataSessao === dateStr)
       : [];
-    
+
     const daySolicitations = userSolicitations
-        ? userSolicitations.filter((solicitation) => solicitation.dataPretendida === dateStr)
-        : [];
+      ? userSolicitations.filter(
+          (solicitation) => solicitation.dataPretendida === dateStr,
+        )
+      : [];
 
     const tutorDaySessions = tutorSessions
       ? tutorSessions.filter((session) => session.dataSessao === dateStr)
       : [];
 
-
     const formatAvailabilities = dayAvailabilities.map((slot) => {
       const timeFormatted = slot.horarioInicio.slice(0, 5);
 
-      const isPastTime = isToday && timeFormatted.localeCompare(currentHourStr) <= 0;
+      const isPastTime =
+        isToday && timeFormatted.localeCompare(currentHourStr) <= 0;
 
       const isUserOccupied = daySessions.some(
         (session) => session.horarioInicio.slice(0, 5) === timeFormatted,
@@ -290,27 +294,24 @@ export function ScheduleModal({
       );
 
       const isAlreadyRequested = daySolicitations?.some(
-        (solicitation) => solicitation.horarioInicio.slice(0,5) === timeFormatted
-        && solicitation.agendaId === slot.id
-      )
+        (solicitation) =>
+          solicitation.horarioInicio.slice(0, 5) === timeFormatted &&
+          solicitation.agendaId === slot.id,
+      );
 
       let status;
 
       if (isPastTime) {
-				status = "busy";
-			} 
-      else if (isUserOccupied) {
-				status = "userOccupied";
-			} 
-      else if (isTutorOccupied) {
-				status = "busy";
-			} 
-      else if (isAlreadyRequested) {
-				status = "alreadyRequested";
-			} 
-      else {
-				status = "free";
-			}
+        status = "busy";
+      } else if (isUserOccupied) {
+        status = "userOccupied";
+      } else if (isTutorOccupied) {
+        status = "busy";
+      } else if (isAlreadyRequested) {
+        status = "alreadyRequested";
+      } else {
+        status = "free";
+      }
 
       return {
         id: slot.id!,
@@ -320,7 +321,13 @@ export function ScheduleModal({
     });
 
     return formatAvailabilities.sort((a, b) => a.time.localeCompare(b.time));
-  }, [selectedDate, availabilities, userSessions, tutorSessions, userSolicitations]);
+  }, [
+    selectedDate,
+    availabilities,
+    userSessions,
+    tutorSessions,
+    userSolicitations,
+  ]);
 
   const filteredSpecialties = useMemo(() => {
     if (!selectedAreaId) return [];
@@ -374,7 +381,7 @@ export function ScheduleModal({
 
       const bodyData = {
         dataPretendida: dataPretendidaStr,
-        recorrente: false,
+        recorrente: recurrent,
         estado: "PENDENTE",
         agendaId: selectedAgendaId,
         areaId: selectedAreaId,
@@ -710,7 +717,7 @@ export function ScheduleModal({
 
             {/* Horários e Legenda */}
             <div className="flex flex-col md:flex-row gap-6 pt-2">
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-5">
                 <p className="text-sm font-bold text-slate-800">
                   {selectedDate
                     ? `Horários livres para o dia ${selectedDate.toLocaleDateString()}:`
@@ -760,6 +767,35 @@ export function ScheduleModal({
                       </button>
                     ))}
                 </div>
+
+                <div className="flex items-center">
+                  <span className="mr-2 text-sm font-bold">Recorrente</span>
+                  <input
+                    className="w-4 h-4"
+                    type="checkbox"
+                    checked={recurrent}
+                    onClick={() => setRecurrent(!recurrent)}
+                  />
+                </div>
+                {/* Legenda */}
+                <div
+                  className="
+                  bg-slate-50/60 
+                  rounded-2xl 
+                  p-4 
+                  border 
+                  border-slate-200 
+                  space-y-3 
+                  w-full 
+                  h-fit"
+                >
+                  <p className="text-gray-500 text-xs">
+                    Criar uma solicitação com <span className="font-bold">recorrência</span> fará com que o sistema
+                    envie, semanalmente, novos pedidos para esta mesma área e
+                    especialidade na agenda do tutor, mantendo o mesmo dia e
+                    horário.
+                  </p>
+                </div>
               </div>
 
               {/* Legenda */}
@@ -779,7 +815,7 @@ export function ScheduleModal({
                   <div className="w-3 h-3 rounded-md bg-red-600 border border-slate-100 opacity-60" />
                   <span>Ocupado</span>
                 </div>
-                  <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
+                <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
                   <div className="w-3 h-3 rounded-md bg-amber-600 border border-slate-100 opacity-60" />
                   <span>Já solicitado.</span>
                 </div>
