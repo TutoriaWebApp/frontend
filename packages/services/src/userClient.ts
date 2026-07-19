@@ -413,6 +413,8 @@ export async function DeleteSchedule(
 
 export async function GetTutors(
   pageNumber: number = 1,
+  gradeOrder: string,
+  sessionsOrder: string,
   areaId?: number,
   specialtyId?: number,
   page_size: number = 6
@@ -424,6 +426,12 @@ export async function GetTutors(
   }
   if (specialtyId) {
     URL += `&especialidade=${specialtyId}`;
+  }
+  if(gradeOrder != ""){
+    URL += `&ordenar_nota=${gradeOrder}`
+  }
+  if(sessionsOrder != ""){
+    URL += `&ordenar_tutorias=${sessionsOrder}`
   }
   
   URL += `&page_size=${page_size}`;

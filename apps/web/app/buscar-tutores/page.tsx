@@ -31,6 +31,8 @@ export default function BuscaTutores() {
   const [querySpecialtyId, setQuerySpecialtyId] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingTutors, setLoadingTutors] = useState<boolean>(false);
+  const [gradeOrder, setGradeOrder] = useState<string>("");
+  const [sessionsOrder, setSessionsOrder] = useState<string>("");
 
   const { showNotification } = useContext(NotificationContext);
 
@@ -60,10 +62,17 @@ export default function BuscaTutores() {
     fetchSpecialties();
   }, [queryAreaId]);
 
-  const fetchTutorsPage = async (page: number, currentSize: number) => {
+  const fetchTutorsPage = async (
+    page: number,
+    currentSize: number,
+    gradeOrder: string,
+    sessionsOrder: string,
+  ) => {
     setLoadingTutors(true);
     const res = await GetTutors(
       page,
+      gradeOrder,
+      sessionsOrder,
       queryAreaId,
       querySpecialtyId,
       currentSize,
@@ -83,25 +92,25 @@ export default function BuscaTutores() {
   };
 
   const handleSubmit = async () => {
-    await fetchTutorsPage(1, pageSize);
+    await fetchTutorsPage(1, pageSize, gradeOrder, sessionsOrder);
   };
 
   const handleNextPage = async () => {
     if (hasNext) {
-      await fetchTutorsPage(currentPage + 1, pageSize);
+      await fetchTutorsPage(currentPage + 1, pageSize, gradeOrder, sessionsOrder);
     }
   };
 
   const handlePrevPage = async () => {
     if (hasPrevious) {
-      await fetchTutorsPage(currentPage - 1, pageSize);
+      await fetchTutorsPage(currentPage - 1, pageSize, gradeOrder, sessionsOrder);
     }
   };
 
   const handlePageSizeChange = async (newSize: number) => {
     setPageSize(newSize);
     if (resultsCount !== null) {
-      await fetchTutorsPage(1, newSize);
+      await fetchTutorsPage(1, newSize, gradeOrder, sessionsOrder);
     }
   };
 
@@ -289,7 +298,7 @@ export default function BuscaTutores() {
                 ml-1
                 "
                   >
-                    Ordenar por
+                    Ordenar por Nota de Avaliação
                   </label>
                   <select
                     className="
@@ -304,9 +313,50 @@ export default function BuscaTutores() {
                 outline-none 
                 transition-all
                 "
+                    defaultValue={""}
+                    onChange={(e) => {
+                      setGradeOrder(e.target.value);
+                    }}
                   >
-                    <option>Avaliação</option>
-                    <option>Proximidade</option>
+                    <option value={""}>Selecione uma opção</option>
+                    <option value={"asc"}>Crescente</option>
+                    <option value={"desc"}>Decrescente</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    className="
+                  sm:text-xs
+                2xl:text-sm 
+                font-black 
+                text-slate-400 
+                uppercase 
+                tracking-widest 
+                "
+                  >
+                    Ordenar por Total de Tutorias
+                  </label>
+                  <select
+                    className="
+                  w-full 
+                  bg-slate-50 
+                border-2 
+                border-slate-500 
+                rounded-xl 
+                p-1 
+                text-slate-600 
+                focus:border-indigo-600 
+                outline-none 
+                transition-all
+                "
+                    defaultValue={""}
+                    onChange={(e) => {
+                      setSessionsOrder(e.target.value);
+                    }}
+                  >
+                    <option value={""}>Selecione uma opção</option>
+                    <option value={"asc"}>Crescente</option>
+                    <option value={"desc"}>Decrescente</option>
                   </select>
                 </div>
                 <button
@@ -439,7 +489,8 @@ export default function BuscaTutores() {
             )}
 
             {resultsCount && resultsCount > 0 && !loadingTutors && (
-              <div className="
+              <div
+                className="
                 bg-white border 
                 border-slate-100 
                 shadow-sm 
@@ -452,7 +503,8 @@ export default function BuscaTutores() {
                 gap-6 
                 max-w-md
                 mx-auto
-              ">
+              "
+              >
                 <button
                   disabled={!hasPrevious}
                   onClick={handlePrevPage}
@@ -469,12 +521,14 @@ export default function BuscaTutores() {
                   <ArrowBackIosNewIcon sx={{ fontSize: 16 }} />
                 </button>
 
-                <span className="
+                <span
+                  className="
                   text-slate-600 
                   font-black 
                   text-sm 
                   select-none
-                ">
+                "
+                >
                   Página {currentPage}
                 </span>
 
