@@ -329,7 +329,12 @@ export default async function ProfilePage() {
                 />
               </section>
             )}
-            <ReviewSection />
+            <ReviewSection
+              userId={userData.id}
+              areas={tutorAreas}
+              specialties={specialties}
+              tutorId={userData.perfilTutor?.id ? userData.perfilTutor.id : null}
+            />
           </main>
         </div>
       )}

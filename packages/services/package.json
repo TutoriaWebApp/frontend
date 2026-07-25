@@ -16,12 +16,14 @@
     "./userClient": "./src/userClient.ts",
     "./solicitations": "./src/solicitations.ts",
     "./sessions": "./src/sessions.ts",
+    "./reviews": "./src/review.ts",
 
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
     "./availabilityTypes": "./src/types/availability.ts",
     "./sessionTypes": "./src/types/sessions.ts",
-    "./solicitationTypes": "./src/types/solicitations.ts"
+    "./solicitationTypes": "./src/types/solicitations.ts",
+    "./reviewTypes": "./src/types/review.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",

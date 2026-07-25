@@ -16,6 +16,7 @@ export interface CreateUserResult {
 }
 
 export interface UserData {
+  id: number;
   email: string;
   nomePerfil: string;
   estado: string;
