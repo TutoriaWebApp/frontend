@@ -468,7 +468,7 @@ export default function BuscaTutores() {
                 {tutorsList.map((tutor) => (
                   <TutorCard
                     key={tutor.id}
-                    id={tutor.id}
+                    id={tutor.usuarioId}
                     name={tutor.nomePerfil}
                     photoURL={tutor.fotoURL}
                     location={`${tutor.cidade}, ${tutor.estado}`}

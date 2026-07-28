@@ -98,7 +98,8 @@ export function ReviewSection({
   }
 
   useEffect(() => {
-    fetchReviews();
+    setCurrentPage(1);
+    fetchReviews(1, pageSize);
   }, [activeTab, queryAreaId, querySpecialtyId, gradeOrder]);
 
   const handleNextPage = async () => {
@@ -109,7 +110,7 @@ export function ReviewSection({
 
   const handlePrevPage = async () => {
     if (hasPrevious) {
-      await fetchReviews(currentPage + 1, pageSize);
+      await fetchReviews(currentPage - 1, pageSize);
     }
   };
 
@@ -340,6 +341,7 @@ export function ReviewSection({
             reviewsList.map((review) => (
               <div className="min-h-[220px]" key={review.id}>
                 <ReviewCard
+                  id={review.usuarioAvaliadorId}
                   photo={review.fotoURL}
                   name={review.nomeUsuario}
                   rating={review.nota}

@@ -2,6 +2,7 @@ export interface ReviewPost {
   id: number;
   fotoURL: string;
   nomeUsuario: string;
+  usuarioAvaliadorId: number;
   nota: number;
   comentario: string;
   tutorId: number;

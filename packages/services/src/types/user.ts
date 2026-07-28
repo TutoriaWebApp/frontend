@@ -46,6 +46,7 @@ export interface SpecificUserData {
   sobremim: string;
   notaAvaliacao: number;
   totalAvaliacoes: number;
+  tutorId: number;
 }
 
 export interface UserDataSuccessResult {
