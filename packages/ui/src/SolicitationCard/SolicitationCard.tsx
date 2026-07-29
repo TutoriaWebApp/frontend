@@ -1,6 +1,7 @@
 import { formatarDataBR } from "@repo/lib/formatData";
-import { useEffect, useMemo, useState } from "react";
-import { ClipLoader } from "react-spinners";
+import { useMemo } from "react";
+import Link from "next/link";
+import { Grade } from "@mui/icons-material";
 
 interface SolicitationCardProps {
   area: string;
@@ -16,6 +17,10 @@ interface SolicitationCardProps {
   mode: string;
   onReject?: any;
   onAccept?: any;
+  userId: number;
+  grade: number;
+  totalReviews: number;
+  filter: string;
 }
 
 export const SolicitationCard = ({
@@ -32,6 +37,10 @@ export const SolicitationCard = ({
   mode,
   onReject,
   onAccept,
+  userId,
+  grade,
+  totalReviews,
+  filter
 }: SolicitationCardProps) => {
   const timeRemaining = useMemo(() => {
     if (!expirationTime) return null;
@@ -76,10 +85,10 @@ export const SolicitationCard = ({
         <h3
           className="
           text-xl 
-        font-black 
-        text-slate-800 
-        mb-6 
-        "
+          font-black 
+          text-slate-800 
+          mb-6 
+          "
         >
           Solicitação de {area} ({speciality})
         </h3>
@@ -94,8 +103,9 @@ export const SolicitationCard = ({
         justify-center
         "
         >
-          <div
-            className="
+          <Link href={`/perfil/${userId}`}>
+            <div
+              className="
             w-32 
           h-32 
           md:w-26 
@@ -110,40 +120,69 @@ export const SolicitationCard = ({
           items-center 
           justify-center
           mt-4
-          mb-4
           "
-          >
-            <img
-              src={photoURL || undefined}
-              alt="Foto do Perfil"
-              className="
-              w-full
-              rounded-full
-              object-cover
-              "
-            />
-          </div>
+            >
+              <img
+                src={photoURL || undefined}
+                alt="Foto do Perfil"
+                className="
+                    w-full
+                    rounded-full
+                    object-cover
+                    hover:brightness-50
+                    hover:transition
+                  "
+              />
+            </div>
+          </Link>
+        </div>
+        <div
+          className="
+            flex 
+            items-center 
+            gap-1
+          text-slate-600
+            justify-center
+            mb-4
+        ">
+          <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
+          <span
+            className="
+              md:text-sm 
+              font-medium
+              2xl:text-base
+          ">
+            {Number.isInteger(grade)
+              ? grade!.toFixed(1)
+              : grade!.toFixed(2)}{" "}
+            como{" "}
+            <em className="text-slate-800 not-italic font-bold">{filter === "aprendiz" ? "Tutor" : "Aprendiz"}</em> (
+            {totalReviews} avaliações)
+          </span>
         </div>
         <div
           className="
           text-left 
-      space-y-1
-      flex
-      flex-col
-      gap-1
-      "
-        >
-          <p
-            className="
-            text-base
-        text-slate-500 
-        font-medium
-        overflow-hidden
-        text-ellipsis
+          space-y-1
+          flex
+          flex-col
+          gap-1
         "
-          >
-            Nome: <span className="text-slate-800 font-bold">{name}</span>
-          </p>
+        >
+          <Link href={`/perfil/${userId}`}>
+            <p
+              className="
+            text-base
+            text-slate-500 
+            font-medium
+            overflow-hidden
+            text-ellipsis
+            hover:underline
+            "
+            >
+              Nome: <span className="text-slate-800 font-bold">{name}</span>
+            </p>
+          </Link>
           <p
             className="
             text-base 

@@ -772,7 +772,11 @@ export default function GerenciadorSolicitacoes() {
                     startTime={session.horarioInicio}
                     endTime={session.horarioFim}
                     status={"ACEITO"}
-                    mode={activeTab}
+                    mode={activeTab} 
+                    userId={session.idUsuarioSessao} 
+                    grade={session.nota} 
+                    totalReviews={session.quantidadeAvaliacoes} 
+                    filter={"aprendiz"}                    
                   />
                 ))}
               {sessionsList.length > 0 &&
@@ -788,7 +792,11 @@ export default function GerenciadorSolicitacoes() {
                     startTime={session.horarioInicio}
                     endTime={session.horarioFim}
                     status={"ACEITO"}
-                    mode={activeTab}
+                    mode={activeTab} 
+                    userId={session.idUsuarioSessao} 
+                    grade={session.nota} 
+                    totalReviews={session.quantidadeAvaliacoes} 
+                    filter={"tutor"}                  
                   />
                 ))}
               {solicitationsList.length > 0 &&
@@ -805,6 +813,10 @@ export default function GerenciadorSolicitacoes() {
                     endTime={solicitation.horarioFim}
                     status={solicitation.estado}
                     mode={activeTab}
+                    userId={solicitation.idUsuarioSolicitacao}
+                    grade={solicitation.nota}
+                    totalReviews={solicitation.quantidadeAvaliacoes} 
+                    filter={"aprendiz"}                  
                   />
                 ))}
               {solicitationsList.length > 0 &&
@@ -825,6 +837,10 @@ export default function GerenciadorSolicitacoes() {
                     mode={activeTab}
                     onReject={() => handleOpenRejectModal(solicitation)}
                     onAccept={() => handleOpenAcceptModal(solicitation)}
+                    userId={solicitation.idUsuarioSolicitacao}
+                    grade={solicitation.nota}
+                    totalReviews={solicitation.quantidadeAvaliacoes} 
+                    filter={"tutor"}                  
                   />
                 ))}
             </div>

@@ -6,6 +6,9 @@ export interface SessionGetData {
   nomeTutor: string;
   fotoAprendizURL: string | null;
   fotoTutorURL: string | null;
+  idUsuarioSessao: number;
+  nota: number;
+  quantidadeAvaliacoes: number;
   dataSessao: string;
   horarioInicio: string;
   horarioFim: string;
@@ -26,15 +29,14 @@ export interface SessionsGetResult {
   };
 }
 
-export interface SpecificTutorSessionGetResult{
+export interface SpecificTutorSessionGetResult {
   success: boolean;
   status: number;
   data?: SessionGetData[];
 }
 
-export interface AllUserSessionGetResult{
+export interface AllUserSessionGetResult {
   success: boolean;
   status: number;
   data?: SessionGetData[];
 }
-

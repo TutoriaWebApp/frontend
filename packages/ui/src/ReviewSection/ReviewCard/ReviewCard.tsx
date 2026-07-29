@@ -32,8 +32,9 @@ export function ReviewCard({
     "
     >
       {/* Avatar */}
-      <div
-        className="
+      <Link href={`/perfil/${id}`}>
+        <div
+          className="
         w-20 
         h-20 
         bg-slate-200 
@@ -45,27 +46,26 @@ export function ReviewCard({
         justify-center 
         flex-shrink-0 
         overflow-hidden
-    "
-      >
-        <Link href={`/perfil/${id}`}>
+        "
+        >
           <img
             src={photo}
             alt="Foto do Perfil"
             className="
-              w-full
-              rounded-2xl
-              cursor-pointer
-              hover:brightness-50
-              hover:transition
+            w-full
+            rounded-2xl
+            cursor-pointer
+            hover:brightness-50
+            hover:transition
             "
           />
-        </Link>
-      </div>
+        </div>
+      </Link>
 
       <div>
         <Link href={`/perfil/${id}`}>
-        <span
-          className="
+          <span
+            className="
             font-bold 
             text-brand-primary 
             text-lg 
@@ -73,9 +73,9 @@ export function ReviewCard({
             hover:cursor-pointer
             hover:underline
         "
-        >
-          {name}
-        </span>
+          >
+            {name}
+          </span>
         </Link>
 
         <div className="flex mb-3">

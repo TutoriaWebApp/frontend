@@ -17,6 +17,9 @@ export interface SolicitationGetData {
   horarioFim: string;
   fotoAprendizURL: string;
   fotoTutorURL: string;
+  idUsuarioSolicitacao: number;
+  nota: number;
+  quantidadeAvaliacoes: number;
   dataCriacao: string;
   dataPretendida: string;
   validade: string;
