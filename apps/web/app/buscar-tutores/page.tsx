@@ -29,6 +29,7 @@ export default function BuscaTutores() {
 
   const [queryAreaId, setQueryAreaId] = useState<number>();
   const [querySpecialtyId, setQuerySpecialtyId] = useState<number>();
+  const [queryRadius, setQueryRadius] = useState<number | string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingTutors, setLoadingTutors] = useState<boolean>(false);
   const [gradeOrder, setGradeOrder] = useState<string>("");
@@ -75,6 +76,7 @@ export default function BuscaTutores() {
       sessionsOrder,
       queryAreaId,
       querySpecialtyId,
+      queryRadius,
       currentSize,
     );
 
@@ -97,13 +99,23 @@ export default function BuscaTutores() {
 
   const handleNextPage = async () => {
     if (hasNext) {
-      await fetchTutorsPage(currentPage + 1, pageSize, gradeOrder, sessionsOrder);
+      await fetchTutorsPage(
+        currentPage + 1,
+        pageSize,
+        gradeOrder,
+        sessionsOrder,
+      );
     }
   };
 
   const handlePrevPage = async () => {
     if (hasPrevious) {
-      await fetchTutorsPage(currentPage - 1, pageSize, gradeOrder, sessionsOrder);
+      await fetchTutorsPage(
+        currentPage - 1,
+        pageSize,
+        gradeOrder,
+        sessionsOrder,
+      );
     }
   };
 
@@ -272,6 +284,12 @@ export default function BuscaTutores() {
                   <input
                     type="number"
                     placeholder="KM"
+                    value={queryRadius}
+                    onChange={(e) =>
+                      setQueryRadius(
+                        e.target.value === "" ? "" : Number(e.target.value),
+                      )
+                    }
                     className="
                   w-full 
                   bg-slate-50 
@@ -283,6 +301,7 @@ export default function BuscaTutores() {
                   focus:border-indigo-600 
                   outline-none 
                   transition-all
+                  
               "
                   />
                 </div>
@@ -488,7 +507,7 @@ export default function BuscaTutores() {
               />
             )}
 
-            {resultsCount && resultsCount > 0 && !loadingTutors && (
+            {resultsCount != null && resultsCount > 0 && !loadingTutors && (
               <div
                 className="
                 bg-white border 
