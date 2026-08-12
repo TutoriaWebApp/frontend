@@ -1,23 +1,14 @@
 import { authRequestWrapper } from '@repo/lib/authRequestWrapper';
-import { GetReviewsResult } from './types/review';
+import { GetReviewsResult, SendTutorReviewData, 
+          SendUserReviewData, SendReviewResult, GetPendingReviewsResult } from './types/review';
 
 export async function GetReviewsStudent(
   pageNumber: number = 1,
   gradeOrder: string,
   userId: number,
-  areaId?: number,
-  specialtyId?: number,
   page_size: number = 6
 ): Promise<GetReviewsResult> {
   let URL = `${process.env.backendBaseURL}/avaliacoes/aprendiz/?page=${pageNumber}`;
-
-  // if (areaId) {
-  //   URL += `&area=${areaId}`;
-  // }
-
-  // if (specialtyId) {
-  //   URL += `&especialidade=${specialtyId}`;
-  // }
 
   if(gradeOrder != ""){
     URL += `&ordering=${gradeOrder}`
@@ -100,6 +91,124 @@ export async function GetReviewsTutor(
     return successGetRelations;
   } else {
     const failedRequest: GetReviewsResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function PostUserReview(
+  bodyData: SendUserReviewData,
+  // cookieString: string,
+  // csrfTokenString: string,
+): Promise<SendReviewResult> {
+  const URL = `${process.env.backendBaseURL}/avaliacoes/aprendiz/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          // Cookie: cookieString,
+          // "X-CSRFToken": csrfTokenString,
+        },
+        body: JSON.stringify(bodyData),
+      },
+      "Post User Review",
+    );
+
+    if (res.success) {
+      return {
+        success: res.success,
+        status: res.status,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    console.error("Post User Review Request Error:", e);
+
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function PostTutorReview(
+  bodyData: SendTutorReviewData,
+  // cookieString: string,
+  // csrfTokenString: string,
+): Promise<SendReviewResult> {
+  const URL = `${process.env.backendBaseURL}/avaliacoes/tutor/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          // Cookie: cookieString,
+          // "X-CSRFToken": csrfTokenString,
+        },
+        body: JSON.stringify(bodyData),
+      },
+      "Post Tutor Review",
+    );
+
+    if (res.success) {
+      return {
+        success: res.success,
+        status: res.status,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    console.error("Post Tutor Review Request Error:", e);
+
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function GetPendingReviews(): Promise<GetPendingReviewsResult> {
+  const URL = `${process.env.backendBaseURL}/avaliacoes/pendentes`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+    "Request Pending Reviews",
+  );
+
+  if (res.success) {
+    const successGetRelations: GetPendingReviewsResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return successGetRelations;
+  } else {
+    const failedRequest: GetPendingReviewsResult = {
       success: false,
       status: res.status,
     };

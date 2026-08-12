@@ -6,12 +6,15 @@ import { EvaluateUserModal } from "../../Modals/EvaluateUser/EvaluateUser";
 
 interface EvaluateUserContextData {
   triggerEvaluation: (
-    userId: number,
+    sessionId: number,
+    sessionDate: string,
+    startTime: string,
+    areaName: string,
+    specialtyName: string,
     userName: string,
-    isTutor: boolean,
-    sessionSubject: string,
-    day: string,
-    time: string,
+    photoURL: string,
+    reviewType: string,
+    userId: number
   ) => Promise<boolean>;
 }
 
@@ -26,25 +29,32 @@ export function EvaluateUserContextProvider({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    userId: 0,
+    sessionId: 0,
+    sessionDate: "",
+    startTime: "",
+    areaName: "",
+    specialtyName: "",
     userName: "",
-    isTutor: false,
-    sessionSubject: "",
-    day: "",
-    time: "",
+    photoURL: "",
+    reviewType: "",
+    userId: 0
   });
 
   const resolveRef = useRef<((value: boolean) => void) | null>(null);
 
   const triggerEvaluation = async (
-    userId: number,
+    sessionId: number,
+    sessionDate: string,
+    startTime: string,
+    areaName: string,
+    specialtyName: string,
     userName: string,
-    isTutor: boolean,
-    sessionSubject: string,
-    day: string,
-    time: string,
+    photoURL: string,
+    reviewType: string,
+    userId: number
   ) => {
-    setUserInfo({ userId, userName, isTutor, sessionSubject, day, time });
+    setUserInfo({sessionId, sessionDate, startTime, areaName, specialtyName,
+                 userName, photoURL, reviewType, userId });
     setIsOpen(true);
 
     return new Promise<boolean>((resolve) => {
@@ -66,12 +76,15 @@ export function EvaluateUserContextProvider({
       {children}
       <EvaluateUserModal
         isOpen={isOpen}
-        userId={userInfo.userId}
+        sessionId={userInfo.sessionId}
+        sessionDate={userInfo.sessionDate}
+        startTime={userInfo.startTime}
+        areaName={userInfo.areaName}
+        specialtyName={userInfo.specialtyName}
         userName={userInfo.userName}
-        isTutor={userInfo.isTutor}
-        sessionSubject={userInfo.sessionSubject}
-        day={userInfo.day}
-        time={userInfo.time}
+        photoURL={userInfo.photoURL}
+        reviewType={userInfo.reviewType}
+        userId={userInfo.userId}
         setClose={handleCloseModal}
       />
     </EvaluationContext.Provider>
