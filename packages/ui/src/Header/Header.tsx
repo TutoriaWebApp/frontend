@@ -1,18 +1,51 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
+import { GetChats } from "@repo/services/chat";
 
 import { LogOutAction } from "@repo/services/authAction";
+
+// Hook movido para fora do componente para respeitar as regras do React
+function useUnreadMessages(loggedIn: boolean) {
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+
+    const fetchUnread = async () => {
+      if (document.hidden) return;
+
+      const res = await GetChats();
+      if (res.success && res.data) {
+        const total = res.data.reduce(
+          (acc: number, chat: any) => acc + (chat.mensagensNaoLidas || 0),
+          0,
+        );
+        setUnreadCount(total);
+      }
+    };
+
+    fetchUnread();
+
+    const intervalId = setInterval(fetchUnread, 4000);
+
+    return () => clearInterval(intervalId);
+  }, [loggedIn]);
+
+  return unreadCount;
+}
 
 export default function Header() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  const unreadCount = useUnreadMessages(loggedIn);
 
   const notLoggedInRoutes = [
     "/",
@@ -102,20 +135,25 @@ export default function Header() {
           </button>
 
           {/* Navegação Desktop */}
-          <nav className="
+          <nav
+            className="
             hidden 
             lg:block 
             mr-6
-          ">
-            <ul className="
+          "
+          >
+            <ul
+              className="
               flex 
               flex-row 
               items-center
-            ">
+            "
+            >
               {navLinks.map((link, index) => (
                 <Link key={index} href={link.href}>
                   <li
                     className="
+                      relative
                       p-4
                       px-6
                       text-slate-600 
@@ -127,7 +165,33 @@ export default function Header() {
                       2xl:text-xl
                       "
                   >
-                    {link.name}
+                    <span>{link.name}</span>
+
+                    {/* Badge do Chat Desktop */}
+                    {link.name === "Chat" && unreadCount > 0 && (
+                      <span
+                        className="
+                          absolute 
+                          top-2 
+                          right-2 
+                          bg-rose-500 
+                          text-white 
+                          text-[10px] 
+                          font-extrabold 
+                          h-4 
+                          min-w-4 
+                          px-1 
+                          rounded-full 
+                          flex 
+                          items-center 
+                          justify-center 
+                          shadow-xs 
+                          animate-pulse
+                        "
+                      >
+                        {unreadCount > 99 ? "+99" : unreadCount}
+                      </span>
+                    )}
                   </li>
                 </Link>
               ))}
@@ -153,7 +217,8 @@ export default function Header() {
 
           {/* Menu Mobile Overlay */}
           {isMenuOpen && (
-            <div className="
+            <div
+              className="
               lg:hidden 
               fixed 
               inset-0 
@@ -163,13 +228,16 @@ export default function Header() {
               animate-in 
               slide-in-from-right 
               duration-300
-            ">
-              <nav className="
+            "
+            >
+              <nav
+                className="
                 flex 
                 flex-col 
                 p-6 
                 space-y-2
-              ">
+              "
+              >
                 {navLinks.map((link, index) => (
                   <Link
                     key={index}
@@ -177,15 +245,40 @@ export default function Header() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <div
-                      className={`
+                      className="
+                        flex
+                        items-center
+                        justify-between
                         p-4 
                         rounded-xl 
                         font-medium 
                         text-lg
-                      text-slate-600
-                      `}
+                        text-slate-600
+                      "
                     >
-                      {link.name}
+                      <span>{link.name}</span>
+
+                      {/* Badge do Chat Mobile */}
+                      {link.name === "Chat" && unreadCount > 0 && (
+                        <span
+                          className="
+                            bg-rose-500 
+                            text-white 
+                            text-xs 
+                            font-extrabold 
+                            h-5 
+                            min-w-5 
+                            px-1.5 
+                            rounded-full 
+                            flex 
+                            items-center 
+                            justify-center 
+                            shadow-xs
+                          "
+                        >
+                          {unreadCount > 99 ? "+99" : unreadCount}
+                        </span>
+                      )}
                     </div>
                   </Link>
                 ))}

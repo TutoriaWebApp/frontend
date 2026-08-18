@@ -20,6 +20,7 @@
   
     "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
     "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
+    "./sendFirstMessageButton": "./src/SendFirstMessageButton/SendFirstMessageButton.tsx",
     "./addTutorAreaButton": "./src/AddTutorAreaButton/AddTutorAreaButton.tsx",
     "./addSpecialty": "./src/AddSpecialty/AddSpecialty.tsx",
     
@@ -33,7 +34,9 @@
     "./deleteStudentModal": "./src/Modals/Specialty/DeleteStudentArea.tsx",
     "./addTutorAreasModal": "./src/Modals/TutorAreas/AddTutorAreas.tsx",
     "./deleteTutorAreasModal": "./src/Modals/TutorAreas/DeleteTutorAreas.tsx",
-    "./evaluateUserModal": "./src/Modals/EvaluateUser/EvaluateUser.tsx"
+    "./evaluateUserModal": "./src/Modals/EvaluateUser/EvaluateUser.tsx",
+    "./acceptSolicitationModal": "./src/Modals/AcceptSolicitationModal/AcceptSolicitationModal.tsx",
+    "./rejectSolicitationModal": "./src/Modals/RejectSolicitationModal/RejectSolicitationModal.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

@@ -1,10 +1,19 @@
 import React from "react";
 
-import { GetSchedule, GetUserData } from "@repo/services/userServer";
+import {
+  GetSchedule,
+  GetSpecificUserData,
+  GetSpecificTutor,
+} from "@repo/services/userServer";
 import { userLevel } from "@repo/lib/userLevel";
 import { userTitle } from "@repo/lib/userTitle";
 
-import { Specialty, TutorArea, UserData } from "@repo/services/userTypes";
+import {
+  Specialty,
+  SpecificUserData,
+  TutorArea,
+  TutorData,
+} from "@repo/services/userTypes";
 
 import { redirect } from "next/navigation";
 
@@ -12,125 +21,136 @@ import { Grade } from "@mui/icons-material";
 
 import { ReviewSection } from "@repo/ui/reviewSection";
 import { EditProfileButton } from "@repo/ui/editProfileButton";
+import { SendFirstMessageButton } from "@repo/ui/sendFirstMessageButton";
 import { AvailabilitySection } from "@repo/ui/availabilitySection";
 import { TimeSlot } from "@repo/services/availabilityTypes";
 
-export default async function ProfilePage() {
-  let userData: UserData | boolean = false;
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ id: number }>;
+}) {
+  const id = (await params).id;
+
+  let userData: SpecificUserData | null = null;
+  let tutorData: TutorData | null = null;
+  let notAvailable: boolean | null = null;
+
   let tutorAreas: TutorArea[] = [];
   let specialties: Specialty[] = [];
   let availabilities: TimeSlot[] = [];
 
-  const results = await GetUserData();
+  const resultsUserData = await GetSpecificUserData(id);
 
-  if (!results.success) {
-    if (results.status === 401) {
-      redirect("/?session=expired");
-    }
-  } else {
-    userData = results.data;
+  if (resultsUserData.success) {
+    userData = resultsUserData.data!;
 
-    if (userData.perfilTutor) {
-      specialties = userData.perfilTutor.especialidades;
+    if (userData?.tutorId) {
+      const resultsTutor = await GetSpecificTutor(userData?.tutorId);
+      if (resultsTutor.success) {
+        tutorData = resultsTutor.data!;
+        specialties = resultsTutor.data?.especialidades!;
 
-      tutorAreas = userData.perfilTutor.areas;
+        tutorAreas = resultsTutor.data!.areas;
+        specialties = resultsTutor.data!.especialidades;
 
-      const tutorSchedules = await GetSchedule(userData.perfilTutor.id);
+        const resultsSchedule = await GetSchedule(resultsTutor.data!.id!);
 
-      if (tutorSchedules.success && tutorSchedules.data != undefined) {
-        availabilities = tutorSchedules.data;
+        if (resultsSchedule.success) {
+          availabilities = resultsSchedule.data!;
+        }
       }
     }
+  } else {
+    notAvailable = true;
   }
 
   return (
     <>
-      {!userData && <h1>Não foi possível obter os dados de perfil.</h1>}
-      {userData && (
-        <div
-          className="
-      bg-slate-50 
-      "
-        >
+      {notAvailable && (
+        <h1 className="mx-auto my-auto md:text-xl">
+          Não foi possível obter os dados do usuário.
+        </h1>
+      )}
+      {!notAvailable && (
+        <div className="bg-slate-50">
           <main
             className="
-          max-w-5xl 
-          mx-auto 
-          px-4 
-          pt-8 
-          space-y-6
-        "
+              max-w-5xl 
+              mx-auto 
+              px-4 
+              pt-8 
+              space-y-6
+          "
           >
             {/* Seção de Dados Pessoais */}
             <section
               className="
-            bg-white 
-            rounded-3xl 
-            p-8 
-            border 
-            border-slate-200 
-            shadow-sm
-          "
+              bg-white 
+              rounded-3xl 
+              p-8 
+              border 
+              border-slate-200 
+              shadow-sm
+            "
             >
-              <div className="flex flex-col md:flex-row gap-8 items-start">
+              <div
+                className="
+                flex 
+                flex-col 
+                md:flex-row 
+                gap-8 
+                items-start
+              "
+              >
                 <div
                   className="
-                w-32 
-                h-32 
-                md:w-40 
-                md:h-40 
-                bg-slate-200 
-                rounded-2xl 
-                border-4 
-                border-slate-200 
-                shadow-md 
-                flex-shrink-0 
-                flex 
-                items-center 
-                justify-center
-              "
+                    w-32 
+                    h-32 
+                    md:w-40 
+                    md:h-40 
+                    bg-slate-200 
+                    rounded-2xl 
+                    border-4 
+                    border-slate-200 
+                    shadow-md 
+                    flex-shrink-0 
+                    flex 
+                    items-center 
+                    justify-center
+                "
                 >
                   <img
                     // Cache Busting
-                    src={`${userData.fotoURL}?t=${new Date().getTime()}`}
+                    src={`${userData!.fotoURL}?t=${new Date().getTime()}`}
                     alt="Foto do Perfil"
-                    className="
-                  w-full
-                  rounded-2xl
-                "
+                    className="w-full rounded-2xl"
                   />
                 </div>
 
                 {/* Informações Principais */}
-                <div
-                  className="
-                flex-1 
-                space-y-4
-              "
-                >
+                <div className="flex-1 space-y-4">
                   <div
                     className="
-                  flex 
-                  flex-col 
-                  gap-3
-                "
+                    flex 
+                    flex-col 
+                    gap-3
+                  "
                   >
                     <h1
                       className="
-                    text-3xl 
-                    font-bold 
-                    text-slate-800
-                  "
+                      text-3xl 
+                      font-bold 
+                      text-slate-800
+                    "
                     >
-                      {userData.nomePerfil}
+                      {userData!.nomePerfil}
                     </h1>
                     <p
-                      className="
-                    text-slate-500 
-                    font-medium
-                  "
+                      className="text-slate-500 font-medium
+                    "
                     >
-                      {userData.cidade} - {userData.estado}
+                      {userData!.cidade} - {userData!.estado}
                     </p>
                     <p
                       className="
@@ -141,45 +161,40 @@ export default async function ProfilePage() {
                     2xl:text-base
                   "
                     >
-                      Nível {userLevel(userData.pontuacao)} -{" "}
-                      {userTitle(userLevel(userData.pontuacao))}
+                      Nível {userLevel(userData!.pontuacao)} -{" "}
+                      {userTitle(userLevel(userData!.pontuacao))}
                     </p>
                   </div>
 
                   {/* Resumo de Avaliações */}
-                  <div
-                    className="
-                  grid 
-                  grid-cols-2
-                "
-                  >
+                  <div className="grid grid-cols-2">
                     <div
                       className="
-                                flex 
-                                items-center 
-                                gap-1
-                                text-slate-600
-                              "
+                        flex 
+                        items-center 
+                        gap-1
+                      text-slate-600
+                      "
                     >
                       <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
                       <span
                         className="
-                                  md:text-sm 
-                                  font-medium
-                                  2xl:text-base
-                                "
+                          md:text-sm 
+                          font-medium
+                          2xl:text-base
+                        "
                       >
-                        {Number.isInteger(userData.notaAvaliacao)
-                          ? userData.notaAvaliacao.toFixed(1)
-                          : userData.notaAvaliacao.toFixed(2)}{" "}
+                        {Number.isInteger(userData!.notaAvaliacao)
+                          ? userData!.notaAvaliacao.toFixed(1)
+                          : userData!.notaAvaliacao.toFixed(2)}{" "}
                         como{" "}
                         <em className="text-slate-800 not-italic font-bold">
                           Aprendiz
                         </em>{" "}
-                        ({userData.totalAvaliacoes} avaliações)
+                        ({userData!.totalAvaliacoes} avaliações)
                       </span>
                     </div>
-                    {userData.perfilTutor && (
+                    {tutorData && (
                       <div
                         className="
                                 flex 
@@ -199,28 +214,21 @@ export default async function ProfilePage() {
                                   2xl:text-base
                                 "
                         >
-                          {Number.isInteger(userData.perfilTutor.notaAvaliacao)
-                            ? userData.perfilTutor.notaAvaliacao.toFixed(1)
-                            : userData.perfilTutor.notaAvaliacao.toFixed(
-                                2,
-                              )}{" "}
+                          {Number.isInteger(tutorData.notaAvaliacao)
+                            ? tutorData!.notaAvaliacao.toFixed(1)
+                            : tutorData!.notaAvaliacao.toFixed(2)}{" "}
                           como{" "}
                           <em className="text-slate-800 not-italic font-bold">
                             Tutor
                           </em>{" "}
-                          ({userData.perfilTutor.totalAvaliacoes} avaliações)
+                          ({tutorData.totalAvaliacoes} avaliações)
                         </span>
                       </div>
                     )}
                   </div>
                 </div>
-
-                {/* Botões de Ação */}
-                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                  <EditProfileButton />
-                </div>
               </div>
-              {userData.sobremim && (
+              {userData!.sobremim && (
                 <>
                   <h2
                     className="
@@ -239,9 +247,25 @@ export default async function ProfilePage() {
                       leading-relaxed 
                   "
                   >
-                    {userData.sobremim}
+                    {userData!.sobremim}
                   </p>
                 </>
+              )}
+              {tutorData && (
+                <div
+                  className="
+            flex 
+            w-full
+            justify-end 
+            mt-4
+            mb-4
+            "
+                >
+                  <SendFirstMessageButton
+                    tutorName={userData!.nomePerfil}
+                    tutorId={tutorData.id}
+                  />
+                </div>
               )}
             </section>
 
@@ -325,15 +349,18 @@ export default async function ProfilePage() {
                 </h2>
                 <AvailabilitySection
                   availabilities={availabilities}
-                  ownProfile={true}
+                  ownProfile={false}
+                  areas={tutorAreas}
+                  specialties={specialties}
+                  tutorId={id}
                 />
               </section>
             )}
             <ReviewSection
-              userId={userData.id}
+              userId={userData!.id}
               areas={tutorAreas}
               specialties={specialties}
-              tutorId={userData.perfilTutor?.id ? userData.perfilTutor.id : null}
+              tutorId={tutorData?.id ?? null}
             />
           </main>
         </div>

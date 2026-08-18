@@ -11,7 +11,10 @@ import {
   DeleteSpecialtyResult,
   InsertScheduleResult,
   DeleteScheduleResult,
-  GetTutorsResult
+  GetTutorsResult,
+  BackendResponse,
+  CreateUserResponse,
+  GetSpecificUserResult,
 } from "./types/user";
 import { GetScheduleResult, TimeSlot } from "./types/availability";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
@@ -163,12 +166,23 @@ export async function GetAreaById(id: number): Promise<GetAreaResult> {
   }
 }
 
-export async function GetSpecialties(): Promise<GetSpecialtiesResult> {
-  const URL = `${process.env.backendBaseURL}/especialidades/`;
+export async function GetSpecialties(
+  areaId?: number,
+): Promise<GetSpecialtiesResult> {
+  let URL = `${process.env.backendBaseURL}/especialidades/`;
+
+  if (areaId) {
+    URL += `?area=${areaId}`;
+  }
 
   const res = await authRequestWrapper(
     URL,
-    { method: "GET" },
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
     "Request Specialties",
   );
 
@@ -211,7 +225,7 @@ export async function BecomeTutor(
     const successBecomeTutor: BecomeTutorResult = {
       success: true,
       status: res.status,
-      data: res.data
+      data: res.data,
     };
     return successBecomeTutor;
   } else {
@@ -227,7 +241,7 @@ export async function InsertSpecialty(
   cookieString: string,
   csrfTokenString: string,
   specialtyId: number,
-  tutorId: number
+  tutorId: number,
 ): Promise<InsertSpecialtyResult> {
   const URL = `${process.env.backendBaseURL}/contem/`;
 
@@ -241,7 +255,7 @@ export async function InsertSpecialty(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({especialidadeId: specialtyId, tutorId: tutorId})
+      body: JSON.stringify({ especialidadeId: specialtyId, tutorId: tutorId }),
     },
     "Request Insert Specialty",
   );
@@ -264,7 +278,7 @@ export async function InsertSpecialty(
 export async function DeleteSpecialty(
   cookieString: string,
   csrfTokenString: string,
-  relationId: number
+  relationId: number,
 ): Promise<DeleteSpecialtyResult> {
   const URL = `${process.env.backendBaseURL}/contem/${relationId}/`;
 
@@ -295,10 +309,13 @@ export async function DeleteSpecialty(
   }
 }
 
-export async function GetSchedule(
-): Promise<GetScheduleResult> {
-  const URL = `${process.env.backendBaseURL}/agendas/`;
+export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> {
+  let URL = `${process.env.backendBaseURL}/agendas/`;
 
+  if (tutorId) {
+    URL += `?tutor=${tutorId}`;
+  }
+  
   const res = await authRequestWrapper(
     URL,
     {
@@ -311,7 +328,7 @@ export async function GetSchedule(
     const successBecomeTutor: GetScheduleResult = {
       success: true,
       status: res.status,
-      data: res.data
+      data: res.data,
     };
     return successBecomeTutor;
   } else {
@@ -327,7 +344,7 @@ export async function InsertSchedule(
   cookieString: string,
   csrfTokenString: string,
   scheduleData: TimeSlot,
-  tutorId: number
+  tutorId: number,
 ): Promise<InsertScheduleResult> {
   const URL = `${process.env.backendBaseURL}/agendas/`;
 
@@ -341,7 +358,7 @@ export async function InsertSchedule(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({...scheduleData, tutorId: tutorId})
+      body: JSON.stringify({ ...scheduleData, tutorId: tutorId }),
     },
     "Request Insert Schedule",
   );
@@ -364,7 +381,7 @@ export async function InsertSchedule(
 export async function DeleteSchedule(
   cookieString: string,
   csrfTokenString: string,
-  scheduleId: number
+  scheduleId: number,
 ): Promise<DeleteScheduleResult> {
   const URL = `${process.env.backendBaseURL}/agendas/${scheduleId}/`;
 
@@ -395,13 +412,42 @@ export async function DeleteSchedule(
   }
 }
 
-export async function GetTutors(): Promise<GetTutorsResult> {
-  const URL = `${process.env.backendBaseURL}/tutores/`;
+export async function GetTutors(
+  pageNumber: number = 1,
+  gradeOrder: string,
+  sessionsOrder: string,
+  areaId?: number,
+  specialtyId?: number,
+  radius?: number | string,
+  page_size: number = 6
+): Promise<GetTutorsResult> {
+  let URL = `${process.env.backendBaseURL}/tutores/?page=${pageNumber}`;
+
+  if (areaId) {
+    URL += `&area=${areaId}`;
+  }
+  if (specialtyId) {
+    URL += `&especialidade=${specialtyId}`;
+  }
+  if (radius) {
+    URL += `&raio=${radius}`;
+  }
+  if(gradeOrder != ""){
+    URL += `&ordenar_nota=${gradeOrder}`
+  }
+  if(sessionsOrder != ""){
+    URL += `&ordenar_tutorias=${sessionsOrder}`
+  }
+  
+  URL += `&page_size=${page_size}`;
 
   const res = await authRequestWrapper(
     URL,
     {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
     "Request Tutors",
   );
@@ -410,11 +456,69 @@ export async function GetTutors(): Promise<GetTutorsResult> {
     const successGetRelations: GetTutorsResult = {
       success: true,
       status: res.status,
-      data: res.data
+      data: res.data,
     };
     return successGetRelations;
   } else {
     const failedRequest: GetTutorsResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function CreateAccount(
+  formData: FormData,
+): Promise<CreateUserResponse> {
+  const baseURL = process.env.backendBaseURL;
+
+  try {
+    const response = await fetch(`${baseURL}/usuarios/novo`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    return {
+      success: response.ok,
+      status: response.status,
+      data: data as BackendResponse,
+    };
+  } catch (error) {
+    console.error("Create User Request Service Error:", error);
+    return {
+      success: false,
+      status: 500,
+      data: { message: "Não foi possível conectar ao servidor." },
+    };
+  }
+}
+
+export async function GetSpecificUserData(userId?: number): Promise<GetSpecificUserResult> {
+  let URL = `${process.env.backendBaseURL}/usuarios/${userId}`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+    },
+    "Request Specific User Data (Client)",
+  );
+
+  if (res.success) {
+    const successUserData: GetSpecificUserResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return successUserData;
+  } else {
+    const failedRequest: GetSpecificUserResult = {
       success: false,
       status: res.status,
     };

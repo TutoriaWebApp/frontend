@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import LoginIcon from "@mui/icons-material/Login";
 import { useSessionExpired } from "../../contexts/SessionExpiredContext/SessionExpiredContext";
+import { LogOutAction } from "@repo/services/authAction";
 
 interface SessionExpiredModalProps {
   isOpen: boolean;
@@ -19,10 +20,9 @@ export function SessionExpiredModal({ isOpen }: SessionExpiredModalProps) {
     return null;
   } 
   
-  const handleLoginRedirect = () => {
+  const handleLoginRedirect = async () => {
     sessionExpired.closeSessionExpired();
-    router.push("/");
-    router.refresh();
+    await LogOutAction();
   };
 
   return (

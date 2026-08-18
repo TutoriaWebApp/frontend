@@ -1,38 +1,89 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import {PostUserReviewAction, PostTutorReviewAction } from "@repo/services/reviewsAction"
+import {GetSpecificUserData} from "@repo/services/userClient";
+import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+import { formatarDataBR } from "@repo/lib/formatData";
+import {formatTime} from "@repo/lib/formatTime"
 
 interface EvaluateUserModalProps {
   isOpen: boolean;
-  userId: number;
+  sessionId: number;
+  sessionDate: string;
+  startTime: string;
+  areaName: string;
+  specialtyName: string;
   userName: string;
-  isTutor: boolean;
-  sessionSubject: string;
-  day: string;
-  time: string;
-  setClose: () => void
+  photoURL: string;
+  reviewType: string;
+  userId: number;
+  setClose: () => void;
 }
 
 export function EvaluateUserModal({
   isOpen,
-  userId,
+  sessionId,
+  sessionDate,
+  startTime,
+  areaName,
+  specialtyName,
   userName,
-  isTutor,
-  sessionSubject,
-  day,
-  time,
-  setClose
+  photoURL,
+  reviewType,
+  userId,
+  setClose,
 }: EvaluateUserModalProps) {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [comment, setComment] = useState("");
 
+  const { showNotification } = useContext(NotificationContext);
+
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
+
+    if(reviewType === "APRENDIZ"){
+        const resultsUserData = await GetSpecificUserData(userId);
+
+        const tutorId = resultsUserData.data.tutorId;
+
+        const res = await PostTutorReviewAction({
+          nota: rating,
+          comentario: comment,
+          tutorId: tutorId,
+          sessaoId: sessionId
+        })
+
+      if(res.success){
+        showNotification("Avaliação enviada com sucesso!", "success");
+      }
+      else{
+        showNotification("Ocorreu um erro ao tentar enviar a avaliação.", "error");
+        return;
+      }
+    }
+    else{
+      const res = await PostUserReviewAction({
+        nota: rating,
+        comentario: comment,
+        usuarioId: userId,
+        sessaoId: sessionId
+      })
+
+      if(res.success){
+        showNotification("Avaliação enviada com sucesso!", "success");
+      }
+      else{
+        showNotification("Ocorreu um erro ao tentar enviar a avaliação.", "error");
+        return;
+      }
+    }
+
     if (rating > 0) {
       setClose();
       setComment("");
@@ -41,7 +92,8 @@ export function EvaluateUserModal({
   };
 
   return (
-    <div className="
+    <div
+      className="
         fixed 
         inset-0 
         z-[150] 
@@ -54,8 +106,10 @@ export function EvaluateUserModal({
         animate-in 
         fade-in 
         duration-300
-    ">
-      <div className="
+    "
+    >
+      <div
+        className="
         bg-white 
         w-full 
         max-w-lg 
@@ -67,30 +121,37 @@ export function EvaluateUserModal({
         animate-in 
         zoom-in-95 
         duration-300
-    ">
-        <div className="
+    "
+      >
+        <div
+          className="
             overflow-y-auto 
             custom-scrollbar 
             p-8 
             md:p-10
-        ">
-          <div className="
+        "
+        >
+          <div
+            className="
             flex 
             flex-col 
             items-center 
             text-center 
             mb-8
-        ">
-            <h2 className="
+        "
+          >
+            <h2
+              className="
                 text-2xl 
                 font-black 
                 text-slate-800
-            ">
-              {isTutor ? "Avaliar Tutor" : "Avaliar Aprendiz"}
+            "
+            >
+              {reviewType === "APRENDIZ" ? "Avaliar Tutor" : "Avaliar Aprendiz"}
             </h2>
 
-                <div
-                  className="
+            <div
+              className="
                     w-32 
                     h-32 
                     md:w-40 
@@ -106,48 +167,62 @@ export function EvaluateUserModal({
                     justify-center
                     mt-4
                     mb-4
-              ">
-                  <img
-                    src={`https://imgs.search.brave.com/rbh7pRnJ8Kh25nP02zCkvtQXBainO9_vApWJoGrpQMU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTcv/MzU1Lzc4NC9zbWFs/bC9nb29nbGUtbG9n/by1vbi10cmFuc3Bh/cmVudC1iYWNrZ3Jv/dW5kLWZyZWUtcG5n/LnBuZw`}
-                    alt="Foto do Perfil"
-                    className="
-                    w-full
-                    rounded-full
-                    object-cover
-                  "/>
+              "
+            >
+              <img
+                src={photoURL}
+                alt="Foto do Perfil"
+                className="
+                  w-full
+                  rounded-full
+                  object-cover
+                "
+              />
             </div>
 
-            <p className="
+            <p
+              className="
                 text-slate-500 
                 mt-2
-            ">
+            "
+            >
               Sua avaliação é fundamental. Como foi sua experiência com{" "}
-              <span className="
+              <span
+                className="
                 font-bold 
                 text-slate-700
-              ">
+              "
+              >
                 {userName}
-              </span>?
+              </span>
+              ?
             </p>
-            <p className="
+            <p
+              className="
                 text-slate-500 
                 mt-4
-            ">
-              Vocês tiveram uma sessão de tutoria em <b>{sessionSubject}</b> no dia <b>{day}</b> às <b>{time}</b>.
+            "
+            >
+              Vocês tiveram uma sessão de tutoria em <b>{areaName} ({specialtyName})</b> no
+              dia <b>{formatarDataBR(sessionDate)}</b> às <b>{formatTime(startTime)}</b>.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="
+            <div
+              className="
                 flex 
                 flex-col 
                 items-center 
                 gap-3
-            ">
-              <div className="
+            "
+            >
+              <div
+                className="
                 flex 
                 gap-2
-            ">
+            "
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -159,7 +234,8 @@ export function EvaluateUserModal({
                         transition-transform 
                         hover:scale-110 
                         active:scale-90
-                    ">
+                    "
+                  >
                     {star <= (hover || rating) ? (
                       <StarIcon
                         className="text-amber-400"
@@ -175,13 +251,15 @@ export function EvaluateUserModal({
                 ))}
               </div>
               {rating === 0 && (
-                <span className="
+                <span
+                  className="
                     text-xs 
                     font-black 
                     uppercase 
                     tracking-widest 
                     text-rose-400 
-                ">
+                "
+                >
                   Seleção obrigatória
                 </span>
               )}
@@ -189,20 +267,22 @@ export function EvaluateUserModal({
 
             {/* Campo de Comentário */}
             <div className="space-y-3">
-              <label className="
+              <label
+                className="
                 text-xs 
                 font-black 
                 text-slate-400 
                 uppercase 
                 tracking-widest 
                 ml-1
-              ">
+              "
+              >
                 Comentário (Opcional)
               </label>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="Conte sobre os pontos positivos ou que pode melhorar..."
+                placeholder={`Conte como foi sua experiência com esse  os pontos positivos ou que pode melhorar.`}
                 rows={4}
                 className="
                     w-full 
@@ -221,21 +301,28 @@ export function EvaluateUserModal({
               />
             </div>
 
-            <div className="
+            <div
+              className="
                 bg-slate-50 
                 rounded-2xl 
                 p-4 
                 border 
                 border-slate-100
-            ">
-              <p className="
+            "
+            >
+              <p
+                className="
                 text-sm 
                 text-slate-400 
                 text-center 
                 leading-relaxed
-            ">
-                Ao enviar, sua avaliação ficará visível no perfil desse {isTutor ? "tutor" :  "aprendiz"} e
-                ajudará outros {isTutor ? "aprendizes a escolherem melhor" : "tutores a selecionarem aprendizes melhor"}.
+            "
+              >
+                Ao enviar, sua avaliação ficará visível no perfil desse{" "}
+                {reviewType === "APRENDIZ" ? "tutor" : "aprendiz"} e ajudará outros{" "}
+                {reviewType === "APRENDIZ"
+                  ? "aprendizes a escolherem melhor seus tutores."
+                  : "tutores a escolherem melhor seus aprendizes."}
               </p>
             </div>
 

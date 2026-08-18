@@ -66,19 +66,14 @@ export function AddSpecialtyModal({
 
   useEffect(() => {
     async function fetchSpecialties() {
-      const res = await GetSpecialties();
+      const res = await GetSpecialties(selectedArea?.id);
 
       if (!res.success) {
         showNotification("Não foi possível obter as especialidades!", "error");
         return;
-      } else {
-        const filteredSpecialties = res.data.filter(
-          (specialty: Specialty) =>
-            specialty.areaId === selectedArea?.id &&
-            !specialties.some((s) => s.id === specialty.id),
-        );
-
-        setAvailableSpecialties(filteredSpecialties);
+      } 
+      else {
+        setAvailableSpecialties(res.data);
       }
     }
 

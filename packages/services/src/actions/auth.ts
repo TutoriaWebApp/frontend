@@ -85,7 +85,7 @@ export async function LogOutAction() {
 
   try {
     const baseURL = process.env.backendBaseURL;
-    await fetch(`${baseURL}/logout/`, {
+    await fetch(`${baseURL}/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

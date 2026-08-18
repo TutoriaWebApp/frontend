@@ -16,6 +16,7 @@ export interface CreateUserResult {
 }
 
 export interface UserData {
+  id: number;
   email: string;
   nomePerfil: string;
   estado: string;
@@ -23,10 +24,29 @@ export interface UserData {
   aniversario: string;
   pontuacao: number;
   fotoURL: string;
+  sobremim: string;
+  notaAvaliacao: number;
+  totalAvaliacoes: number;
   perfilTutor?: {
     id: number;
     especialidades: Specialty[];
+    areas: TutorArea[];
+    notaAvaliacao: number;
+    totalAvaliacoes: number;
   } | null;
+}
+
+export interface SpecificUserData {
+  id: number;
+  nomePerfil: string;
+  estado: string;
+  cidade: string;
+  pontuacao: number;
+  fotoURL: string;
+  sobremim: string;
+  notaAvaliacao: number;
+  totalAvaliacoes: number;
+  tutorId: number;
 }
 
 export interface UserDataSuccessResult {
@@ -115,19 +135,40 @@ export interface DeleteScheduleResult {
   status: number;
 }
 
+export interface TutorData {
+  id: number;
+  usuarioId: number;
+  nomePerfil: string;
+  estado: string;
+  cidade: string;
+  pontuacao: string;
+  fotoURL: string;
+  sobremim: string;
+  notaAvaliacao: number;
+  totalAvaliacoes: number;
+  especialidades: Specialty[];
+  areas: TutorArea[];
+}
+
 export interface GetTutorsResult {
   success: boolean;
   status: number;
-  data?: [
-    {
-      id: number;
-      usuarioId: number;
-      nomePerfil: string;
-      estado: string;
-      cidade: string;
-      pontuacao: string;
-      fotoURL: string;
-      especialidades: Specialty[];
-    },
-  ];
+  data?: {
+    count: number;
+    next: string;
+    previous: string;
+    results: TutorData[];
+  };
+}
+
+export interface GetSpecificUserResult {
+  success: boolean;
+  status: number;
+  data?: SpecificUserData;
+}
+
+export interface GetSpecificTutorResult {
+  success: boolean;
+  status: number;
+  data?: TutorData;
 }
