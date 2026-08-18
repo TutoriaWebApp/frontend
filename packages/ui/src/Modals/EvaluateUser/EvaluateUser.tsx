@@ -4,7 +4,6 @@ import React, { useState, useContext } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import {PostUserReviewAction, PostTutorReviewAction } from "@repo/services/reviewsAction"
-import { PostUserReview, PostTutorReview } from "@repo/services/reviews";
 import {GetSpecificUserData} from "@repo/services/userClient";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 import { formatarDataBR } from "@repo/lib/formatData";
@@ -53,7 +52,7 @@ export function EvaluateUserModal({
 
         const tutorId = resultsUserData.data.tutorId;
 
-        const res = await PostTutorReview({
+        const res = await PostTutorReviewAction({
           nota: rating,
           comentario: comment,
           tutorId: tutorId,
@@ -69,7 +68,7 @@ export function EvaluateUserModal({
       }
     }
     else{
-      const res = await PostUserReview({
+      const res = await PostUserReviewAction({
         nota: rating,
         comentario: comment,
         usuarioId: userId,

@@ -1,18 +1,15 @@
 "use server";
 
+import { CreateChat, PostMessage } from "../chat";
 import {
-  SendTutorReviewData,
-  SendUserReviewData,
-  SendReviewResult,
-} from "../types/review";
-
-import { PostUserReview, PostTutorReview } from "../review";
+  CreateChatResult,
+  PostMessageData,
+  PostMessageResult,
+} from "../types/chat";
 
 import { cookies } from "next/headers";
 
-export async function PostUserReviewAction(
-  bodyData: SendUserReviewData,
-): Promise<SendReviewResult> {
+export async function PostMessageAction(messageData: PostMessageData): Promise<PostMessageResult> {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
@@ -20,7 +17,7 @@ export async function PostUserReviewAction(
 
     const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
-    const result: SendReviewResult = await PostUserReview(bodyData, cookieString, csrfToken);
+    const result: PostMessageResult = await PostMessage(messageData, cookieString, csrfToken);
 
     if (result.success) {
       return { success: true, status: result.status };
@@ -38,9 +35,10 @@ export async function PostUserReviewAction(
   }
 }
 
-export async function PostTutorReviewAction(
-  bodyData: SendTutorReviewData,
-): Promise<SendReviewResult> {
+export async function CreateChatAction(
+  tutorId: number,
+  conteudo: string,
+): Promise<CreateChatResult> {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
@@ -48,7 +46,7 @@ export async function PostTutorReviewAction(
 
     const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
-    const result: SendReviewResult = await PostTutorReview(bodyData, cookieString, csrfToken);
+    const result: CreateChatResult = await CreateChat(tutorId, conteudo, cookieString, csrfToken);
 
     if (result.success) {
       return { success: true, status: result.status };

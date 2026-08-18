@@ -20,6 +20,7 @@
   
     "./addStudentAreaButton": "./src/AddStudentAreaButton/AddStudentAreaButton.tsx",
     "./editProfileButton": "./src/EditProfileButton/EditProfileButton.tsx",
+    "./sendFirstMessageButton": "./src/SendFirstMessageButton/SendFirstMessageButton.tsx",
     "./addTutorAreaButton": "./src/AddTutorAreaButton/AddTutorAreaButton.tsx",
     "./addSpecialty": "./src/AddSpecialty/AddSpecialty.tsx",
     

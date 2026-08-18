@@ -10,7 +10,7 @@ import {
 export async function CreateSolicitation(
   bodyData: SolicitationPostData,
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
   const URL = `${process.env.backendBaseURL}/solicitacoes/`;
 
@@ -136,7 +136,7 @@ export async function GetAllSolicitations(): Promise<AllSolicitationsGetResult> 
 export async function AcceptSolicitation(
   id: number,
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
   let URL = `${process.env.backendBaseURL}/solicitacoes/aceitar/${id}/`;
 
@@ -178,7 +178,7 @@ export async function AcceptSolicitation(
 export async function RejectSolicitation(
   id: number,
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
   let URL = `${process.env.backendBaseURL}/solicitacoes/recusar/${id}/`;
 

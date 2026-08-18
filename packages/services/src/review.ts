@@ -100,8 +100,8 @@ export async function GetReviewsTutor(
 
 export async function PostUserReview(
   bodyData: SendUserReviewData,
-  // cookieString: string,
-  // csrfTokenString: string,
+  cookieString: string,
+  csrfTokenString: string | undefined,
 ): Promise<SendReviewResult> {
   const URL = `${process.env.backendBaseURL}/avaliacoes/aprendiz/`;
 
@@ -113,8 +113,8 @@ export async function PostUserReview(
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          // Cookie: cookieString,
-          // "X-CSRFToken": csrfTokenString,
+          Cookie: cookieString,
+          "X-CSRFToken": csrfTokenString,
         },
         body: JSON.stringify(bodyData),
       },
@@ -144,8 +144,8 @@ export async function PostUserReview(
 
 export async function PostTutorReview(
   bodyData: SendTutorReviewData,
-  // cookieString: string,
-  // csrfTokenString: string,
+  cookieString: string,
+  csrfTokenString: string | undefined,
 ): Promise<SendReviewResult> {
   const URL = `${process.env.backendBaseURL}/avaliacoes/tutor/`;
 
@@ -157,8 +157,8 @@ export async function PostTutorReview(
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          // Cookie: cookieString,
-          // "X-CSRFToken": csrfTokenString,
+          Cookie: cookieString,
+          "X-CSRFToken": csrfTokenString,
         },
         body: JSON.stringify(bodyData),
       },

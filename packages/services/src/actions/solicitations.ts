@@ -15,7 +15,7 @@ export async function CreateSolicitationAction(
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
-    const csrfToken = cookieStore.get("csrftoken")!.value;
+    const csrfToken = cookieStore.get("csrftoken")?.value;
 
     const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -43,7 +43,7 @@ export async function AcceptSolicitationAction(
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
-    const csrfToken = cookieStore.get("csrftoken")!.value;
+    const csrfToken = cookieStore.get("csrftoken")?.value;
 
     const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -71,7 +71,7 @@ export async function RejectSolicitationAction(
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
-    const csrfToken = cookieStore.get("csrftoken")!.value;
+    const csrfToken = cookieStore.get("csrftoken")?.value;
 
     const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
