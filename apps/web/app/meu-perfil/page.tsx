@@ -23,11 +23,7 @@ export default async function ProfilePage() {
 
   const results = await GetUserData();
 
-  if (!results.success) {
-    if (results.status === 401) {
-      redirect("/?session=expired");
-    }
-  } else {
+  if (results.success) {
     userData = results.data;
 
     if (userData.perfilTutor) {
@@ -333,7 +329,9 @@ export default async function ProfilePage() {
               userId={userData.id}
               areas={tutorAreas}
               specialties={specialties}
-              tutorId={userData.perfilTutor?.id ? userData.perfilTutor.id : null}
+              tutorId={
+                userData.perfilTutor?.id ? userData.perfilTutor.id : null
+              }
             />
           </main>
         </div>

@@ -87,11 +87,11 @@ export function ChangePasswordModal({
       onClose();
     }
     if (!res.success) {
-      if (res.status === 401) {
-        router.push("/?session=expired");
+      if (res.status === 500) {
+        showNotification("Ocorreu um erro no servidor, não foi possível mudar sua senha.", "error");
       } 
       else{
-        setErrorMessage(res.message)
+        showNotification("Ocorreu um erro, não foi possível mudar sua senha.", "error");
       }
     }
   };

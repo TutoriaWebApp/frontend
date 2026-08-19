@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import Link from "next/link";
 
@@ -12,17 +12,32 @@ import { DashboardCard } from "@repo/ui/dashboardCard";
 
 import { useEvaluation } from "@repo/ui/contexts/EvaluateUserContext/EvaluateUserContext";
 import { GetPendingReviews } from "@repo/services/reviews";
+import { DashboardStatisticsData } from "@repo/services/userTypes";
+import { GetStatistics } from "@repo/services/userClient";
+
+import { ClipLoader } from "react-spinners";
+
+import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+
+import { levelThresholds, userLevel } from "@repo/lib/userLevel";
 
 export default function Dashboard(): React.ReactNode {
   const { triggerEvaluation } = useEvaluation();
+  const [statisticsData, setStatisticsData] =
+    useState<DashboardStatisticsData>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [pointsToNextLevel, setPointsToNextLevel] = useState<number>();
+
+  const [progressPercentage, setProgressPercentage] = useState<number>(0);
+
+  const { showNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     async function fetchSessions() {
       const res = await GetPendingReviews();
 
       if (res.success) {
-
-      const data = res.data;
+        const data = res.data;
 
         for (let i = 0; i < data!.length; i++) {
           await triggerEvaluation(
@@ -41,6 +56,60 @@ export default function Dashboard(): React.ReactNode {
     }
 
     fetchSessions();
+  }, []);
+
+  useEffect(() => {
+    async function fetchStatistics() {
+      setLoading(true);
+      const res = await GetStatistics();
+
+      if (res.success && res.data) {
+        setStatisticsData(res.data);
+
+        const currentPoints = res.data.pontos ?? 0;
+        const currentLevel = userLevel(currentPoints);
+
+        // Se o usuário já atingiu o nível máximo (nível 50)
+        if (currentLevel >= levelThresholds.length) {
+          setProgressPercentage(100);
+        } else {
+          // XP base do nível atual (se for nível 1, a base é 0)
+          const currentLevelBaseXp =
+            currentLevel > 1 ? (levelThresholds[currentLevel - 2] ?? 0) : 0;
+          // XP necessária para o próximo nível
+          const nextLevelTargetXp = levelThresholds[currentLevel - 1] ?? 100;
+
+          const range = nextLevelTargetXp - currentLevelBaseXp;
+          const progressInRange = currentPoints - currentLevelBaseXp;
+
+          const percentage =
+            range > 0
+              ? Math.min(
+                  100,
+                  Math.max(0, Math.round((progressInRange / range) * 100)),
+                )
+              : 0;
+
+          setProgressPercentage(percentage);
+        }
+      } else {
+        if (res.status === 500) {
+          showNotification(
+            "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
+            "error",
+          );
+        } else {
+          showNotification(
+            "Ocorreu um erro, não foi possível obter suas estatísticas",
+            "error",
+          );
+        }
+      }
+
+      setLoading(false);
+    }
+
+    fetchStatistics();
   }, []);
 
   return (
@@ -117,152 +186,61 @@ export default function Dashboard(): React.ReactNode {
           />
         </section>
 
-        <section
-          className="
-          bg-slate-50/80
-          mx-10 
-          mb-10 
-          rounded-[2rem] 
-          p-8 
-          border 
-          border-slate-100
-        "
-        >
-          <h2
-            className="
-            text-xl 
-            font-black 
-            text-slate-700 
-            text-center 
-            mb-8
-          "
-          >
-            Seu Progresso de Aprendizado
-          </h2>
+        {loading && (
+          <ClipLoader
+            color="#64748b"
+            className="relative left-[47%]"
+            size={120}
+          />
+        )}
+        {!loading && (
+          <section className="bg-slate-50/80 mx-10 mb-10 rounded-[2rem] p-8 border border-slate-100">
+            <h2 className="text-xl font-black text-slate-700 text-center mb-8">
+              Seu Progresso de Aprendizado
+            </h2>
 
-          <div
-            className="
-            grid 
-            grid-cols-1
-            md:grid-cols-3 
-            gap-4 
-            mb-10 
-            text-center
-          "
-          >
-            <div>
-              <p
-                className="
-                text-3xl 
-                font-black 
-              text-slate-500
-              "
-              >
-                15
-              </p>
-              <p
-                className="
-                sm:text-xs 
-                2xl:text-sm 
-                font-bold 
-                text-slate-400 
-                uppercase 
-                mt-1
-              "
-              >
-                Sessões Concluídas
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-center">
+              <div>
+                <p className="text-3xl font-black text-slate-500">
+                  {statisticsData?.sessoesConcluidas ?? 0}
+                </p>
+                <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
+                  Sessões Concluídas
+                </p>
+              </div>
+              <div>
+                <p className="text-3xl font-black text-purple-500">
+                  {statisticsData?.conquistasDesbloqueadas ?? 0}
+                </p>
+                <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
+                  Conquistas Desbloqueadas
+                </p>
+              </div>
+              <div>
+                <p className="text-3xl font-black text-purple-500">
+                  {statisticsData?.pontos ?? 0}
+                </p>
+                <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
+                  Pontos
+                </p>
+              </div>
             </div>
-            <div>
-              <p
-                className="
-                text-3xl 
-                font-black 
-              text-purple-500
-              "
-              >
-                8
-              </p>
-              <p
-                className="
-                sm:text-xs 
-                2xl:text-sm 
-                font-bold 
-                text-slate-400 
-                uppercase 
-                mt-1
-              "
-              >
-                Conquistas Desbloqueadas
-              </p>
-            </div>
-            <div>
-              <p
-                className="
-                text-3xl 
-                font-black 
-                text-purple-500
-              "
-              >
-                250
-              </p>
-              <p
-                className="
-                sm:text-xs 
-                2xl:text-sm 
-                font-bold 
-                text-slate-400 
-                uppercase 
-                mt-1
-              "
-              >
-                Pontos
-              </p>
-            </div>
-          </div>
 
-          <div
-            className="
-            max-w-2xl 
-            mx-auto
-          "
-          >
-            <div
-              className="
-              w-full 
-              h-4 
-              bg-slate-200 
-              rounded-full 
-              overflow-hidden 
-              mb-4 
-              shadow-inner
-            "
-            >
-              <div
-                className="
-                h-full 
-                bg-purple-500 
-                rounded-full 
-                w-[70%] 
-                transition-all 
-                duration-1000 
-               "
-              ></div>
+            <div className="max-w-2xl mx-auto">
+              <div className="w-full h-4 bg-slate-200 rounded-full overflow-hidden mb-4 shadow-inner">
+                <div
+                  className="h-full bg-purple-500 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+              <p className="text-center text-sm font-bold text-slate-500">
+                Você está{" "}
+                <span className="text-purple-700">{progressPercentage}%</span> mais
+                perto do seu próximo nível!
+              </p>
             </div>
-            <p
-              className="
-              text-center 
-              text-sm 
-              font-bold 
-              text-slate-500
-            "
-            >
-              Você está <span className="text-purple-700">70%</span> mais perto do
-              seu próximo nível!
-            </p>
-          </div>
-        </section>
-
+          </section>
+        )}
         <div
           className="
           flex 

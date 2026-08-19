@@ -1,5 +1,5 @@
 // Lista de XP Total Acumulado extraída da sua Tabela de Progressão
-const levelThresholds = [
+export const levelThresholds = [
   100, 201, 302, 403, 504, 705, 1006, 1407, 1908, 2509, // Níveis 1-10 
   3210, 4011, 4912, 5913, 7014, 8215, 9516, 10917, 12418, 14019, // Níveis 11-20 
   15720, 17521, 19422, 21423, 23524, 25725, 28026, 30427, 32928, 35529, // Níveis 21-30 

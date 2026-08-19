@@ -172,3 +172,47 @@ export interface GetSpecificTutorResult {
   status: number;
   data?: TutorData;
 }
+
+export interface DashboardStatisticsData {
+  sessoesConcluidas: number;
+  conquistasDesbloqueadas: number;
+  pontos: number;
+}
+
+export interface DashboardStatisticsResult {
+  success: boolean;
+  status: number;
+  data?: DashboardStatisticsData;
+}
+
+export interface GetRecommendationData {
+  id: number;
+  score: number;
+  perfilTutor: {
+    id: number;
+    usuarioId: number;
+    nomePerfil: string;
+    estado: string;
+    cidade: string;
+    localizacao: string;
+    distancia_km: string;
+    pontuacao: string;
+    fotoURL: string;
+    sobremim: string;
+    notaAvaliacao: number;
+    totalAvaliacoes: number;
+    especialidades: string;
+    areas: string;
+  };
+}
+
+export interface GetRecommendationsResult {
+  success: boolean;
+  status: number;
+  data?: {
+    count: number;
+    next: string;
+    previous: string;
+    results: GetRecommendationData[];
+  };
+}

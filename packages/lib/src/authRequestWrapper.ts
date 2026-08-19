@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 interface reqParamsData {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: {};
@@ -29,6 +31,7 @@ export const authRequestWrapper = async (
         status: 401,
         data,
       };
+      redirect("/?session=expired");
     }
     if (response.ok) {
       return { success: true, status: response.status, data };
