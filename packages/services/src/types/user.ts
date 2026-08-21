@@ -202,7 +202,7 @@ export interface GetRecommendationData {
     notaAvaliacao: number;
     totalAvaliacoes: number;
     especialidades: string;
-    areas: string;
+    areas: TutorArea[];
   };
 }
 
