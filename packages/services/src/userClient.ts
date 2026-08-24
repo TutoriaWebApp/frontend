@@ -15,6 +15,8 @@ import {
   BackendResponse,
   CreateUserResponse,
   GetSpecificUserResult,
+  DashboardStatisticsResult,
+  GetRecommendationsResult
 } from "./types/user";
 import { GetScheduleResult, TimeSlot } from "./types/availability";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
@@ -468,6 +470,50 @@ export async function GetTutors(
   }
 }
 
+export async function GetRecommendations(
+  pageNumber: number = 1,
+  areaId: number,
+  specialtyId?: number,
+  radius?: number | string,
+  page_size: number = 6
+): Promise<GetRecommendationsResult> {
+  let URL = `${process.env.backendBaseURL}/recomendacoes/?page=${pageNumber}&area=${areaId}&page_size=${page_size}`;
+
+  if (specialtyId) {
+    URL += `&especialidade=${specialtyId}`;
+  }
+  if (radius) {
+    URL += `&raio=${radius}`;
+  }
+  
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+    "Request Recommendation Tutors",
+  );
+
+  if (res.success) {
+    const successGetRelations: GetRecommendationsResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return successGetRelations;
+  } else {
+    const failedRequest: GetRecommendationsResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+
 export async function CreateAccount(
   formData: FormData,
 ): Promise<CreateUserResponse> {
@@ -519,6 +565,33 @@ export async function GetSpecificUserData(userId?: number): Promise<GetSpecificU
     return successUserData;
   } else {
     const failedRequest: GetSpecificUserResult = {
+      success: false,
+      status: res.status,
+    };
+    return failedRequest;
+  }
+}
+
+export async function GetStatistics(): Promise<DashboardStatisticsResult> {
+  let URL = `${process.env.backendBaseURL}/estatistica`;
+
+  const res = await authRequestWrapper(
+    URL,
+    {
+      method: "GET",
+    },
+    "Request Statistics",
+  );
+
+  if (res.success) {
+    const successUserData: DashboardStatisticsResult = {
+      success: true,
+      status: res.status,
+      data: res.data,
+    };
+    return successUserData;
+  } else {
+    const failedRequest: DashboardStatisticsResult = {
       success: false,
       status: res.status,
     };

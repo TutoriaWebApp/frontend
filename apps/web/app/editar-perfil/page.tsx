@@ -275,8 +275,11 @@ export default function EditProfilePage() {
       const results = await GetUserDataClient();
 
       if (!results.success) {
-        if (results.status === 401) {
-          redirect("/?session=expired");
+        if (results.status === 500) {
+          showNotification("Ocorreu um erro no servidor. Não foi possível obter suas informações.", "error");
+        }
+        else{
+          showNotification("Ocorreu um erro, obter suas informações.", "error");
         }
       } else {
         setUserData(results.data);
