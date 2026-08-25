@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 import { GetChats } from "@repo/services/chat";
+import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+import { GetAllFutureTutorSolicitations } from "@repo/services/solicitations";
 
 import { LogOutAction } from "@repo/services/authAction";
 
-// Hook movido para fora do componente para respeitar as regras do React
-function useUnreadMessages(loggedIn: boolean) {
+const useUnreadMessages = (loggedIn: boolean) => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
   useEffect(() => {
@@ -40,12 +41,50 @@ function useUnreadMessages(loggedIn: boolean) {
   return unreadCount;
 }
 
+const usePendingRequests = (loggedIn: boolean) => {
+  const [pendingCount, setPendingCount] = useState<number>(0);
+  const previousCountRef = useRef<number | null>(null);
+  const { showNotification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+
+    const fetchRequests = async () => {
+      if (document.hidden) return;
+
+      const res = await GetAllFutureTutorSolicitations(); 
+      if (res.success && res.data) {
+        const pendentes = res.data.length;
+
+        if (previousCountRef.current !== null && pendentes > previousCountRef.current) {
+          const novas = pendentes - previousCountRef.current;
+          showNotification(
+            `Você recebeu ${novas > 1 ? `${novas} novas solicitações` : "uma nova solicitação"} de tutoria!`,
+            "info"
+          );
+        }
+
+        previousCountRef.current = pendentes;
+        setPendingCount(pendentes);
+      }
+    };
+
+    fetchRequests();
+    const intervalId = setInterval(fetchRequests, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [loggedIn, showNotification]);
+
+  return pendingCount;
+}
+
 export default function Header() {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const unreadCount = useUnreadMessages(loggedIn);
+  const pendingRequestsCount = usePendingRequests(loggedIn);
 
   const notLoggedInRoutes = [
     "/",
@@ -192,6 +231,30 @@ export default function Header() {
                         {unreadCount > 99 ? "+99" : unreadCount}
                       </span>
                     )}
+                    {link.name === "Solicitações" && pendingRequestsCount > 0 && (
+                      <span
+                        className="
+                          absolute 
+                          top-2 
+                          right-2 
+                          bg-rose-500 
+                          text-white 
+                          text-[10px] 
+                          font-extrabold 
+                          h-4 
+                          min-w-4 
+                          px-1 
+                          rounded-full 
+                          flex 
+                          items-center 
+                          justify-center 
+                          shadow-xs 
+                          animate-pulse
+                        "
+                      >
+                        {pendingRequestsCount > 99 ? "+99" : pendingRequestsCount}
+                      </span>
+                    )}
                   </li>
                 </Link>
               ))}
@@ -215,6 +278,7 @@ export default function Header() {
             </ul>
           </nav>
 
+          {/* Menu Mobile Overlay */}
           {/* Menu Mobile Overlay */}
           {isMenuOpen && (
             <div
@@ -248,12 +312,14 @@ export default function Header() {
                       className="
                         flex
                         items-center
-                        justify-between
+                        gap-3
+                        w-fit
                         p-4 
                         rounded-xl 
                         font-medium 
                         text-lg
                         text-slate-600
+                        hover:bg-slate-50
                       "
                     >
                       <span>{link.name}</span>
@@ -274,9 +340,33 @@ export default function Header() {
                             items-center 
                             justify-center 
                             shadow-xs
+                            animate-pulse
                           "
                         >
                           {unreadCount > 99 ? "+99" : unreadCount}
+                        </span>
+                      )}
+
+                      {/* Badge de Solicitações Mobile */}
+                      {link.name === "Solicitações" && pendingRequestsCount > 0 && (
+                        <span
+                          className="
+                            bg-rose-500 
+                            text-white 
+                            text-xs 
+                            font-extrabold 
+                            h-5 
+                            min-w-5 
+                            px-1.5 
+                            rounded-full 
+                            flex 
+                            items-center 
+                            justify-center 
+                            shadow-xs
+                            animate-pulse
+                          "
+                        >
+                          {pendingRequestsCount > 99 ? "+99" : pendingRequestsCount}
                         </span>
                       )}
                     </div>
@@ -290,7 +380,7 @@ export default function Header() {
                     text-lg 
                     active:bg-rose-50 
                     cursor-pointer
-                  text-slate-600
+                    text-slate-600
                   "
                   onClick={() => {
                     LogOutAction();

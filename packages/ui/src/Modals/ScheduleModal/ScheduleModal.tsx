@@ -774,7 +774,7 @@ export function ScheduleModal({
                     className="w-4 h-4"
                     type="checkbox"
                     checked={recurrent}
-                    onClick={() => setRecurrent(!recurrent)}
+                    onChange={(e) => setRecurrent(e.target.checked)}
                   />
                 </div>
                 {/* Legenda */}
