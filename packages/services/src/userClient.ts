@@ -52,7 +52,7 @@ export async function ChangePassword(
   password: string,
   newPassword: string,
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
 ): Promise<ChangePasswordResult> {
   const URL = `${process.env.backendBaseURL}/usuarios/altera-senha`;
 
@@ -91,7 +91,7 @@ export async function ChangePassword(
 export async function EditProfile(
   formData: FormData,
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
 ): Promise<EditProfileResult> {
   const URL = `${process.env.backendBaseURL}/perfil`;
 
@@ -207,7 +207,7 @@ export async function GetSpecialties(
 
 export async function BecomeTutor(
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
 ): Promise<BecomeTutorResult> {
   const URL = `${process.env.backendBaseURL}/tutores/`;
 
@@ -241,7 +241,7 @@ export async function BecomeTutor(
 
 export async function InsertSpecialty(
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
   specialtyId: number,
   tutorId: number,
 ): Promise<InsertSpecialtyResult> {
@@ -279,7 +279,7 @@ export async function InsertSpecialty(
 
 export async function DeleteSpecialty(
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
   relationId: number,
 ): Promise<DeleteSpecialtyResult> {
   const URL = `${process.env.backendBaseURL}/contem/${relationId}/`;
@@ -344,7 +344,7 @@ export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> 
 
 export async function InsertSchedule(
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
   scheduleData: TimeSlot,
   tutorId: number,
 ): Promise<InsertScheduleResult> {
@@ -382,7 +382,7 @@ export async function InsertSchedule(
 
 export async function DeleteSchedule(
   cookieString: string,
-  csrfTokenString: string,
+  csrfTokenString: string | undefined,
   scheduleId: number,
 ): Promise<DeleteScheduleResult> {
   const URL = `${process.env.backendBaseURL}/agendas/${scheduleId}/`;

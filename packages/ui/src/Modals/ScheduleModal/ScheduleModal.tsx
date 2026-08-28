@@ -271,7 +271,7 @@ export function ScheduleModal({
 
     const daySolicitations = userSolicitations
       ? userSolicitations.filter(
-          (solicitation) => solicitation.dataPretendida === dateStr,
+          (solicitation) => solicitation.dataPretendida === dateStr && solicitation.estado != "RECUSADO",
         )
       : [];
 

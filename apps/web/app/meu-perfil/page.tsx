@@ -24,6 +24,7 @@ export default async function ProfilePage() {
   const results = await GetUserData();
 
   if (results.success) {
+    console.log(results.data);
     userData = results.data;
 
     if (userData.perfilTutor) {

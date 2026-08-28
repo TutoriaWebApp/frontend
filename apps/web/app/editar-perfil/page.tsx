@@ -697,7 +697,6 @@ export default function EditProfilePage() {
                     <input
                       type="text"
                       {...register("nomePerfil")}
-                      defaultValue={userData.nomePerfil}
                       className="
                       bg-white  
                         w-full
@@ -750,7 +749,6 @@ export default function EditProfilePage() {
                           py-1
                           border-2
                           border-slate-300"
-                        defaultValue={userData.estado}
                       >
                         <option value="" disabled hidden>
                           Selecione uma opção
@@ -791,7 +789,6 @@ export default function EditProfilePage() {
                           border-2
                         border-slate-300
                         "
-                        defaultValue={userData.cidade}
                       >
                         {cities.map((city) => (
                           <option key={city.id} value={city.nome}>
@@ -830,9 +827,6 @@ export default function EditProfilePage() {
                     >
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
-                        defaultValue={
-                          userData.sobremim ? userData.sobremim : ""
-                        }
                         {...register("sobreMim")}
                         rows={6}
                         className="
