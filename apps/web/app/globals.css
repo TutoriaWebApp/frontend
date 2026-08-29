@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes border-shimmer {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(90deg);
+  }
+}
+
+.animate-shimmer-spin {
+  animation: border-shimmer 6s linear infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle-twinkle var(--twinkle-duration, 2.5s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}

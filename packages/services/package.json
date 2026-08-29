@@ -20,6 +20,7 @@
     "./sessions": "./src/sessions.ts",
     "./reviews": "./src/review.ts",
     "./chat": "./src/chat.ts",
+    "./achievements": "./src/achievements.ts",
 
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
@@ -27,7 +28,8 @@
     "./sessionTypes": "./src/types/sessions.ts",
     "./solicitationTypes": "./src/types/solicitations.ts",
     "./reviewTypes": "./src/types/review.ts",
-    "./chatTypes": "./src/types/chat.ts"
+    "./chatTypes": "./src/types/chat.ts",
+    "./achievementTypes": "./src/types/achievements.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",
