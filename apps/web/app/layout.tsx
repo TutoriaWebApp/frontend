@@ -13,6 +13,8 @@ import { NotificationContextProvider } from "@repo/ui/contexts/NotificationConte
 import { SessionExpiredContextProvider } from "@repo/ui/contexts/SessionExpiredContext/SessionExpiredContext";
 import { EvaluateUserContextProvider } from "@repo/ui/contexts/EvaluateUserContext/EvaluateUserContext";
 
+import { LogOutAction } from "@repo/services/authAction";
+
 import type { Metadata } from "next";
 
 import { Montserrat, Quicksand, Inter } from "next/font/google";
@@ -47,7 +49,7 @@ export default function RootLayout({
         <SessionExpiredContextProvider>
           <NotificationContextProvider>
             <EvaluateUserContextProvider>
-              <Header />
+              <Header onLogout={LogOutAction} />
               {children}
               <CookieBanner />
               <Footer />

@@ -53,7 +53,7 @@ export async function ChangePasswordAction(
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
-    const csrfToken = cookieStore.get("csrftoken")!.value;
+    const csrfToken = cookieStore.get("csrftoken")?.value;
 
     const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -94,7 +94,7 @@ export async function EditProfileAction(
 ): Promise<EditProfileResult> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
-  const csrfToken = cookieStore.get("csrftoken")!.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
 
   const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -122,7 +122,7 @@ export async function EditProfileAction(
 export async function BecomeTutorAction(): Promise<BecomeTutorResult> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
-  const csrfToken = cookieStore.get("csrftoken")!.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
 
   const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -153,7 +153,7 @@ export async function InsertSpecialtyAction(
 ): Promise<InsertSpecialtyResult> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
-  const csrfToken = cookieStore.get("csrftoken")!.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
 
   const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -185,7 +185,7 @@ export async function DeleteSpecialtyAction(
 ): Promise<DeleteSpecialtyResult> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
-  const csrfToken = cookieStore.get("csrftoken")!.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
 
   const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -217,7 +217,7 @@ export async function InsertScheduleAction(
 ): Promise<InsertScheduleResult> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
-  const csrfToken = cookieStore.get("csrftoken")!.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
 
   const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 
@@ -249,7 +249,7 @@ export async function DeleteScheduleAction(
 ): Promise<DeleteScheduleResult> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
-  const csrfToken = cookieStore.get("csrftoken")!.value;
+  const csrfToken = cookieStore.get("csrftoken")?.value;
 
   const cookieString = `access_token=${accessToken}; csrftoken=${csrfToken}`;
 

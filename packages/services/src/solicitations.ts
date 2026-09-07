@@ -132,6 +132,65 @@ export async function GetAllSolicitations(): Promise<AllSolicitationsGetResult> 
   }
 }
 
+export async function GetAllFutureTutorSolicitations(): Promise<AllSolicitationsGetResult> {
+  const URL = `${process.env.backendBaseURL}/todas-solicitacoes/?tipo=tutor&apenas_futuras=true`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      { method: "GET" },
+      "Request All Future Tutor Solicitations Data",
+    );
+
+    if (res.success) {
+      return {
+        success: true,
+        status: res.status,
+        data: res.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
+
+export async function GetResolvedLearnerSolicitations(): Promise<AllSolicitationsGetResult> {
+  const URL = `${process.env.backendBaseURL}/todas-solicitacoes/?tipo=aprendiz&apenas_resolvidas=true`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      { method: "GET" },
+      "Request Resolved Learner Solicitations Data",
+    );
+
+    if (res.success) {
+      return {
+        success: true,
+        status: res.status,
+        data: res.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
+  }
+}
 
 export async function AcceptSolicitation(
   id: number,

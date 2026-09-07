@@ -271,7 +271,7 @@ export function ScheduleModal({
 
     const daySolicitations = userSolicitations
       ? userSolicitations.filter(
-          (solicitation) => solicitation.dataPretendida === dateStr,
+          (solicitation) => solicitation.dataPretendida === dateStr && solicitation.estado != "RECUSADO",
         )
       : [];
 
@@ -774,7 +774,7 @@ export function ScheduleModal({
                     className="w-4 h-4"
                     type="checkbox"
                     checked={recurrent}
-                    onClick={() => setRecurrent(!recurrent)}
+                    onChange={(e) => setRecurrent(e.target.checked)}
                   />
                 </div>
                 {/* Legenda */}
