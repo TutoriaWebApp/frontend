@@ -2,7 +2,8 @@
 const nextConfig = {
     output: 'standalone',
     env: {
-        backendBaseURL: 'http://localhost:8000/v1'
+        backendBaseURL: 'http://localhost:8000/v1',
+        NEXT_PUBLIC_backendAchivementsBaseImageURL: 'http://localhost:8000/media/conquistas/'
     },
     images: {
     remotePatterns: [
@@ -13,6 +14,8 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
+        port: '8000',
+        pathname: '/media/**',
       },
     ],
   },

@@ -18,7 +18,7 @@ export async function GetAllAchievements(): Promise<GetAllAchievementsResult> {
       return {
         success: true,
         status: res.status,
-        data: res.data.results,
+        data: res.data,
       };
     }
     return { success: false, status: res.status };

@@ -246,8 +246,8 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Emblema */}
         <div
           className={`
-              w-24 
-              h-24 
+              w-28 
+              h-28
               mb-3 
               rounded-2xl 
               flex 
@@ -353,9 +353,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
             }
           `}
         >
-          {isSecretLocked
-            ? `💡 Pista: "${conquista.pistaSecreta || "Descubra interagindo na plataforma..."}"`
-            : conquista.descricao}
+          {isSecretLocked ? `"${conquista.pista}"` : conquista.descricao}
         </p>
       </div>
     </div>
