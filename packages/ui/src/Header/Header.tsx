@@ -143,7 +143,7 @@ export default function Header({ onLogout }: HeaderProps) {
     { name: "Conquistas", href: "/conquistas" },
     { name: "Buscar Tutores", href: "/buscar-tutores" },
     { name: "Solicitações", href: "/solicitacoes" },
-    { name: "Chat", href: "/chat" },
+    { name: "Mensagens", href: "/mensagens" },
   ];
 
   useEffect(() => {
@@ -195,6 +195,32 @@ export default function Header({ onLogout }: HeaderProps) {
             ) : (
               <MenuIcon fontSize="large" />
             )}
+            {unreadCount > 0 || pendingTutorCount > 0 || confirmedLearnerCount > 0 ? (
+              <span
+                className="
+                  absolute 
+                  top-2 
+                  right-2 
+                  bg-rose-500 
+                  text-white 
+                  text-[10px] 
+                  font-extrabold 
+                  h-4 
+                  min-w-4 
+                  px-1 
+                  rounded-full 
+                  flex 
+                  items-center 
+                  justify-center 
+                  shadow-xs 
+                  animate-pulse
+                "
+              >
+                {unreadCount + pendingTutorCount + confirmedLearnerCount > 99
+                  ? "+99"
+                  : unreadCount + pendingTutorCount + confirmedLearnerCount}
+              </span>
+            ) : null} 
           </button>
 
           {/* Navegação Desktop */}
@@ -219,7 +245,7 @@ export default function Header({ onLogout }: HeaderProps) {
                     <span>{link.name}</span>
 
                     {/* Badge do Chat */}
-                    {link.name === "Chat" && unreadCount > 0 && (
+                    {link.name === "Mensagens" && unreadCount > 0 && (
                       <span
                         className="
                           absolute 
@@ -356,7 +382,7 @@ export default function Header({ onLogout }: HeaderProps) {
                       <span>{link.name}</span>
 
                       {/* Badge Chat Mobile */}
-                      {link.name === "Chat" && unreadCount > 0 && (
+                      {link.name === "Mensagens" && unreadCount > 0 && (
                         <span
                           className="
                             bg-rose-500 
@@ -439,10 +465,7 @@ export default function Header({ onLogout }: HeaderProps) {
                     cursor-pointer
                     text-slate-600
                   "
-                  onClick={() => {
-                    onLogout;
-                    setIsMenuOpen(false);
-                  }}
+                  onClick={onLogout}
                 >
                   Sair da Conta
                 </div>
