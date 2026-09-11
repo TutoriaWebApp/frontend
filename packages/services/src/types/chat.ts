@@ -55,3 +55,8 @@ export interface MessagesGetResult {
   data?: MessageGetData[];
   hasNext?: boolean;
 }
+
+export interface ReadMessagesResult {
+  success: boolean;
+  status: number;
+}
