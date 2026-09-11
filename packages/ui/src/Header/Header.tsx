@@ -168,7 +168,7 @@ export default function Header({ onLogout }: HeaderProps) {
         border-slate-200 
         sticky 
         top-0 
-        z-10
+        z-20
       "
     >
       <Link href="/" className="flex items-center ml-6">
