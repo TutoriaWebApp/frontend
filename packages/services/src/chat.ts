@@ -6,6 +6,7 @@ import {
   PostMessageResult,
   GetChatResult,
   MessagesGetResult,
+  ReadMessagesResult
 } from "./types/chat";
 
 export async function PostMessage(
@@ -161,5 +162,32 @@ export async function GetChatMessages(
     return { success: false, status: res.status };
   } catch (e) {
     return { success: false, status: 500 };
+  }
+}
+
+export async function MarkMessagesAsRead(chatId: number): Promise<ReadMessagesResult> {
+  const baseURL = process.env.backendBaseURL;
+  const URL = `${baseURL}/mensagens/marcar-lidas/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chatId }),
+      },
+      "Request Mark Messages As Read"
+    );
+
+    return {
+      success: res.success,
+      status: res.status,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
   }
 }

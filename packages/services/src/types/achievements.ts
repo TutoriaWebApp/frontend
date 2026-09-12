@@ -4,25 +4,27 @@ export interface AllAchievements {
   descricao: string;
   urlImagem: string;
   pontos: number;
-  secreta: boolean;
-  pistaSecreta?: string;
+  tier: string;
+  secreta: true;
+  pista: string;
 }
 
 export interface UserAchievements {
+  id: number;
   titulo: string;
   descricao: string;
   urlImagem: string;
   pontos: number;
 }
 
-export interface GetAllAchievementsResult{
-    success: boolean;
-    status: number;
-    data?: AllAchievements[];
+export interface GetAllAchievementsResult {
+  success: boolean;
+  status: number;
+  data?: AllAchievements[];
 }
 
-export interface GetUserAchievementsResult{
-    success: boolean;
-    status: number;
-    data?: GetUserAchievementsResult[];
+export interface GetUserAchievementsResult {
+  success: boolean;
+  status: number;
+  data?: GetUserAchievementsResult[];
 }
