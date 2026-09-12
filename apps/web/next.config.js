@@ -2,7 +2,8 @@
 const nextConfig = {
     output: 'standalone',
     env: {
-        backendBaseURL: 'http://localhost:8000/v1'
+        backendBaseURL: process.env.BACKEND_BASE_URL || 'http://localhost:8000/v1',
+        internalBackendURL: process.env.INTERNAL_BACKEND_URL || process.env.BACKEND_BASE_URL || 'http://localhost:8000/v1'
     },
     images: {
     remotePatterns: [

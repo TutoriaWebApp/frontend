@@ -1,8 +1,9 @@
 import {GetAllAchievementsResult, GetUserAchievementsResult} from "./types/achievements"
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper"
+import { getBackendUrl } from "@repo/lib/getBackendUrl"
 
 export async function GetAllAchievements(): Promise<GetAllAchievementsResult> {
-  const URL = `${process.env.backendBaseURL}/conquistas/`;
+  const URL = `${getBackendUrl()}/conquistas/`;
 
   try {
     const res = await authRequestWrapper(
@@ -28,7 +29,7 @@ export async function GetAllAchievements(): Promise<GetAllAchievementsResult> {
 }
 
 export async function GetUserAchievements(userId: number): Promise<GetUserAchievementsResult> {
-  const URL = `${process.env.backendBaseURL}/conquistas/usuario/${userId}/`;
+  const URL = `${getBackendUrl()}/conquistas/usuario/${userId}/`;
 
   try {
     const res = await authRequestWrapper(

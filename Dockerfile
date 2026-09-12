@@ -10,6 +10,8 @@ COPY apps/web/package.json ./apps/web/
 COPY apps/docs/package.json ./apps/docs/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/config/package.json ./packages/config/
+COPY packages/lib/package.json ./packages/lib/
+COPY packages/services/package.json ./packages/services/
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder

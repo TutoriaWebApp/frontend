@@ -8,10 +8,15 @@ services:
       - /app/node_modules
       - /app/apps/web/node_modules
       - /app/packages/ui/node_modules
+      - /app/packages/lib/node_modules
+      - /app/packages/services/node_modules
+      - /app/packages/config/node_modules
       - /app/apps/web/.next
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - WATCHPACK_POLLING=true 
+      - WATCHPACK_POLLING=true
+      - BACKEND_BASE_URL=http://localhost:8000/v1
+      - INTERNAL_BACKEND_URL=http://django-api:8000/v1
     command: pnpm --filter web dev

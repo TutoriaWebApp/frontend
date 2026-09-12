@@ -4,12 +4,13 @@ import {
   PasswordResetRequestResult,
   PasswordResetResult,
 } from "./types/auth";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 
 export async function LogIn(
   username: string,
   password: string,
 ): Promise<AuthResult> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
 
   try {
     const response = await fetch(`${baseURL}/login`, {
@@ -42,7 +43,7 @@ export async function LogIn(
 export async function RequestPasswordReset(
   email: string,
 ): Promise<PasswordResetRequestResult> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
 
   try {
     const response = await fetch(`${baseURL}/reset-password/request`, {
@@ -76,7 +77,7 @@ export async function PasswordReset(
   token: string,
   new_password: string,
 ): Promise<PasswordResetResult> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
 
   try {
     const response = await fetch(`${baseURL}/reset-password/confirm`, {

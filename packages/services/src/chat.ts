@@ -1,4 +1,5 @@
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 import {
   CreateChatResult,
   PostMessageData,
@@ -12,7 +13,7 @@ export async function PostMessage(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<PostMessageResult> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
   const URL = `${baseURL}/mensagens/`;
 
   try {
@@ -51,7 +52,7 @@ export async function CreateChat(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<CreateChatResult> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
   const URL = `${baseURL}/chats/`;
 
   try {
@@ -99,7 +100,7 @@ export async function CreateChat(
 }
 
 export async function GetChats(): Promise<GetChatResult> {
-  const URL = `${process.env.backendBaseURL}/chats/`;
+  const URL = `${getBackendUrl()}/chats/`;
 
   try {
     const res = await authRequestWrapper(
@@ -137,7 +138,7 @@ export async function GetChatMessages(
   chatId: number,
   page: number = 1,
 ): Promise<MessagesGetResult> {
-  const URL = `${process.env.backendBaseURL}/mensagens/?chatId=${chatId}&page=${page}`;
+  const URL = `${getBackendUrl()}/mensagens/?chatId=${chatId}&page=${page}`;
 
   try {
     const res = await authRequestWrapper(

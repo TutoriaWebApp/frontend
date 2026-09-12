@@ -1,4 +1,5 @@
 import { authRequestWrapper } from '@repo/lib/authRequestWrapper';
+import { getBackendUrl } from '@repo/lib/getBackendUrl';
 import { GetReviewsResult, SendTutorReviewData, 
           SendUserReviewData, SendReviewResult, GetPendingReviewsResult } from './types/review';
 
@@ -8,7 +9,7 @@ export async function GetReviewsStudent(
   userId: number,
   page_size: number = 6
 ): Promise<GetReviewsResult> {
-  let URL = `${process.env.backendBaseURL}/avaliacoes/aprendiz/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/avaliacoes/aprendiz/?page=${pageNumber}`;
 
   if(gradeOrder != ""){
     URL += `&ordering=${gradeOrder}`
@@ -53,7 +54,7 @@ export async function GetReviewsTutor(
   specialtyId?: number,
   page_size: number = 6
 ): Promise<GetReviewsResult> {
-  let URL = `${process.env.backendBaseURL}/avaliacoes/tutor/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/avaliacoes/tutor/?page=${pageNumber}`;
 
   if (areaId != 0) {
     URL += `&area=${areaId}`;
@@ -103,7 +104,7 @@ export async function PostUserReview(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SendReviewResult> {
-  const URL = `${process.env.backendBaseURL}/avaliacoes/aprendiz/`;
+  const URL = `${getBackendUrl()}/avaliacoes/aprendiz/`;
 
   try {
     const res = await authRequestWrapper(
@@ -147,7 +148,7 @@ export async function PostTutorReview(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SendReviewResult> {
-  const URL = `${process.env.backendBaseURL}/avaliacoes/tutor/`;
+  const URL = `${getBackendUrl()}/avaliacoes/tutor/`;
 
   try {
     const res = await authRequestWrapper(
@@ -187,7 +188,7 @@ export async function PostTutorReview(
 }
 
 export async function GetPendingReviews(): Promise<GetPendingReviewsResult> {
-  const URL = `${process.env.backendBaseURL}/avaliacoes/pendentes`;
+  const URL = `${getBackendUrl()}/avaliacoes/pendentes`;
 
   const res = await authRequestWrapper(
     URL,

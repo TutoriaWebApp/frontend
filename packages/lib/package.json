@@ -10,7 +10,8 @@
     "./userTitle": "./src/userTitle.ts",
     "./formatData": "./src/formatDataToBR.ts",
     "./formatTime": "./src/formatTime.ts",
-    "./formatMessageDate": "./src/formatMessageDate.ts"
+    "./formatMessageDate": "./src/formatMessageDate.ts",
+    "./getBackendUrl": "./src/getBackendUrl.ts"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
