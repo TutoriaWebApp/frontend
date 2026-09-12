@@ -15,6 +15,14 @@ import { GetPendingReviews } from "@repo/services/reviews";
 import { DashboardStatisticsData } from "@repo/services/userTypes";
 import { GetStatistics } from "@repo/services/userClient";
 
+import { UnlockAchievementAction } from "@repo/services/achievementAction";
+import {
+  GetSpecificAchievement,
+  UnlockAchievement,
+} from "@repo/services/achievements";
+
+import { useAchievement } from "@repo/ui/achievementUnlockContext";
+
 import { ClipLoader } from "react-spinners";
 
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
@@ -31,6 +39,7 @@ export default function Dashboard(): React.ReactNode {
   const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
   const { showNotification } = useContext(NotificationContext);
+  const { showAchievement } = useAchievement();
 
   useEffect(() => {
     async function fetchSessions() {
@@ -62,7 +71,6 @@ export default function Dashboard(): React.ReactNode {
     async function fetchStatistics() {
       setLoading(true);
       const res = await GetStatistics();
-
       if (res.success && res.data) {
         setStatisticsData(res.data);
 
@@ -110,6 +118,26 @@ export default function Dashboard(): React.ReactNode {
     }
 
     fetchStatistics();
+  }, []);
+
+  useEffect(() => {
+    const fetchAchievement = async () => {
+      const resAchie = await UnlockAchievement(10, 30);
+
+      if (resAchie.success) {
+        const res = await GetSpecificAchievement(30);
+
+        if (res.success) {
+          showAchievement({
+            titulo: res.data!.titulo,
+            descricao: res.data!.descricao,
+            pontos: res.data!.pontos,
+            urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data!.urlImagem}`,
+          });
+        }
+      }
+    };
+    fetchAchievement();
   }, []);
 
   return (
@@ -235,8 +263,8 @@ export default function Dashboard(): React.ReactNode {
               </div>
               <p className="text-center text-sm font-bold text-slate-500">
                 Você está{" "}
-                <span className="text-purple-700">{progressPercentage}%</span> mais
-                perto do seu próximo nível!
+                <span className="text-purple-700">{progressPercentage}%</span>{" "}
+                mais perto do seu próximo nível!
               </p>
             </div>
           </section>

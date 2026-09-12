@@ -23,8 +23,31 @@ export interface GetAllAchievementsResult {
   data?: AllAchievements[];
 }
 
+export interface GetSpecificAchievementsResult {
+  success: boolean;
+  status: number;
+  data?: {
+    id: number;
+    titulo: string;
+    descricao: string;
+    urlImagem: string;
+    pontos: number;
+  };
+}
+
 export interface GetUserAchievementsResult {
   success: boolean;
   status: number;
-  data?: GetUserAchievementsResult[];
+  data?: UserAchievements[];
+}
+
+export interface AchivementUnlockedResult {
+  success: boolean;
+  status: number;
+  data?: {
+    id: number;
+    dataObtido: string;
+    usuarioId: number;
+    conquistaId: number;
+  };
 }

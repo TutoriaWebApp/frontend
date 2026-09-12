@@ -13,6 +13,7 @@
     "./solicitationsAction": "./src/actions/solicitations.ts",
     "./reviewsAction": "./src/actions/reviews.ts",
     "./chatAction": "./src/actions/chat.ts",
+    "./achievementAction": "./src/actions/achievements.ts",
 
     "./userServer": "./src/userServer.ts",
     "./userClient": "./src/userClient.ts",
