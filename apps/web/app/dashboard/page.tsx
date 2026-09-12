@@ -127,14 +127,14 @@ export default function Dashboard(): React.ReactNode {
       if (resAchie.success) {
         const res = await GetSpecificAchievement(30);
 
-        if (res.success) {
-          showAchievement({
-            titulo: res.data!.titulo,
-            descricao: res.data!.descricao,
-            pontos: res.data!.pontos,
-            urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data!.urlImagem}`,
-          });
-        }
+        // if (res.success) {
+        //   showAchievement({
+        //     titulo: res.data!.titulo,
+        //     descricao: res.data!.descricao,
+        //     pontos: res.data!.pontos,
+        //     urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data!.urlImagem}`,
+        //   });
+        // }
       }
     };
     fetchAchievement();
