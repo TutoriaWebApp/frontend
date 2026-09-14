@@ -124,6 +124,7 @@ export function AddScheduleModal({
             Adicionar Disponibilidade
           </h2>
           <button
+            id="btn-closeAddScheduleModal"
             onClick={onClose}
             className="
                 text-slate-400 
@@ -132,7 +133,7 @@ export function AddScheduleModal({
                 p-1
           "
           >
-            <CloseIcon onClick={handleClose} />
+            <CloseIcon id="btn-iconCloseAddSchedule" onClick={handleClose} />
           </button>
         </div>
 
@@ -175,6 +176,7 @@ export function AddScheduleModal({
               "
               >
                 <select
+                  id="sel-dayAvailable"
                   required
                   value={selectedDay}
                   onChange={(e) => setSelectedDay(e.target.value)}
@@ -235,6 +237,7 @@ export function AddScheduleModal({
               </label>
               <div className="relative group">
                 <select
+                  id="sel-timeSlot"
                   required
                   disabled={!selectedDay}
                   value={selectedTime}
@@ -249,10 +252,9 @@ export function AddScheduleModal({
                     font-medium 
                     outline-none 
                     transition-all
-                    ${
-                      !selectedDay
-                        ? "border-slate-100 text-slate-300 cursor-not-allowed bg-slate-50"
-                        : "border-slate-200 text-slate-700 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 cursor-pointer"
+                    ${!selectedDay
+                      ? "border-slate-100 text-slate-300 cursor-not-allowed bg-slate-50"
+                      : "border-slate-200 text-slate-700 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 cursor-pointer"
                     }
                   `}
                 >
@@ -293,6 +295,7 @@ export function AddScheduleModal({
         "
           >
             <button
+              id="btn-cancelAddSchedule"
               type="button"
               onClick={handleClose}
               className="
@@ -311,6 +314,7 @@ export function AddScheduleModal({
               Cancelar
             </button>
             <button
+              id="btn-submitAddSchedule"
               type="submit"
               disabled={!selectedDay || !selectedTime}
               className="

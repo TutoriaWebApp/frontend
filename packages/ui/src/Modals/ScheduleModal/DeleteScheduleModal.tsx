@@ -96,6 +96,7 @@ export function DeleteScheduleModal({
             Remover Disponibilidade
           </h2>
           <button
+            id="btn-closeDeleteSchedule"
             type="button"
             onClick={onClose}
             className="
@@ -145,6 +146,7 @@ export function DeleteScheduleModal({
         "
         >
           <button
+            id="btn-cancelDeleteSchedule"
             type="button"
             onClick={onClose}
             className="
@@ -164,6 +166,7 @@ export function DeleteScheduleModal({
             Cancelar
           </button>
           <button
+            id="btn-submitDeleteSchedule"
             type="button"
             onClick={deleteAvailability}
             className="

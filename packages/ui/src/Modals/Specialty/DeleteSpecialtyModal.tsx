@@ -71,6 +71,7 @@ export function DeleteSpecialtyModal({
             Remover Especialidade
           </h2>
           <button
+            id="btn-closeDeleteSpecialty"
             type="button"
             onClick={onClose}
             className="
@@ -116,6 +117,7 @@ export function DeleteSpecialtyModal({
           border-slate-100
         ">
           <button
+            id="btn-cancelDeleteSpecialty"
             type="button"
             onClick={onClose}
             className="
@@ -134,6 +136,7 @@ export function DeleteSpecialtyModal({
             Cancelar
           </button>
           <button
+            id="btn-submitDeleteSpecialty"
             type="button"
             onClick={deleteSpecialty}
             className="
