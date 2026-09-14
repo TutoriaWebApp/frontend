@@ -147,6 +147,7 @@ export default function ForgotPassword(): React.ReactNode {
                   Nova senha
                 </span>
                 <input
+                  id="inp-password"
                   type={showNewPassword ? "text" : "password"}
                   {...register("password")}
                   className="
@@ -162,6 +163,7 @@ export default function ForgotPassword(): React.ReactNode {
                 />
               </label>
               <div
+                id="div-showPassword"
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="
                   flex 
@@ -212,6 +214,7 @@ export default function ForgotPassword(): React.ReactNode {
                   Confirme a nova senha
                 </span>
                 <input
+                  id="inp-passwordConfirm"
                   type={showConfirmNewPassword ? "text" : "password"}
                   {...register("passwordConfirm")}
                   className="
@@ -228,6 +231,7 @@ export default function ForgotPassword(): React.ReactNode {
                 />
               </label>
               <div
+                id="div-showPasswordConfirm"
                 onClick={() =>
                   setShowConfirmNewPassword(!showConfirmNewPassword)
                 }
@@ -257,6 +261,7 @@ export default function ForgotPassword(): React.ReactNode {
               )}
             </div>
             <button
+              id="btn-submitResetPassword"
               className="
               bg-indigo-600
               hover:bg-indigo-800

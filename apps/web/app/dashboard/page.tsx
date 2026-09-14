@@ -277,6 +277,7 @@ export default function Dashboard(): React.ReactNode {
         "
         >
           <Link
+            id="lnk-viewSolicitations"
             href="/solicitacoes"
             className="
               bg-indigo-600 

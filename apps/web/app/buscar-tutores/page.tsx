@@ -199,6 +199,7 @@ export default function BuscaTutores() {
                     Área de Conhecimento
                   </label>
                   <select
+                    id="sel-filterArea"
                     defaultValue={""}
                     onChange={(e) => setQueryAreaId(Number(e.target.value))}
                     className="
@@ -239,6 +240,7 @@ export default function BuscaTutores() {
                     Especialidade
                   </label>
                   <select
+                    id="sel-filterSpecialty"
                     disabled={queryAreaId ? false : true}
                     defaultValue={""}
                     onChange={(e) =>
@@ -282,6 +284,7 @@ export default function BuscaTutores() {
                     Localização (Raio em KM)
                   </label>
                   <input
+                    id="inp-filterRadius"
                     type="number"
                     placeholder="KM"
                     value={queryRadius}
@@ -320,6 +323,7 @@ export default function BuscaTutores() {
                     Ordenar por Nota de Avaliação
                   </label>
                   <select
+                    id="sel-filterGradeOrder"
                     className="
                   w-full 
                   bg-slate-50 
@@ -356,6 +360,7 @@ export default function BuscaTutores() {
                     Ordenar por Total de Tutorias
                   </label>
                   <select
+                    id="sel-filterSessionsOrder"
                     className="
                   w-full 
                   bg-slate-50 
@@ -379,6 +384,7 @@ export default function BuscaTutores() {
                   </select>
                 </div>
                 <button
+                  id="btn-searchTutors"
                   onClick={handleSubmit}
                   className="
               bg-emerald-600 
@@ -458,6 +464,7 @@ export default function BuscaTutores() {
                 >
                   <span>Exibir:</span>
                   <select
+                    id="sel-pageSize"
                     value={pageSize}
                     onChange={(e) =>
                       handlePageSizeChange(Number(e.target.value))
@@ -525,6 +532,7 @@ export default function BuscaTutores() {
               "
               >
                 <button
+                  id="btn-prevPage"
                   disabled={!hasPrevious}
                   onClick={handlePrevPage}
                   className={`
@@ -552,6 +560,7 @@ export default function BuscaTutores() {
                 </span>
 
                 <button
+                  id="btn-nextPage"
                   disabled={!hasNext}
                   onClick={handleNextPage}
                   className={`
@@ -569,8 +578,9 @@ export default function BuscaTutores() {
               </div>
             )}
 
-            <Link href={"/recomendacoes"}>
+            <Link id="lnk-viewRecommendations" href={"/recomendacoes"}>
               <button
+                id="btn-viewRecommendations"
                 className="
                 group 
                 flex 

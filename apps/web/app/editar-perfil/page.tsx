@@ -695,6 +695,7 @@ export default function EditProfilePage() {
                       Nome<span className="text-rose-500">*</span>
                     </span>
                     <input
+                      id="inp-nomePerfil"
                       type="text"
                       {...register("nomePerfil")}
                       className="
@@ -740,6 +741,7 @@ export default function EditProfilePage() {
                         Estado<span className="text-rose-500">*</span>
                       </span>
                       <select
+                        id="sel-estado"
                         {...register("estado")}
                         className="
                         bg-white  
@@ -779,6 +781,7 @@ export default function EditProfilePage() {
                         Cidade<span className="text-rose-500">*</span>
                       </span>
                       <select
+                        id="sel-cidade"
                         {...register("cidade")}
                         className="
                         bg-white  
@@ -827,6 +830,7 @@ export default function EditProfilePage() {
                     >
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
+                        id="txt-sobreMim"
                         {...register("sobreMim")}
                         rows={6}
                         className="
@@ -844,6 +848,7 @@ export default function EditProfilePage() {
                     </label>
                   </div>
                   <button
+                    id="btn-openChangePasswordModal"
                     className="
                     bg-brand-primary 
                     hover:bg-indigo-800 
@@ -1077,6 +1082,7 @@ export default function EditProfilePage() {
                 </section>
                 <div className="flex justify-between">
                   <Link
+                    id="lnk-backToProfile"
                     href={"/meu-perfil"}
                     className="
                       p-4 
@@ -1093,6 +1099,7 @@ export default function EditProfilePage() {
                     <span>Voltar para Perfil</span>
                   </Link>
                   <button
+                    id="btn-saveProfile"
                     onClick={handleSubmit(onSubmit)}
                     type="button"
                     className="

@@ -375,10 +375,9 @@ export default function CreateAccountPage(): React.ReactNode {
                       border-2 
                       transition-all 
                       duration-300 
-                    ${
-                      step >= 1
-                        ? "bg-indigo-600 border-indigo-600 text-white"
-                        : "bg-white border-slate-300 text-slate-400"
+                    ${step >= 1
+                      ? "bg-indigo-600 border-indigo-600 text-white"
+                      : "bg-white border-slate-300 text-slate-400"
                     }`}
                 >
                   {step > 1 ? "✓" : "1"}
@@ -457,13 +456,12 @@ export default function CreateAccountPage(): React.ReactNode {
                       border-2 
                       transition-all 
                       duration-300 
-                    ${
-                      step >= 3
-                        ? "bg-indigo-600 border-indigo-600 text-white"
-                        : "bg-white border-slate-300 text-slate-400"
+                    ${step >= 3
+                      ? "bg-indigo-600 border-indigo-600 text-white"
+                      : "bg-white border-slate-300 text-slate-400"
                     }`}
                 >
-                2
+                  2
                 </div>
                 <span
                   className={`
@@ -522,6 +520,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         Nome<span className="text-rose-500">*</span>
                       </span>
                       <input
+                        id="inp-profileName"
                         type="text"
                         {...register("nomePerfil")}
                         className="
@@ -570,6 +569,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         E-mail<span className="text-rose-500">*</span>
                       </span>
                       <input
+                        id="inp-email"
                         type="email"
                         {...register("email")}
                         className="
@@ -645,6 +645,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         <span className="text-rose-500">*</span>
                       </span>
                       <input
+                        id="inp-password"
                         type={showNewPassword ? "text" : "password"}
                         {...register("password")}
                         className="
@@ -660,6 +661,7 @@ export default function CreateAccountPage(): React.ReactNode {
                       />
                     </label>
                     <div
+                      id="div-showPassword"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="
                       flex 
@@ -714,6 +716,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         Confirme a senha<span className="text-rose-500">*</span>
                       </span>
                       <input
+                        id="inp-passwordConfirm"
                         type={showConfirmNewPassword ? "text" : "password"}
                         {...register("passwordConfirm")}
                         className="
@@ -729,6 +732,7 @@ export default function CreateAccountPage(): React.ReactNode {
                       />
                     </label>
                     <div
+                      id="div-showPasswordConfirm"
                       onClick={() =>
                         setShowConfirmNewPassword(!showConfirmNewPassword)
                       }
@@ -810,6 +814,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         Estado<span className="text-rose-500">*</span>
                       </span>
                       <select
+                        id="sel-uf"
                         {...register("estado")}
                         className="
                           bg-white
@@ -869,6 +874,7 @@ export default function CreateAccountPage(): React.ReactNode {
                         Cidade<span className="text-rose-500">*</span>
                       </span>
                       <select
+                        id="sel-city"
                         {...register("cidade")}
                         className={`${selectedEstado != "" ? "bg-white" : "bg-gray-300"}  
                       w-[calc(100%-6%)]
@@ -938,7 +944,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     "
                     >
                       <span className="font-semibold">Data de Nascimento</span>
-                      - <input type="date" {...register("aniversario")} />
+                      - <input id="inp-birthdate" type="date" {...register("aniversario")} />
                     </label>
                     <div
                       className="
@@ -973,6 +979,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     >
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
+                        id="txt-about"
                         maxLength={500}
                         {...register("sobreMim")}
                         className="
@@ -1010,6 +1017,7 @@ export default function CreateAccountPage(): React.ReactNode {
                 </form>
                 <div className="flex justify-between p-4">
                   <Link
+                    id="lnk-backLogin"
                     href={"/"}
                     className="p-4 pb-0 flex items-center text-brand-primary hover:font-bold hover:underline transition-all"
                   >
@@ -1017,6 +1025,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     <span>Voltar para o Login</span>
                   </Link>
                   <button
+                    id="btn-nextStep"
                     className="
                       bg-brand-primary 
                     hover:bg-indigo-800 
@@ -1114,6 +1123,7 @@ export default function CreateAccountPage(): React.ReactNode {
                             {area.nomeArea}
                           </span>
                           <DeleteIcon
+                            id={`btn-deleteStudentArea-${index}`}
                             onClick={() => {
                               setStudentAreaToDelete(area);
                               setDeleteStudentAreaModalOpen();
@@ -1145,6 +1155,7 @@ export default function CreateAccountPage(): React.ReactNode {
                   "
                 >
                   <div
+                    id="div-backPersonalInfo"
                     onClick={() => setStep(1)}
                     className="
                     p-4 
@@ -1161,6 +1172,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     <span>Voltar para o Passo 1</span>
                   </div>
                   <button
+                    id="btn-continueInterests"
                     className="
                     bg-brand-primary 
                     hover:bg-indigo-800 
@@ -1263,6 +1275,7 @@ export default function CreateAccountPage(): React.ReactNode {
                             {area.nomeArea}
                           </span>
                           <DeleteIcon
+                            id={`btn-deleteTutorArea-${index}`}
                             onClick={() => {
                               setTutorAreaToDelete(area);
                               setDeleteTutorAreaModalOpen();
@@ -1305,6 +1318,7 @@ export default function CreateAccountPage(): React.ReactNode {
                             {specialty.nomeEspecialidade}
                           </span>
                           <DeleteIcon
+                            id={`btn-deleteSpecialty-${specialty.id}`}
                             onClick={() => {
                               setSpecialtyToDelete(specialty);
                               setDeleteSpecialtyModalOpen();
@@ -1380,6 +1394,7 @@ export default function CreateAccountPage(): React.ReactNode {
                   "
                 >
                   <div
+                    id="div-backInterests"
                     onClick={() => setStep(2)}
                     className="
                     p-4 
@@ -1396,6 +1411,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     <span>Voltar para o Passo 1</span>
                   </div>
                   <button
+                    id="btn-submitRegister"
                     className="
                     bg-brand-primary 
                     hover:bg-indigo-800 
