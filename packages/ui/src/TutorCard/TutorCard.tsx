@@ -181,8 +181,9 @@ export const TutorCard = ({
       </div>
     )}
 
-    <Link href={`/perfil/${id}`}  className="w-full">
+    <Link id={`lnk-viewTutorProfile-${id}`} href={`/perfil/${id}`}  className="w-full">
       <button
+        id={`btn-viewTutorProfile-${id}`}
         className="
         w-full
         lg:max-w-[250px] 

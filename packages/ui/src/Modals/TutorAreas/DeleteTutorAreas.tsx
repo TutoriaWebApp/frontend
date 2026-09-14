@@ -91,6 +91,7 @@ export function DeleteTutorAreaModal({
             Remover Área de Tutoria
           </h2>
           <button
+            id="btn-closeDeleteTutorArea"
             type="button"
             onClick={onClose}
             className="
@@ -158,6 +159,7 @@ export function DeleteTutorAreaModal({
         "
         >
           <button
+            id="btn-cancelDeleteTutorArea"
             type="button"
             onClick={onClose}
             className="
@@ -177,6 +179,7 @@ export function DeleteTutorAreaModal({
             Cancelar
           </button>
           <button
+            id="btn-submitDeleteTutorArea"
             type="button"
             onClick={deleteArea}
             className="

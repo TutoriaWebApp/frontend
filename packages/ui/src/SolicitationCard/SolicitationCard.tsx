@@ -103,7 +103,7 @@ export const SolicitationCard = ({
         justify-center
         "
         >
-          <Link href={`/perfil/${userId}`}>
+          <Link id={`lnk-viewUserProfile-${userId}`} href={`/perfil/${userId}`}>
             <div
               className="
             w-32 
@@ -169,7 +169,7 @@ export const SolicitationCard = ({
           gap-1
         "
         >
-          <Link href={`/perfil/${userId}`}>
+          <Link id={`lnk-viewUserName-${userId}`} href={`/perfil/${userId}`}>
             <p
               className="
             text-base
@@ -272,6 +272,7 @@ export const SolicitationCard = ({
 
         {mode == "sessoes_tutor" && (
           <button
+            id={`btn-cancelSession-${userId}`}
             className="
           mt-6
           mb-2
@@ -315,6 +316,7 @@ export const SolicitationCard = ({
         {mode == "solicitacoes_tutor" && (
           <div className="flex gap-4">
             <button
+              id={`btn-acceptSolicitation-${userId}`}
               onClick={onAccept}
               className="
               mt-6
@@ -335,6 +337,7 @@ export const SolicitationCard = ({
               Confirmar
             </button>
             <button
+              id={`btn-rejectSolicitation-${userId}`}
               onClick={onReject}
               className="
             mt-6

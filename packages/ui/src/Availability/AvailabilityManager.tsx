@@ -112,7 +112,7 @@ export function AvailabilityManager({
 
   return (
     <>
-      <section>
+      <section id="day-available">
         <div className="
           border-2 
           border-slate-50 
@@ -198,8 +198,8 @@ export function AvailabilityManager({
                           border 
                           shadow-sm
                           transition-all
-                          ${isBlocked 
-                            ? "bg-rose-100 border-rose-300 text-rose-950" 
+                          ${isBlocked
+                            ? "bg-rose-100 border-rose-300 text-rose-950"
                             : "bg-slate-200 border-slate-300/40 text-slate-800"
                           }
                       `}>
@@ -211,9 +211,10 @@ export function AvailabilityManager({
                           {slot.horarioInicio.slice(0, 5)} -{" "}
                           {slot.horarioFim?.slice(0, 5) || slot.horarioFim.slice(0, 5)}
                         </span>
-                        
+
                         {!isBlocked ? (
                           <DeleteIcon
+                            id={`btn-deleteAvailability-${slot.id}`}
                             onClick={() => handleOpenDeleteModal(slot)}
                             className="
                               text-rose-500 
@@ -224,9 +225,9 @@ export function AvailabilityManager({
                             sx={{ fontSize: 18 }}
                           />
                         ) : (
-                          <ReportProblemIcon 
-                            className="text-rose-400" 
-                            sx={{ fontSize: 16 }} 
+                          <ReportProblemIcon
+                            className="text-rose-400"
+                            sx={{ fontSize: 16 }}
                             titleAccess="Horário bloqueado devido a compromisso agendado"
                           />
                         )}
@@ -244,6 +245,7 @@ export function AvailabilityManager({
           justify-end
         ">
           <button
+            id="btn-addAvailability"
             type="button"
             onClick={() => setOpenModal(true)}
             className="
