@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isTokenExpired } from "@repo/lib/jwtAux";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 
 const validateSession = async (req: NextRequest) => {
   const accessToken = req.cookies.get("access_token")?.value;
@@ -11,7 +12,7 @@ const validateSession = async (req: NextRequest) => {
   const refreshToken = req.cookies.get("refresh_token")?.value;
 
   if (refreshToken && !isTokenExpired(refreshToken)) {
-    const baseURL = process.env.backendBaseURL;
+    const baseURL = getBackendUrl();
 
     const res = await fetch(`${baseURL}/login/refresh`, {
       method: "POST",

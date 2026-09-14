@@ -80,11 +80,13 @@ export async function LogInAction(
   }
 }
 
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
+
 export async function LogOutAction() {
   const cookieStore = await cookies();
 
   try {
-    const baseURL = process.env.backendBaseURL;
+    const baseURL = getBackendUrl();
     await fetch(`${baseURL}/logout`, {
       method: "POST",
       headers: {

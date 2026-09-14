@@ -174,6 +174,7 @@ export interface GetSpecificTutorResult {
 }
 
 export interface DashboardStatisticsData {
+  usuarioId: number;
   sessoesConcluidas: number;
   conquistasDesbloqueadas: number;
   pontos: number;

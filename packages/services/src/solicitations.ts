@@ -1,4 +1,5 @@
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 import {
   SolicitationGetResult,
   SolicitationPostData,
@@ -12,7 +13,7 @@ export async function CreateSolicitation(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
-  const URL = `${process.env.backendBaseURL}/solicitacoes/`;
+  const URL = `${getBackendUrl()}/solicitacoes/`;
 
   try {
     const res = await authRequestWrapper(
@@ -59,7 +60,7 @@ export async function GetSolicitations(
   pageNumber: number = 1,
   page_size: number = 6,
 ): Promise<SolicitationGetResult> {
-  let URL = `${process.env.backendBaseURL}/solicitacoes/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/solicitacoes/?page=${pageNumber}`;
 
   if (areaId) {
     URL += `&area=${areaId}`;
@@ -103,7 +104,7 @@ export async function GetSolicitations(
 }
 
 export async function GetAllSolicitations(): Promise<AllSolicitationsGetResult> {
-  const URL = `${process.env.backendBaseURL}/todas-solicitacoes/`;
+  const URL = `${getBackendUrl()}/todas-solicitacoes/`;
 
   try {
     const res = await authRequestWrapper(
@@ -133,7 +134,7 @@ export async function GetAllSolicitations(): Promise<AllSolicitationsGetResult> 
 }
 
 export async function GetAllFutureTutorSolicitations(): Promise<AllSolicitationsGetResult> {
-  const URL = `${process.env.backendBaseURL}/todas-solicitacoes/?tipo=tutor&apenas_futuras=true`;
+  const URL = `${getBackendUrl()}/todas-solicitacoes/?tipo=tutor&apenas_futuras=true`;
 
   try {
     const res = await authRequestWrapper(
@@ -163,7 +164,7 @@ export async function GetAllFutureTutorSolicitations(): Promise<AllSolicitations
 }
 
 export async function GetResolvedLearnerSolicitations(): Promise<AllSolicitationsGetResult> {
-  const URL = `${process.env.backendBaseURL}/todas-solicitacoes/?tipo=aprendiz&apenas_resolvidas=true`;
+  const URL = `${getBackendUrl()}/todas-solicitacoes/?tipo=aprendiz&apenas_resolvidas=true`;
 
   try {
     const res = await authRequestWrapper(
@@ -197,7 +198,7 @@ export async function AcceptSolicitation(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
-  let URL = `${process.env.backendBaseURL}/solicitacoes/aceitar/${id}/`;
+  let URL = `${getBackendUrl()}/solicitacoes/aceitar/${id}/`;
 
   try {
     const res = await authRequestWrapper(
@@ -239,7 +240,7 @@ export async function RejectSolicitation(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
-  let URL = `${process.env.backendBaseURL}/solicitacoes/recusar/${id}/`;
+  let URL = `${getBackendUrl()}/solicitacoes/recusar/${id}/`;
 
   try {
     const res = await authRequestWrapper(

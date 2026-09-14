@@ -1,4 +1,5 @@
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 import {
   SessionsGetResult,
   SpecificTutorSessionGetResult,
@@ -14,7 +15,7 @@ export async function GetSessions(
   pageNumber: number = 1,
   page_size: number = 6,
 ): Promise<SessionsGetResult> {
-  let URL = `${process.env.backendBaseURL}/sessoes/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/sessoes/?page=${pageNumber}`;
 
   if (areaId) {
     URL += `&area=${areaId}`;
@@ -61,7 +62,7 @@ export async function GetSessions(
 export async function GetSpecificTutorSessions(
   tutorId: number,
 ): Promise<SpecificTutorSessionGetResult> {
-  let URL = `${process.env.backendBaseURL}/sessoes-tutor/`;
+  let URL = `${getBackendUrl()}/sessoes-tutor/`;
 
   URL += `?tutor_id=${tutorId}`;
 
@@ -97,7 +98,7 @@ export async function GetAllUserSessions(): Promise<AllUserSessionGetResult | bo
     const res = await GetUserDataClient();
 
     if (res.success && res.data.perfilTutor != null) {
-      let URL = `${process.env.backendBaseURL}/todas-sessoes-usuario/`;
+      let URL = `${getBackendUrl()}/todas-sessoes-usuario/`;
 
       const sessionRes = await authRequestWrapper(
         URL,

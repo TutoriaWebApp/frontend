@@ -20,11 +20,12 @@ import {
 } from "./types/user";
 import { GetScheduleResult, TimeSlot } from "./types/availability";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 
 export async function GetUserDataClient(): Promise<
   UserDataSuccessResult | UserDataFailResult
 > {
-  const URL = `${process.env.backendBaseURL}/perfil`;
+  const URL = `${getBackendUrl()}/perfil`;
 
   const res = await authRequestWrapper(
     URL,
@@ -54,7 +55,7 @@ export async function ChangePassword(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<ChangePasswordResult> {
-  const URL = `${process.env.backendBaseURL}/usuarios/altera-senha`;
+  const URL = `${getBackendUrl()}/usuarios/altera-senha`;
 
   const res = await authRequestWrapper(
     URL,
@@ -93,7 +94,7 @@ export async function EditProfile(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<EditProfileResult> {
-  const URL = `${process.env.backendBaseURL}/perfil`;
+  const URL = `${getBackendUrl()}/perfil`;
 
   const res = await authRequestWrapper(
     URL,
@@ -125,7 +126,7 @@ export async function EditProfile(
 }
 
 export async function GetAreas(): Promise<GetAreasResult> {
-  const URL = `${process.env.backendBaseURL}/areas/`;
+  const URL = `${getBackendUrl()}/areas/`;
 
   const res = await authRequestWrapper(URL, { method: "GET" }, "Request Areas");
 
@@ -147,7 +148,7 @@ export async function GetAreas(): Promise<GetAreasResult> {
 }
 
 export async function GetAreaById(id: number): Promise<GetAreaResult> {
-  const URL = `${process.env.backendBaseURL}/areas/${id}/`;
+  const URL = `${getBackendUrl()}/areas/${id}/`;
 
   const res = await authRequestWrapper(URL, { method: "GET" }, "Request Areas");
 
@@ -171,7 +172,7 @@ export async function GetAreaById(id: number): Promise<GetAreaResult> {
 export async function GetSpecialties(
   areaId?: number,
 ): Promise<GetSpecialtiesResult> {
-  let URL = `${process.env.backendBaseURL}/especialidades/`;
+  let URL = `${getBackendUrl()}/especialidades/`;
 
   if (areaId) {
     URL += `?area=${areaId}`;
@@ -209,7 +210,7 @@ export async function BecomeTutor(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<BecomeTutorResult> {
-  const URL = `${process.env.backendBaseURL}/tutores/`;
+  const URL = `${getBackendUrl()}/tutores/`;
 
   const res = await authRequestWrapper(
     URL,
@@ -245,7 +246,7 @@ export async function InsertSpecialty(
   specialtyId: number,
   tutorId: number,
 ): Promise<InsertSpecialtyResult> {
-  const URL = `${process.env.backendBaseURL}/contem/`;
+  const URL = `${getBackendUrl()}/contem/`;
 
   const res = await authRequestWrapper(
     URL,
@@ -282,7 +283,7 @@ export async function DeleteSpecialty(
   csrfTokenString: string | undefined,
   relationId: number,
 ): Promise<DeleteSpecialtyResult> {
-  const URL = `${process.env.backendBaseURL}/contem/${relationId}/`;
+  const URL = `${getBackendUrl()}/contem/${relationId}/`;
 
   const res = await authRequestWrapper(
     URL,
@@ -312,7 +313,7 @@ export async function DeleteSpecialty(
 }
 
 export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> {
-  let URL = `${process.env.backendBaseURL}/agendas/`;
+  let URL = `${getBackendUrl()}/agendas/`;
 
   if (tutorId) {
     URL += `?tutor=${tutorId}`;
@@ -348,7 +349,7 @@ export async function InsertSchedule(
   scheduleData: TimeSlot,
   tutorId: number,
 ): Promise<InsertScheduleResult> {
-  const URL = `${process.env.backendBaseURL}/agendas/`;
+  const URL = `${getBackendUrl()}/agendas/`;
 
   const res = await authRequestWrapper(
     URL,
@@ -385,7 +386,7 @@ export async function DeleteSchedule(
   csrfTokenString: string | undefined,
   scheduleId: number,
 ): Promise<DeleteScheduleResult> {
-  const URL = `${process.env.backendBaseURL}/agendas/${scheduleId}/`;
+  const URL = `${getBackendUrl()}/agendas/${scheduleId}/`;
 
   const res = await authRequestWrapper(
     URL,
@@ -423,7 +424,7 @@ export async function GetTutors(
   radius?: number | string,
   page_size: number = 6
 ): Promise<GetTutorsResult> {
-  let URL = `${process.env.backendBaseURL}/tutores/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/tutores/?page=${pageNumber}`;
 
   if (areaId) {
     URL += `&area=${areaId}`;
@@ -477,7 +478,7 @@ export async function GetRecommendations(
   radius?: number | string,
   page_size: number = 6
 ): Promise<GetRecommendationsResult> {
-  let URL = `${process.env.backendBaseURL}/recomendacoes/?page=${pageNumber}&area=${areaId}&page_size=${page_size}`;
+  let URL = `${getBackendUrl()}/recomendacoes/?page=${pageNumber}&area=${areaId}&page_size=${page_size}`;
 
   if (specialtyId) {
     URL += `&especialidade=${specialtyId}`;
@@ -517,7 +518,7 @@ export async function GetRecommendations(
 export async function CreateAccount(
   formData: FormData,
 ): Promise<CreateUserResponse> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
 
   try {
     const response = await fetch(`${baseURL}/usuarios/novo`, {
@@ -546,7 +547,7 @@ export async function CreateAccount(
 }
 
 export async function GetSpecificUserData(userId?: number): Promise<GetSpecificUserResult> {
-  let URL = `${process.env.backendBaseURL}/usuarios/${userId}`;
+  let URL = `${getBackendUrl()}/usuarios/${userId}`;
 
   const res = await authRequestWrapper(
     URL,
@@ -573,7 +574,7 @@ export async function GetSpecificUserData(userId?: number): Promise<GetSpecificU
 }
 
 export async function GetStatistics(): Promise<DashboardStatisticsResult> {
-  let URL = `${process.env.backendBaseURL}/estatistica`;
+  let URL = `${getBackendUrl()}/estatistica`;
 
   const res = await authRequestWrapper(
     URL,

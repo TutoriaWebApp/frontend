@@ -27,6 +27,7 @@
     
     "./notification": "./src/contexts/NotificationContext/NotificationContext.tsx",
     "./evaluateUserContext": "./src/contexts/EvaluateUserContext/Evaluate.tsx",
+    "./achievementUnlockContext": "./src/contexts/AchievementUnlockContext/AchievementUnlockContext.tsx",
 
     "./changePasswordModal": "./src/Modals/ChangePasswordModal/ChangePasswordModal.tsx",
     "./addSpecialtyModal": "./src/Modals/Specialty/AddSpecialtyModal.tsx",

@@ -8,13 +8,14 @@ import {
   UserDataSuccessResult,
 } from "./types/user";
 import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
 import { cookies } from "next/headers";
 import { GetScheduleResult } from "./types/availability";
 
 export async function CreateAccount(
   formData: FormData,
 ): Promise<CreateUserResponse> {
-  const baseURL = process.env.backendBaseURL;
+  const baseURL = getBackendUrl();
 
   try {
     const response = await fetch(`${baseURL}/usuarios/novo`, {
@@ -45,7 +46,7 @@ export async function CreateAccount(
 export async function GetUserData(): Promise<
   UserDataSuccessResult | UserDataFailResult
 > {
-  const URL = `${process.env.backendBaseURL}/perfil`;
+  const URL = `${getBackendUrl()}/perfil`;
   const cookieStore = await cookies();
 
   const accessToken = cookieStore.get("access_token")?.value;
@@ -79,7 +80,7 @@ export async function GetUserData(): Promise<
 }
 
 export async function GetAreaById(id: number): Promise<GetAreaResult> {
-  const URL = `${process.env.backendBaseURL}/areas/${id}/`;
+  const URL = `${getBackendUrl()}/areas/${id}/`;
   const cookieStore = await cookies();
 
   const accessToken = cookieStore.get("access_token")?.value;
@@ -114,7 +115,7 @@ export async function GetAreaById(id: number): Promise<GetAreaResult> {
 }
 
 export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> {
-  let URL = `${process.env.backendBaseURL}/agendas/`;
+  let URL = `${getBackendUrl()}/agendas/`;
 
   if (tutorId) {
     URL += `?tutor=${tutorId}`;
@@ -153,7 +154,7 @@ export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> 
 }
 
 export async function GetSpecificUserData(userId?: number): Promise<GetSpecificUserResult> {
-  let URL = `${process.env.backendBaseURL}/usuarios/${userId}`;
+  let URL = `${getBackendUrl()}/usuarios/${userId}`;
 
   const cookieStore = await cookies();
 
@@ -188,7 +189,7 @@ export async function GetSpecificUserData(userId?: number): Promise<GetSpecificU
 }
 
 export async function GetSpecificTutor(tutorId: number): Promise<GetSpecificTutorResult> {
-  let URL = `${process.env.backendBaseURL}/tutores/${tutorId}`;
+  let URL = `${getBackendUrl()}/tutores/${tutorId}`;
 
   const cookieStore = await cookies();
 
