@@ -28,7 +28,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
   const isSecretLocked = conquista.secreta && !isObtained;
 
   // Gerador de faixas e brilhos
-  const getTierTheme = (pontos: number) => {
+  const getTierTheme = (tier: string) => {
     if (!isObtained) {
       return {
         outerFrame: "bg-stone-300 border-2 border-stone-400/80 shadow-xs",
@@ -43,7 +43,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     }
 
     // 1. Bronze: Sem brilhos
-    if (pontos <= 200) {
+    if (tier === "B") {
       return {
         outerFrame:
           "bg-gradient-to-br from-[#7a3e1d] via-[#d68c59] to-[#4a220e] shadow-md shadow-[#4a220e]/30 border-2 border-[#8c481f]",
@@ -60,7 +60,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     }
 
     // 2. Prata: Poucos brilhos prateados/claros ocasionais
-    if (pontos <= 700) {
+    if (tier === "P") {
       return {
         outerFrame:
           "bg-gradient-to-br from-[#64748b] via-[#ffffff] to-[#334155] shadow-lg shadow-slate-400/40 border-2 border-slate-300",
@@ -93,7 +93,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     }
 
     // 3. Ouro: Quantidade média, frequentes e dourados
-    if (pontos <= 1500) {
+    if (tier === "O") {
       return {
         outerFrame:
           "bg-gradient-to-br from-[#92400e] via-[#fef08a] to-[#713f12] shadow-xl shadow-amber-900/30 border-2 border-yellow-300",
@@ -168,7 +168,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     };
   };
 
-  const theme = getTierTheme(conquista.pontos);
+  const theme = getTierTheme(conquista.tier);
 
   return (
     <div

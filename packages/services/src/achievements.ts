@@ -83,8 +83,8 @@ export async function GetUserAchievements(userId: number): Promise<GetUserAchiev
 export async function UnlockAchievement(
   userId: number,
   achievementId: number,
-  // cookieString: string,
-  // csrfTokenString: string | undefined,
+  cookieString: string,
+  csrfTokenString: string | undefined,
 ): Promise<AchivementUnlockedResult> {
   const URL = `${process.env.backendBaseURL}/consegue/`;
 
@@ -96,8 +96,8 @@ export async function UnlockAchievement(
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          // Cookie: cookieString,
-          // "X-CSRFToken": csrfTokenString,
+          Cookie: cookieString,
+          "X-CSRFToken": csrfTokenString,
         },
         body: JSON.stringify({usuarioId: userId, conquistaId: achievementId}),
       },

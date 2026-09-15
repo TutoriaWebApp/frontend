@@ -32,6 +32,7 @@ export interface GetSpecificAchievementsResult {
     descricao: string;
     urlImagem: string;
     pontos: number;
+    tier: string;
   };
 }
 

@@ -1,32 +1,21 @@
 "use client";
 
 import React, { useEffect, useState, useContext } from "react";
-
 import Link from "next/link";
-
 import { PersonSearch, Star, EmojiEvents } from "@mui/icons-material";
-
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 import { DashboardCard } from "@repo/ui/dashboardCard";
-
 import { useEvaluation } from "@repo/ui/contexts/EvaluateUserContext/EvaluateUserContext";
 import { GetPendingReviews } from "@repo/services/reviews";
 import { DashboardStatisticsData } from "@repo/services/userTypes";
 import { GetStatistics } from "@repo/services/userClient";
-
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+import { GetSpecificAchievement } from "@repo/services/achievements";
 import { UnlockAchievementAction } from "@repo/services/achievementAction";
-import {
-  GetSpecificAchievement,
-  UnlockAchievement,
-} from "@repo/services/achievements";
-
 import { useAchievement } from "@repo/ui/achievementUnlockContext";
-
 import { ClipLoader } from "react-spinners";
-
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
-
 import { levelThresholds, userLevel } from "@repo/lib/userLevel";
 
 export default function Dashboard(): React.ReactNode {
@@ -34,57 +23,69 @@ export default function Dashboard(): React.ReactNode {
   const [statisticsData, setStatisticsData] =
     useState<DashboardStatisticsData>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [pointsToNextLevel, setPointsToNextLevel] = useState<number>();
-
   const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
   const { showNotification } = useContext(NotificationContext);
   const { showAchievement } = useAchievement();
 
+  const {
+    userId,
+    inicializado,
+    pontos,
+    totalConquistasDesbloqueadas,
+    setUserId,
+    hasAchievement,
+    carregarDadosConquistas,
+    markAchievementUnlocked,
+  } = useUserAchievements();
+
   useEffect(() => {
     async function fetchSessions() {
       const res = await GetPendingReviews();
 
-      if (res.success) {
+      if (res.success && res.data) {
         const data = res.data;
 
-        for (let i = 0; i < data!.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           await triggerEvaluation(
-            data![i]!.sessaoId,
-            data![i]!.dataSessao,
-            data![i]!.horarioInicio,
-            data![i]!.nomeArea,
-            data![i]!.nomeEspecialidade,
-            data![i]!.nome,
-            data![i]!.fotoURL,
-            data![i]!.tipoPendente,
-            data![i]!.usuarioAvaliadoId,
+            data[i]!.sessaoId,
+            data[i]!.dataSessao,
+            data[i]!.horarioInicio,
+            data[i]!.nomeArea,
+            data[i]!.nomeEspecialidade,
+            data[i]!.nome,
+            data[i]!.fotoURL,
+            data[i]!.tipoPendente,
+            data[i]!.usuarioAvaliadoId,
           );
         }
       }
     }
 
     fetchSessions();
-  }, []);
+  }, [triggerEvaluation]);
 
   useEffect(() => {
     async function fetchStatistics() {
       setLoading(true);
       const res = await GetStatistics();
+
       if (res.success && res.data) {
         setStatisticsData(res.data);
+
+        if (res.data.usuarioId) {
+          setUserId(res.data.usuarioId);
+          await carregarDadosConquistas(res.data.usuarioId);
+        }
 
         const currentPoints = res.data.pontos ?? 0;
         const currentLevel = userLevel(currentPoints);
 
-        // Se o usuário já atingiu o nível máximo (nível 50)
         if (currentLevel >= levelThresholds.length) {
           setProgressPercentage(100);
         } else {
-          // XP base do nível atual (se for nível 1, a base é 0)
           const currentLevelBaseXp =
             currentLevel > 1 ? (levelThresholds[currentLevel - 2] ?? 0) : 0;
-          // XP necessária para o próximo nível
           const nextLevelTargetXp = levelThresholds[currentLevel - 1] ?? 100;
 
           const range = nextLevelTargetXp - currentLevelBaseXp;
@@ -118,49 +119,38 @@ export default function Dashboard(): React.ReactNode {
     }
 
     fetchStatistics();
-  }, []);
+  }, [carregarDadosConquistas, setUserId, showNotification]);
 
   useEffect(() => {
     const fetchAchievement = async () => {
-      const resAchie = await UnlockAchievement(10, 30);
+      const achievementId = 1;
 
-      if (resAchie.success) {
-        const res = await GetSpecificAchievement(30);
+      if (!userId || !inicializado || hasAchievement(achievementId)) {
+        return;
+      }
 
-        // if (res.success) {
-        //   showAchievement({
-        //     titulo: res.data!.titulo,
-        //     descricao: res.data!.descricao,
-        //     pontos: res.data!.pontos,
-        //     urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data!.urlImagem}`,
-        //   });
-        // }
+      const resAchie = await UnlockAchievementAction(userId, achievementId);
+      if (resAchie.success && resAchie.status !== 200) {
+        const res = await GetSpecificAchievement(achievementId);
+        if (res.success && res.data) {
+          markAchievementUnlocked(achievementId, res.data.pontos);
+          showAchievement({
+            titulo: res.data.titulo,
+            descricao: res.data.descricao,
+            urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data.urlImagem}`,
+            tier: res.data.tier,
+            pontos: res.data.pontos,
+          });
+        }
       }
     };
+
     fetchAchievement();
-  }, []);
+  }, [userId, inicializado]);
 
   return (
-    <div
-      className="
-        h-fit 
-        bg-slate-50 
-        p-6 
-        md:p-12
-      "
-    >
-      <div
-        className="
-        max-w-5xl 
-        mx-auto 
-        bg-white 
-        rounded-[3rem] 
-        shadow-2xl 
-        shadow-slate-200/50 
-        border 
-        border-slate-100
-      "
-      >
+    <div className="h-fit bg-slate-50 p-6 md:p-12">
+      <div className="max-w-5xl mx-auto bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
         <section className="pt-12 pb-8 px-8 text-center">
           <h1 className="text-3xl font-black text-slate-800 mb-4">
             Bem-vindo ao{" "}
@@ -175,16 +165,7 @@ export default function Dashboard(): React.ReactNode {
           </p>
         </section>
 
-        <section
-          className="
-          grid 
-          grid-cols-1 
-          md:grid-cols-3 
-          gap-6 
-          px-10 
-          pb-12
-        "
-        >
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 px-10 pb-12">
           <DashboardCard
             title="Encontre um Tutor"
             description="Descubra tutores com base nas suas necessidades de aprendizado."
@@ -221,6 +202,7 @@ export default function Dashboard(): React.ReactNode {
             size={120}
           />
         )}
+
         {!loading && (
           <section className="bg-slate-50/80 mx-10 mb-10 rounded-[2rem] p-8 border border-slate-100">
             <h2 className="text-xl font-black text-slate-700 text-center mb-8">
@@ -238,7 +220,8 @@ export default function Dashboard(): React.ReactNode {
               </div>
               <div>
                 <p className="text-3xl font-black text-purple-500">
-                  {statisticsData?.conquistasDesbloqueadas ?? 0}
+                  {totalConquistasDesbloqueadas ||
+                    (statisticsData?.conquistasDesbloqueadas ?? 0)}
                 </p>
                 <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
                   Conquistas Desbloqueadas
@@ -246,7 +229,7 @@ export default function Dashboard(): React.ReactNode {
               </div>
               <div>
                 <p className="text-3xl font-black text-purple-500">
-                  {statisticsData?.pontos ?? 0}
+                  {pontos || (statisticsData?.pontos ?? 0)}
                 </p>
                 <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
                   Pontos
@@ -269,13 +252,8 @@ export default function Dashboard(): React.ReactNode {
             </div>
           </section>
         )}
-        <div
-          className="
-          flex 
-          justify-center 
-          pb-12
-        "
-        >
+
+        <div className="flex justify-center pb-12">
           <Link
             id="lnk-viewSolicitations"
             href="/solicitacoes"

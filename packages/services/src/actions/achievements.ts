@@ -1,3 +1,5 @@
+"use server";
+
 import { UnlockAchievement } from "../achievements";
 import {AchivementUnlockedResult} from "../types/achievements"
 
