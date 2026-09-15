@@ -184,7 +184,7 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
 
       {current && theme && (
         <div
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out transform ${
+          className={`fixed top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out transform ${
             isVisible
               ? "opacity-100 translate-y-0 scale-100"
               : "opacity-0 translate-y-10 scale-95 pointer-events-none"

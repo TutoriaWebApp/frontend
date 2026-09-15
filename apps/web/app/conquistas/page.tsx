@@ -9,6 +9,7 @@ import {
 import { GetAllAchievements } from "@repo/services/achievements";
 import { ClipLoader } from "react-spinners";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
 
 export default function AchievementsPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,22 +17,30 @@ export default function AchievementsPage() {
   const BASE_IMAGE_URL = process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL;
   const { showNotification } = useContext(NotificationContext);
 
+  const {
+    pontos,
+    totalConquistasDesbloqueadas,
+    hasAchievement,
+  } = useUserAchievements();
+
   useEffect(() => {
     const fetchAchievements = async () => {
       setLoading(true);
 
       const res = await GetAllAchievements();
 
-      if (res.success) {
-        const achivementsTreated = res.data?.map((achievement) => ({
-          ...achievement,
-          obtida: true,
-          urlImagem: `${BASE_IMAGE_URL}${achievement.urlImagem}`,
-        })) as AchievementCardItem[];
+      if (res.success && res.data) {
+        const achivementsTreated: AchievementCardItem[] = res.data.map((achievement) => {
+          const achievementUnlocked = hasAchievement(achievement.id);
+
+          return {
+            ...achievement,
+            obtida: achievementUnlocked,
+            urlImagem: `${BASE_IMAGE_URL}${achievement.urlImagem}`,
+          };
+        });
 
         setAchievements(achivementsTreated);
-
-        console.log(achivementsTreated,achievements);
       } else {
         if (res.status !== 500) {
           showNotification(
@@ -52,11 +61,6 @@ export default function AchievementsPage() {
     fetchAchievements();
   }, []);
 
-  const obtidasCount = achievements.filter((c) => c.obtida).length;
-  const totalPontos = achievements
-    .filter((c) => c.obtida)
-    .reduce((acc, curr) => acc + curr.pontos, 0);
-
   return (
     <>
       {loading && (
@@ -67,7 +71,7 @@ export default function AchievementsPage() {
         />
       )}
 
-      {!loading  && (
+      {!loading && (
         <main
           className="
       max-w-6xl 
@@ -158,7 +162,7 @@ export default function AchievementsPage() {
               text-sm
               "
                 >
-                  {obtidasCount} / {achievements.length}
+                  {totalConquistasDesbloqueadas} / {achievements.length}
                 </span>
               </div>
               <div
@@ -179,7 +183,7 @@ export default function AchievementsPage() {
               text-sm
             "
                 >
-                  {totalPontos} pts
+                  {pontos} pts
                 </span>
               </div>
             </div>

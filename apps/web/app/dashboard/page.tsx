@@ -130,7 +130,7 @@ export default function Dashboard(): React.ReactNode {
       }
 
       const resAchie = await UnlockAchievementAction(userId, achievementId);
-      if (resAchie.success && resAchie.status !== 200) {
+      if (resAchie.success) {
         const res = await GetSpecificAchievement(achievementId);
         if (res.success && res.data) {
           markAchievementUnlocked(achievementId, res.data.pontos);
