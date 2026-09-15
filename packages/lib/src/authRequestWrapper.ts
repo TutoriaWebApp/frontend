@@ -20,10 +20,23 @@ export const authRequestWrapper = async (
   try {
     const response = await fetch(URL, {
       ...reqParams,
+      headers: {
+        Accept: "application/json",
+        ...(reqParams.headers || {}),
+      },
       credentials: "include",
     });
 
-    const data = await response.json();
+    const contentType = response.headers.get("content-type");
+    let data: any = null;
+
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      console.warn(`${requestName} retornou resposta não-JSON (status ${response.status}):`, text.slice(0, 150));
+      data = { mensagem: "Resposta não formatada em JSON recebida do servidor." };
+    }
 
     if (response.status === 401) {
       return {
@@ -31,8 +44,8 @@ export const authRequestWrapper = async (
         status: 401,
         data,
       };
-      redirect("/?session=expired");
     }
+
     if (response.ok) {
       return { success: true, status: response.status, data };
     } else {

@@ -11,8 +11,7 @@ import { GetPendingReviews } from "@repo/services/reviews";
 import { DashboardStatisticsData } from "@repo/services/userTypes";
 import { GetStatistics } from "@repo/services/userClient";
 import { useUserAchievements } from "@repo/ui/userAchievementsContext";
-import { GetSpecificAchievement } from "@repo/services/achievements";
-import { UnlockAchievementAction } from "@repo/services/achievementAction";
+import {useUnlockAchievement} from "@repo/lib/useUnlockAchievement"
 import { useAchievement } from "@repo/ui/achievementUnlockContext";
 import { ClipLoader } from "react-spinners";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
@@ -27,6 +26,8 @@ export default function Dashboard(): React.ReactNode {
 
   const { showNotification } = useContext(NotificationContext);
   const { showAchievement } = useAchievement();
+
+  const { unlockAchievement } = useUnlockAchievement();
 
   const {
     userId,
@@ -122,31 +123,10 @@ export default function Dashboard(): React.ReactNode {
   }, [carregarDadosConquistas, setUserId, showNotification]);
 
   useEffect(() => {
-    const fetchAchievement = async () => {
-      const achievementId = 1;
-
-      if (!userId || !inicializado || hasAchievement(achievementId)) {
-        return;
-      }
-
-      const resAchie = await UnlockAchievementAction(userId, achievementId);
-      if (resAchie.success) {
-        const res = await GetSpecificAchievement(achievementId);
-        if (res.success && res.data) {
-          markAchievementUnlocked(achievementId, res.data.pontos);
-          showAchievement({
-            titulo: res.data.titulo,
-            descricao: res.data.descricao,
-            urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data.urlImagem}`,
-            tier: res.data.tier,
-            pontos: res.data.pontos,
-          });
-        }
-      }
-    };
-
-    fetchAchievement();
-  }, [userId, inicializado]);
+    if (userId && inicializado) {
+      unlockAchievement(1);
+    }
+  }, [userId, inicializado, unlockAchievement]);
 
   return (
     <div className="h-fit bg-slate-50 p-6 md:p-12">

@@ -71,10 +71,12 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const showAchievement = (achievement: AchievementPopupData) => {
+    console.log("📢 [AchievementUnlockContext] showAchievement acionado com dados:", achievement);
+
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch((err) => {
-        console.warn("Autoplay bloqueado pelo navegador:", err);
+        console.warn("⚠️ [AchievementUnlockContext] Áudio bloqueado pelo navegador:", err);
       });
     }
 
@@ -84,6 +86,7 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsVisible(true);
 
     timerRef.current = setTimeout(() => {
+      console.log("⏱️ [AchievementUnlockContext] Encerrando pop-up após tempo limite.");
       setIsVisible(false);
       setTimeout(() => setCurrent(null), 500);
     }, 5500);
@@ -184,7 +187,7 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
 
       {current && theme && (
         <div
-          className={`fixed top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out transform ${
+          className={`fixed top-20 left-1/2 -translate-x-1/2 z-[99999] transition-all duration-500 ease-out transform pointer-events-auto${
             isVisible
               ? "opacity-100 translate-y-0 scale-100"
               : "opacity-0 translate-y-10 scale-95 pointer-events-none"
@@ -228,12 +231,10 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
                 `}
               >
                 {current.urlImagem ? (
-                  <Image
+                  <img
                     src={current.urlImagem}
                     alt={current.titulo}
-                    fill
-                    unoptimized
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <span className="text-2xl">🏆</span>

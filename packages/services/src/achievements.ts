@@ -55,7 +55,11 @@ export async function GetSpecificAchievement(achievementId: number): Promise<Get
 }
 
 export async function GetUserAchievements(userId: number): Promise<GetUserAchievementsResult> {
-  const URL = `${getBackendUrl()}/conquistas/usuario/${userId}/`;
+  if (!userId || isNaN(Number(userId))) {
+    return { success: false, status: 400 };
+  }
+
+  const URL = `${getBackendUrl()}/conquistas/usuario/${userId}`;
 
   try {
     const res = await authRequestWrapper(
@@ -108,6 +112,7 @@ export async function UnlockAchievement(
       return {
         success: res.success,
         status: res.status,
+        data: res.data
       };
     } else {
       return {
