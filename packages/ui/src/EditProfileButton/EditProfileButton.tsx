@@ -3,14 +3,15 @@
 import { redirect } from "next/navigation";
 
 export const EditProfileButton = () => {
-    const redirectToEdit = () => {
-        redirect("/editar-perfil")
-    }
+  const redirectToEdit = () => {
+    redirect("/editar-perfil")
+  }
 
   return (
     <>
       <button
-      onClick={redirectToEdit}
+        id="btn-profileEdit"
+        onClick={redirectToEdit}
         className="
         w-full
         bg-brand-primary 

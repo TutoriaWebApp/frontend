@@ -47,6 +47,7 @@ export const NotificationContextProvider = ({ children }: { children: React.Reac
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <MuiAlert
+          id="snk-notification"
           onClose={handleClose}
           severity={severity}
           variant="filled"
