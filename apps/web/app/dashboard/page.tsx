@@ -47,6 +47,12 @@ export default function Dashboard(): React.ReactNode {
       if (res.success && res.data) {
         const data = res.data;
 
+        if(res.data.length >= 1){
+          if(!hasAchievement(3)){
+            unlockAchievement(3);
+          }
+        }
+
         for (let i = 0; i < data.length; i++) {
           await triggerEvaluation(
             data[i]!.sessaoId,
