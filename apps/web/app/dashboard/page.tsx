@@ -11,11 +11,12 @@ import { GetPendingReviews } from "@repo/services/reviews";
 import { DashboardStatisticsData } from "@repo/services/userTypes";
 import { GetStatistics } from "@repo/services/userClient";
 import { useUserAchievements } from "@repo/ui/userAchievementsContext";
-import {useUnlockAchievement} from "@repo/lib/useUnlockAchievement"
+import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
 import { useAchievement } from "@repo/ui/achievementUnlockContext";
 import { ClipLoader } from "react-spinners";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 import { levelThresholds, userLevel } from "@repo/lib/userLevel";
+import { GetUserDataClient } from "@repo/services/userClient";
 
 export default function Dashboard(): React.ReactNode {
   const { triggerEvaluation } = useEvaluation();
@@ -47,8 +48,8 @@ export default function Dashboard(): React.ReactNode {
       if (res.success && res.data) {
         const data = res.data;
 
-        if(res.data.length >= 1){
-          if(!hasAchievement(3)){
+        if (res.data.length >= 1) {
+          if (!hasAchievement(3)) {
             unlockAchievement(3);
           }
         }
@@ -80,8 +81,10 @@ export default function Dashboard(): React.ReactNode {
       if (res.success && res.data) {
         setStatisticsData(res.data);
 
-        if (res.data.usuarioId) {
-          setUserId(res.data.usuarioId);
+        const currentUserId = res.data.usuarioId;
+        if (currentUserId) {
+          setUserId(currentUserId);
+          await carregarDadosConquistas(currentUserId, true);
         }
 
         const currentPoints = res.data.pontos ?? 0;
@@ -125,12 +128,28 @@ export default function Dashboard(): React.ReactNode {
     }
 
     fetchStatistics();
-  }, [setUserId, showNotification]);
+  }, [carregarDadosConquistas, setUserId, showNotification]);
 
   useEffect(() => {
-    if (userId && inicializado) {
-      unlockAchievement(1);
-    }
+    const checkAchievements = async () => {
+      if (userId && inicializado) {
+        unlockAchievement(1);
+
+        if (!hasAchievement(23)) {
+          const res = await GetUserDataClient();
+
+          if (res.success && res.data.perfilTutor != null) {
+            unlockAchievement(23);
+          }
+        }
+        //Verificando conquista de Level 5
+        if (userLevel(pontos) >= 5) {
+          unlockAchievement(7);
+        }
+      }
+    };
+
+    checkAchievements();
   }, [userId, inicializado]);
 
   return (

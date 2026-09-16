@@ -1,6 +1,6 @@
 interface reqParamsData {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-  headers?: Record<string, string>;
+  headers?: Record<string, string | undefined>;
   body?: string | FormData;
 }
 

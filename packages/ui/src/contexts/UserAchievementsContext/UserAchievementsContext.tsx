@@ -126,8 +126,6 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
           setUserIdState(resolvedUserId);
           const achieveRes = await GetUserAchievements(resolvedUserId);
 
-          console.log("🔍 [UserAchievementsContext] achieveRes:", achieveRes);
-
           if (achieveRes.success && achieveRes.data) {
             const novoArrayStatus = Array(TOTAL_SLOTS).fill(false);
             const listaConquistas = Array.isArray(achieveRes.data)
@@ -147,12 +145,10 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
               }
             });
 
-            console.log("✅ [UserAchievementsContext] novoArrayStatus:", novoArrayStatus);
             setAchievementsStatus(novoArrayStatus);
           }
+          setInicializado(true);
         }
-
-        setInicializado(true);
       } catch (error) {
         console.error("Erro ao carregar dados de conquistas:", error);
       } finally {

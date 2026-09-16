@@ -13,6 +13,9 @@ import {
   GetResolvedLearnerSolicitations 
 } from "@repo/services/solicitations";
 
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+
+
 interface HeaderProps {
   onLogout?: () => void;
 }
@@ -145,6 +148,15 @@ export default function Header({ onLogout }: HeaderProps) {
     { name: "Solicitações", href: "/solicitacoes" },
     { name: "Mensagens", href: "/mensagens" },
   ];
+
+  const { resetContext } = useUserAchievements();
+
+
+  const handleLogout = async () => {
+    resetContext(); 
+    
+    await onLogout!();
+  };
 
   useEffect(() => {
     if (notLoggedInRoutes.includes(pathname)) {
@@ -336,7 +348,7 @@ export default function Header({ onLogout }: HeaderProps) {
                   2xl:text-xl
                   cursor-pointer
                 "
-                onClick={onLogout}
+                onClick={handleLogout}
               >
                 Sair da Conta
               </li>
@@ -465,7 +477,7 @@ export default function Header({ onLogout }: HeaderProps) {
                     cursor-pointer
                     text-slate-600
                   "
-                  onClick={onLogout}
+                  onClick={handleLogout}
                 >
                   Sair da Conta
                 </div>
