@@ -15,8 +15,6 @@ import {
   TutorData,
 } from "@repo/services/userTypes";
 
-import { redirect } from "next/navigation";
-
 import { Grade } from "@mui/icons-material";
 
 import { ReviewSection } from "@repo/ui/reviewSection";

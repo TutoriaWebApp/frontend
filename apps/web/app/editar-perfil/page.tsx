@@ -10,7 +10,7 @@ import { userTitle } from "@repo/lib/userTitle";
 
 import { UserData } from "@repo/services/userTypes";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { Grade, TurnLeftOutlined } from "@mui/icons-material";
@@ -57,6 +57,9 @@ import { GetAllSolicitations } from "@repo/services/solicitations";
 import { GetSpecificTutorSessions } from "@repo/services/sessions";
 import { SolicitationGetData } from "@repo/services/solicitationTypes";
 import { SessionGetData } from "@repo/services/sessionTypes";
+
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -138,7 +141,8 @@ export default function EditProfilePage() {
 
   const [availabilities, setAvailabilities] = useState<TimeSlot[]>([]);
 
-  const [userSolicitations, setUserSolicitations] = useState<SolicitationGetData[]>();
+  const [userSolicitations, setUserSolicitations] =
+    useState<SolicitationGetData[]>();
 
   const [tutorSessions, setTutorSessions] = useState<SessionGetData[]>();
 
@@ -148,8 +152,12 @@ export default function EditProfilePage() {
 
   const todayDate = new Date();
 
-  const todayDateString = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
-  
+  const todayDateString = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
+
+  const { userId, inicializado } = useUserAchievements();
+
+  const { unlockAchievement } = useUnlockAchievement();
+
   // Change Password Modal
   const openChangePasswordModal = () => setChangePasswordModalIsOpen(true);
   const closeChangePasswordModal = () => setChangePasswordModalIsOpen(false);
@@ -276,9 +284,11 @@ export default function EditProfilePage() {
 
       if (!results.success) {
         if (results.status === 500) {
-          showNotification("Ocorreu um erro no servidor. Não foi possível obter suas informações.", "error");
-        }
-        else{
+          showNotification(
+            "Ocorreu um erro no servidor. Não foi possível obter suas informações.",
+            "error",
+          );
+        } else {
           showNotification("Ocorreu um erro, obter suas informações.", "error");
         }
       } else {
@@ -296,24 +306,30 @@ export default function EditProfilePage() {
             setAvailabilities(tutorSchedules.data);
           }
 
-          const responseTutorSessions = await GetSpecificTutorSessions(results.data.perfilTutor.id);
-        
-          if(responseTutorSessions.data){
+          const responseTutorSessions = await GetSpecificTutorSessions(
+            results.data.perfilTutor.id,
+          );
 
-            setTutorSessions((responseTutorSessions.data).filter(
-              (session) => session.tutorId === results.data.perfilTutor?.id 
-                && session.dataSessao >= todayDateString 
-            ))
+          if (responseTutorSessions.data) {
+            setTutorSessions(
+              responseTutorSessions.data.filter(
+                (session) =>
+                  session.tutorId === results.data.perfilTutor?.id &&
+                  session.dataSessao >= todayDateString,
+              ),
+            );
           }
 
           const responseSolicitations = await GetAllSolicitations();
 
-          if(responseSolicitations.data){
-            
-            setUserSolicitations((responseSolicitations.data).filter(
-              (solicitation) => solicitation.dataPretendida >= todayDateString
-                            && solicitation.estado == "PENDENTE" 
-            ))
+          if (responseSolicitations.data) {
+            setUserSolicitations(
+              responseSolicitations.data.filter(
+                (solicitation) =>
+                  solicitation.dataPretendida >= todayDateString &&
+                  solicitation.estado == "PENDENTE",
+              ),
+            );
           }
         }
       }
@@ -393,6 +409,9 @@ export default function EditProfilePage() {
       const resultadoTutor = await BecomeTutorAction();
 
       if (resultadoTutor.success) {
+        if (userId && inicializado) {
+          unlockAchievement(23);
+        }
         specialties.forEach(async (specialty) => {
           console.log(
             await InsertSpecialtyAction(specialty.id, resultadoTutor.data!.id),
@@ -579,11 +598,10 @@ export default function EditProfilePage() {
                         >
                           {Number.isInteger(userData.notaAvaliacao)
                             ? userData.notaAvaliacao.toFixed(1)
-                            : userData.notaAvaliacao.toFixed(
-                                2,
-                              )}{" "} como {" "}
+                            : userData.notaAvaliacao.toFixed(2)}{" "}
+                          como{" "}
                           <em className="text-slate-800 not-italic font-bold">
-                             Aprendiz
+                            Aprendiz
                           </em>{" "}
                           ({userData.totalAvaliacoes} avaliações)
                         </span>

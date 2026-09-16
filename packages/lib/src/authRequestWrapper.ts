@@ -1,8 +1,6 @@
-import { redirect } from "next/navigation";
-
 interface reqParamsData {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-  headers?: {};
+  headers?: Record<string, string>;
   body?: string | FormData;
 }
 
@@ -34,11 +32,20 @@ export const authRequestWrapper = async (
       data = await response.json();
     } else {
       const text = await response.text();
-      console.warn(`${requestName} retornou resposta não-JSON (status ${response.status}):`, text.slice(0, 150));
-      data = { mensagem: "Resposta não formatada em JSON recebida do servidor." };
+      data = { mensagem: text || "Resposta sem formato JSON." };
     }
 
     if (response.status === 401) {
+      if (typeof window !== "undefined") {
+        const currentPath = window.location.pathname;
+        const isAuthRoute = currentPath === "/" || currentPath.startsWith("/criar-conta");
+        const isLoginRequest = URL.includes("/") || URL.includes("/token");
+
+        if (!isAuthRoute && !isLoginRequest) {
+          window.location.href = "/?session=expired";
+        }
+      }
+
       return {
         success: false,
         status: 401,
@@ -46,11 +53,11 @@ export const authRequestWrapper = async (
       };
     }
 
-    if (response.ok) {
-      return { success: true, status: response.status, data };
-    } else {
-      return { success: false, status: response.status, data };
-    }
+    return {
+      success: response.ok,
+      status: response.status,
+      data,
+    };
   } catch (error) {
     console.error(`${requestName} Request Service Error:`, error);
     return {

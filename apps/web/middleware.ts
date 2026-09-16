@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { isTokenExpired } from "@repo/lib/jwtAux";
 import { getBackendUrl } from "@repo/lib/getBackendUrl";
 
+const redirectToLogin = (req: NextRequest) => {
+  const url = req.nextUrl.clone();
+  url.pathname = "/";
+  url.searchParams.set("session", "expired");
+
+  const response = NextResponse.redirect(url);
+  response.cookies.delete("access_token");
+  response.cookies.delete("refresh_token");
+  return response;
+};
+
 const validateSession = async (req: NextRequest) => {
   const accessToken = req.cookies.get("access_token")?.value;
 
@@ -12,51 +23,44 @@ const validateSession = async (req: NextRequest) => {
   const refreshToken = req.cookies.get("refresh_token")?.value;
 
   if (refreshToken && !isTokenExpired(refreshToken)) {
-    const baseURL = getBackendUrl();
+    try {
+      const baseURL = getBackendUrl();
+      const res = await fetch(`${baseURL}/login/refresh/`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Cookie: `refresh_token=${refreshToken}`,
+        },
+        credentials: "include",
+      });
 
-    const res = await fetch(`${baseURL}/login/refresh`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Cookie: `refresh_token=${refreshToken}`,
-      },
-      credentials: "include",
-    });
-
-    if (res.ok) {
-      const newCookies = res.headers!.getSetCookie();
-      const response = NextResponse.next();
-      newCookies.forEach((c) => response.headers.append("Set-Cookie", c));
-      return response;
+      if (res.ok) {
+        const newCookies = res.headers.getSetCookie();
+        const response = NextResponse.next();
+        newCookies.forEach((c) => response.headers.append("Set-Cookie", c));
+        return response;
+      }
+    } catch (e) {
+      console.error("Erro ao renovar token no middleware:", e);
     }
-    return NextResponse.next();
   }
 
-  const url = req.nextUrl.clone();
-  url.pathname = "/";
-  url.searchParams.set("session", "expired");
-
-  const response = NextResponse.redirect(url);
-
-  response.cookies.delete("access_token");
-  response.cookies.delete("refresh_token");
-
-  return response;
+  return redirectToLogin(req);
 };
 
 export async function middleware(req: NextRequest) {
-  const authResponse = await validateSession(req);
-
-  return authResponse;
+  return await validateSession(req);
 }
 
 export const config = {
-  // Aplique apenas nas rotas protegidas para não dar loop infinito na "/"
   matcher: [
-    "/dashboard/:path*",
-    "/perfil/:path*",
-    "/editar-perfil/:path*",
     "/buscar-tutores/:path*",
+    "/conquistas/:path*",
+    "/dashboard/:path*",
+    "/editar-perfil/:path*",
+    "/mensagens/:path*",
+    "/meu-perfil/:path*",
+    "/perfil/:path*",
     "/recomendacoes/:path*",
     "/solicitacoes/:path*",
   ],

@@ -6,8 +6,6 @@ import { userTitle } from "@repo/lib/userTitle";
 
 import { Specialty, TutorArea, UserData } from "@repo/services/userTypes";
 
-import { redirect } from "next/navigation";
-
 import { Grade } from "@mui/icons-material";
 
 import { ReviewSection } from "@repo/ui/reviewSection";
