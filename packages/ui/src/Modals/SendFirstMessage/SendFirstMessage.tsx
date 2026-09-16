@@ -3,8 +3,10 @@
 import { useState, useContext, FormEvent } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
-import { CreateChatAction } from "@repo/services/chatAction"
-import {CreateChatResult} from "@repo/services/chatTypes"
+import { CreateChatAction } from "@repo/services/chatAction";
+import { CreateChatResult } from "@repo/services/chatTypes";
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
 
 interface SendFirstMessageModalProps {
   tutorName: string;
@@ -24,6 +26,10 @@ export function SendFirstMessageModal({
   const [message, setMessage] = useState<string>("");
   const { showNotification } = useContext(NotificationContext);
 
+  const { userId, inicializado } = useUserAchievements();
+
+  const { unlockAchievement } = useUnlockAchievement();
+
   if (!isOpen) {
     return null;
   }
@@ -36,23 +42,30 @@ export function SendFirstMessageModal({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!message.trim()){
+    if (!message.trim()) {
       return;
     }
-    
-    const res: CreateChatResult  = await CreateChatAction(tutorId, message);
 
-    if(res.success){
+    const res: CreateChatResult = await CreateChatAction(tutorId, message);
+
+    if (res.success) {
       showNotification("Chat criado com sucesso!", "success");
+      if (userId && inicializado) {
+        unlockAchievement(2);
+      }
       onClose();
-    }
-    else{
-      if(res.status != 500)
-        showNotification("Ocorreu um erro na criação do chat. Tente novamente.", "error");
+    } else {
+      if (res.status != 500)
+        showNotification(
+          "Ocorreu um erro na criação do chat. Tente novamente.",
+          "error",
+        );
       else
-        showNotification("Ocorreu um erro no servidor. Não foi possível criar o chat.", "error");
+        showNotification(
+          "Ocorreu um erro no servidor. Não foi possível criar o chat.",
+          "error",
+        );
     }
-
   };
 
   const remainingChars = MAX_CHARS - message.length;
@@ -77,15 +90,17 @@ export function SendFirstMessageModal({
           <div className="p-6 space-y-4">
             <p className="text-slate-600 text-sm leading-relaxed">
               Para enviar uma mensagem para{" "}
-              <strong className="text-slate-900 font-bold">{tutorName}</strong>
-              , escreva no espaço abaixo e clique em{" "}
-              <strong className="text-slate-900 font-bold">'Enviar'</strong>. Isso
-              vai iniciar um chat entre vocês.
+              <strong className="text-slate-900 font-bold">{tutorName}</strong>,
+              escreva no espaço abaixo e clique em{" "}
+              <strong className="text-slate-900 font-bold">'Enviar'</strong>.
+              Isso vai iniciar um chat entre vocês.
             </p>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Para ver e enviar mensagens nessa e outras conversas, acesse a página de chats através do botão <strong className="text-slate-900 font-bold">'Chat'</strong> no menu.
+              Para ver e enviar mensagens nessa e outras conversas, acesse a
+              página de chats através do botão{" "}
+              <strong className="text-slate-900 font-bold">'Chat'</strong> no
+              menu.
             </p>
-
 
             <div className="flex flex-col gap-1.5">
               <textarea
