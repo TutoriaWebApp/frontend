@@ -6,8 +6,8 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useCallback,
 } from "react";
-import Image from "next/image";
 import { SparkleStar } from "../../SparkleStar/SparkleStar";
 
 export interface AchievementPopupData {
@@ -39,8 +39,12 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [current, setCurrent] = useState<AchievementPopupData | null>(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  // Fila de conquistas pendentes
+  const queueRef = useRef<AchievementPopupData[]>([]);
+  const isProcessingRef = useRef<boolean>(false);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const audioUnlockedRef = useRef<boolean>(false);
 
   useEffect(() => {
@@ -70,27 +74,55 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  const showAchievement = (achievement: AchievementPopupData) => {
-    console.log("📢 [AchievementUnlockContext] showAchievement acionado com dados:", achievement);
-
+  const playAudio = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch((err) => {
         console.warn("⚠️ [AchievementUnlockContext] Áudio bloqueado pelo navegador:", err);
       });
     }
+  };
 
-    if (timerRef.current) clearTimeout(timerRef.current);
+  const processQueue = useCallback(() => {
+    if (queueRef.current.length === 0) {
+      isProcessingRef.current = false;
+      return;
+    }
 
-    setCurrent(achievement);
+    isProcessingRef.current = true;
+    const nextAchievement = queueRef.current.shift()!;
+
+    // Toca o som para a conquista atual da fila
+    playAudio();
+
+    // Sobe o pop-up
+    setCurrent(nextAchievement);
     setIsVisible(true);
 
-    timerRef.current = setTimeout(() => {
-      console.log("⏱️ [AchievementUnlockContext] Encerrando pop-up após tempo limite.");
+    // Mantém o pop-up visível por 5 segundos
+    setTimeout(() => {
+      // Inicia a animação de saída (fade-out / slide-out)
       setIsVisible(false);
-      setTimeout(() => setCurrent(null), 500);
-    }, 5500);
-  };
+
+      // Aguarda 500ms da animação de saída antes de chamar a próxima
+      setTimeout(() => {
+        setCurrent(null);
+        processQueue();
+      }, 500);
+    }, 5000);
+  }, []);
+
+  const showAchievement = useCallback(
+    (achievement: AchievementPopupData) => {
+      console.log("📢 [AchievementUnlockContext] Enfileirando conquista:", achievement.titulo);
+      queueRef.current.push(achievement);
+
+      if (!isProcessingRef.current) {
+        processQueue();
+      }
+    },
+    [processQueue]
+  );
 
   const getPopupTheme = (tier: string = "B") => {
     if (tier === "B") {
@@ -187,7 +219,7 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
 
       {current && theme && (
         <div
-          className={`fixed top-20 left-1/2 -translate-x-1/2 z-[99999] transition-all duration-500 ease-out transform pointer-events-auto${
+          className={`fixed top-20 left-1/2 -translate-x-1/2 z-[99999] transition-all duration-500 ease-out transform pointer-events-auto ${
             isVisible
               ? "opacity-100 translate-y-0 scale-100"
               : "opacity-0 translate-y-10 scale-95 pointer-events-none"
