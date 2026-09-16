@@ -5,19 +5,12 @@ export async function GetCities(UF: string): Promise<CityResult[] | string> {
 
   try {
     const response = await fetch(URL);
+    const data: CityResult[] = await response.json();
 
-    const data = await response.json();
-
-    let concatArray: CityResult[] = [];
-
-    for(const element of data){
-        concatArray = concatArray.concat(element);
-    }
-
-    return data;
-
-  } catch (error) {
+    return data.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  } 
+  catch (error) {
     console.error("Erro em acesso à API do IBGE:", error);
-    return "Não foi possível obter a lista de cidades do estado."; 
+    return "Não foi possível obter a lista de cidades do estado.";
   }
 }

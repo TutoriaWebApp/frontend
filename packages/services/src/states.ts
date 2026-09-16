@@ -8,8 +8,7 @@ export async function GetStates(): Promise<StateResult[] | string> {
 
     const data = await response.json();
 
-    return data;
-
+    return data.sort((a:any , b: any) => a.nome.localeCompare(b.nome, "pt-BR"));
   } catch (error) {
     console.error("Erro em acesso à API do IBGE:", error);
     return "Não foi possível obter a lista de estados."; 
