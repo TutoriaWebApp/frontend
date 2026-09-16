@@ -56,8 +56,6 @@ export const useUnlockAchievement = () => {
             pontos: res.data.pontos,
           });
         }
-      } else if (resAchie.success) {
-        markAchievementUnlocked(achievementId);
       }
       console.groupEnd();
     },

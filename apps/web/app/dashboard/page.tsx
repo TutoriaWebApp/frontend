@@ -76,7 +76,6 @@ export default function Dashboard(): React.ReactNode {
 
         if (res.data.usuarioId) {
           setUserId(res.data.usuarioId);
-          await carregarDadosConquistas(res.data.usuarioId);
         }
 
         const currentPoints = res.data.pontos ?? 0;
@@ -120,13 +119,13 @@ export default function Dashboard(): React.ReactNode {
     }
 
     fetchStatistics();
-  }, [carregarDadosConquistas, setUserId, showNotification]);
+  }, [setUserId, showNotification]);
 
   useEffect(() => {
     if (userId && inicializado) {
       unlockAchievement(1);
     }
-  }, [userId, inicializado, unlockAchievement]);
+  }, [userId, inicializado]);
 
   return (
     <div className="h-fit bg-slate-50 p-6 md:p-12">

@@ -75,7 +75,7 @@ export async function GetUserAchievements(userId: number): Promise<GetUserAchiev
       return {
         success: true,
         status: res.status,
-        data: res.data.results,
+        data: res.data,
       };
     }
     return { success: false, status: res.status };

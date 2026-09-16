@@ -6,6 +6,8 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useEffect,
+  useRef,
   ReactNode,
 } from "react";
 import { GetUserAchievements } from "@repo/services/achievements";
@@ -24,7 +26,7 @@ interface UserAchievementsContextType {
   setPontos: (pontos: number) => void;
   adicionarPontos: (qtd: number) => void;
   markAchievementUnlocked: (achievementId: number, pontosGanhos?: number) => void;
-  carregarDadosConquistas: (userId: number, forceRefresh?: boolean) => Promise<void>;
+  carregarDadosConquistas: (targetUserId?: number, forceRefresh?: boolean) => Promise<void>;
   resetContext: () => void;
 }
 
@@ -50,12 +52,14 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [userId, setUserIdState] = useState<number | null>(null);
-  const [achievementsStatus, setAchievementsStatus] = useState<boolean[]>(
-    () => Array(TOTAL_SLOTS).fill(false)
+  const [achievementsStatus, setAchievementsStatus] = useState<boolean[]>(() =>
+    Array(TOTAL_SLOTS).fill(false)
   );
   const [pontos, setPontosState] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [inicializado, setInicializado] = useState<boolean>(false);
+
+  const isFetchingRef = useRef(false);
 
   const totalConquistasDesbloqueadas = useMemo(() => {
     return achievementsStatus.filter(Boolean).length;
@@ -100,35 +104,52 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   const carregarDadosConquistas = useCallback(
-    async (targetUserId: number, forceRefresh: boolean = false) => {
-      setUserIdState(targetUserId);
+    async (targetUserId?: number, forceRefresh: boolean = false) => {
+      if (isFetchingRef.current) return;
+      if (inicializado && !forceRefresh) return;
 
-      if (inicializado && !forceRefresh) {
-        return;
-      }
-
+      isFetchingRef.current = true;
       setLoading(true);
+
       try {
-        const [achieveRes, statsRes] = await Promise.all([
-          GetUserAchievements(targetUserId),
-          GetStatistics(),
-        ]);
-
-        if (achieveRes.success && achieveRes.data) {
-          const novoArrayStatus = Array(TOTAL_SLOTS).fill(false);
-
-          achieveRes.data.forEach((item: { id?: number; conquistaId?: number }) => {
-            const id = item.id || item.conquistaId;
-            if (id && id < TOTAL_SLOTS) {
-              novoArrayStatus[id] = true;
-            }
-          });
-
-          setAchievementsStatus(novoArrayStatus);
-        }
+        let resolvedUserId = targetUserId ?? userId;
+        const statsRes = await GetStatistics();
 
         if (statsRes.success && statsRes.data) {
           setPontosState(statsRes.data.pontos ?? 0);
+          if (!resolvedUserId && statsRes.data.usuarioId) {
+            resolvedUserId = statsRes.data.usuarioId;
+          }
+        }
+
+        if (resolvedUserId) {
+          setUserIdState(resolvedUserId);
+          const achieveRes = await GetUserAchievements(resolvedUserId);
+
+          console.log("🔍 [UserAchievementsContext] achieveRes:", achieveRes);
+
+          if (achieveRes.success && achieveRes.data) {
+            const novoArrayStatus = Array(TOTAL_SLOTS).fill(false);
+            const listaConquistas = Array.isArray(achieveRes.data)
+              ? achieveRes.data
+              : (achieveRes.data as any).results || [];
+
+            listaConquistas.forEach((item: any) => {
+              const id =
+                item.id ??
+                item.conquistaId ??
+                item.conquista_id ??
+                (typeof item.conquista === "object" ? item.conquista.id : item.conquista);
+
+              const numId = Number(id);
+              if (!isNaN(numId) && numId > 0 && numId < TOTAL_SLOTS) {
+                novoArrayStatus[numId] = true;
+              }
+            });
+
+            console.log("✅ [UserAchievementsContext] novoArrayStatus:", novoArrayStatus);
+            setAchievementsStatus(novoArrayStatus);
+          }
         }
 
         setInicializado(true);
@@ -136,10 +157,15 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
         console.error("Erro ao carregar dados de conquistas:", error);
       } finally {
         setLoading(false);
+        isFetchingRef.current = false;
       }
     },
-    [inicializado]
+    [inicializado, userId]
   );
+
+  useEffect(() => {
+    carregarDadosConquistas();
+  }, []);
 
   const resetContext = useCallback(() => {
     setUserIdState(null);

@@ -13,7 +13,7 @@ import { useUserAchievements } from "@repo/ui/userAchievementsContext";
 
 export default function AchievementsPage() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [achievements, setAchievements] = useState<AchievementCardItem[]>([]);
+  const [rawAchievements, setRawAchievements] = useState<any[]>([]);
   const BASE_IMAGE_URL = process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL;
   const { showNotification } = useContext(NotificationContext);
 
@@ -21,49 +21,38 @@ export default function AchievementsPage() {
     pontos,
     totalConquistasDesbloqueadas,
     hasAchievement,
+    inicializado,
+    loading: contextLoading,
   } = useUserAchievements();
 
   useEffect(() => {
-    const fetchAchievements = async () => {
+    const fetchAll = async () => {
       setLoading(true);
-
       const res = await GetAllAchievements();
 
       if (res.success && res.data) {
-        const achivementsTreated: AchievementCardItem[] = res.data.map((achievement) => {
-          const achievementUnlocked = hasAchievement(achievement.id);
-
-          return {
-            ...achievement,
-            obtida: achievementUnlocked,
-            urlImagem: `${BASE_IMAGE_URL}${achievement.urlImagem}`,
-          };
-        });
-
-        setAchievements(achivementsTreated);
+        setRawAchievements(res.data);
       } else {
-        if (res.status !== 500) {
-          showNotification(
-            "Erro ao buscar conquistas. Tente novamente mais tarde.",
-            "error",
-          );
-        } else {
-          showNotification(
-            "Erro interno do servidor. Tente novamente mais tarde.",
-            "error",
-          );
-        }
-        console.error("Failed to fetch achievements:", res.status);
+        showNotification("Erro ao buscar conquistas.", "error");
       }
 
       setLoading(false);
     };
-    fetchAchievements();
-  }, []);
+
+    fetchAll();
+  }, [showNotification]);
+
+  const achievements: AchievementCardItem[] = rawAchievements.map((achievement) => ({
+    ...achievement,
+    obtida: hasAchievement(achievement.id),
+    urlImagem: `${BASE_IMAGE_URL}${achievement.urlImagem}`,
+  }));
+
+  const isPageLoading = loading || (!inicializado && contextLoading);
 
   return (
     <>
-      {loading && (
+      {isPageLoading && (
         <ClipLoader
           color="#64748b"
           className="relative left-[47%]"
@@ -71,134 +60,40 @@ export default function AchievementsPage() {
         />
       )}
 
-      {!loading && (
-        <main
-          className="
-      max-w-6xl 
-      mx-auto
-      px-4 
-      py-10
-      "
-        >
-          {/* Cabeçalho */}
-          <div
-            className="
-          flex 
-        flex-col 
-        md:flex-row 
-        items-center 
-        justify-between 
-        gap-4 
-        mb-10 
-        border-b 
-        border-slate-200 
-        pb-6
-        "
-          >
+      {!isPageLoading && (
+        <main className="max-w-6xl mx-auto px-4 py-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 border-b border-slate-200 pb-6">
             <div>
-              <h1
-                className="
-              text-3xl 
-              font-extrabold 
-              text-slate-800 
-              text-center 
-              md:text-left
-              "
-              >
+              <h1 className="text-3xl font-extrabold text-slate-800 text-center md:text-left">
                 Conquistas
               </h1>
-              <p
-                className="
-              text-slate-500 
-              text-sm 
-              mt-1 
-              text-center 
-              md:text-left
-              "
-              >
+              <p className="text-slate-500 text-sm mt-1 text-center md:text-left">
                 Complete desafios e ganhe recompensas.
               </p>
             </div>
 
-            {/* Resumo */}
-            <div
-              className="
-            flex 
-            items-center 
-            gap-4 
-            bg-white 
-            border 
-            border-slate-200 
-          px-5 
-          py-2.5 
-          rounded-2xl 
-          shadow-xs
-        "
-            >
-              <div
-                className="
-              flex 
-              items-center 
-              gap-1.5 
-            border-r 
-            border-slate-200 
-            pr-4
-            "
-              >
-                <span
-                  className="
-                text-slate-400 
-                text-xs 
-              font-bold 
-              uppercase
-              "
-                >
+            <div className="flex items-center gap-4 bg-white border border-slate-200 px-5 py-2.5 rounded-2xl shadow-xs">
+              <div className="flex items-center gap-1.5 border-r border-slate-200 pr-4">
+                <span className="text-slate-400 text-xs font-bold uppercase">
                   Progresso:
                 </span>
-                <span
-                  className="
-              text-slate-800 
-              font-extrabold 
-              text-sm
-              "
-                >
+                <span className="text-slate-800 font-extrabold text-sm">
                   {totalConquistasDesbloqueadas} / {achievements.length}
                 </span>
               </div>
-              <div
-                className="
-              flex 
-              items-center 
-            gap-1.5
-            "
-              >
+              <div className="flex items-center gap-1.5">
                 <EmojiEventsIcon
                   className="text-amber-500"
                   sx={{ fontSize: 20 }}
                 />
-                <span
-                  className="
-                text-amber-600 
-              font-black
-              text-sm
-            "
-                >
+                <span className="text-amber-600 font-black text-sm">
                   {pontos} pts
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Grid */}
-          <div
-            className="
-          grid 
-          grid-cols-1 
-          sm:grid-cols-2 
-          lg:grid-cols-3 
-          gap-6
-          "
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {achievements.map((conquista) => (
               <AchievementCard key={conquista.id} conquista={conquista} />
             ))}
