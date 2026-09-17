@@ -245,7 +245,7 @@ export default function LoginForm({
                 Entrar
               </button>
               {serverError && (
-                <span className="text-rose-500 font-medium text-center">
+                <span id="lbl-errorMsg" className="text-rose-500 font-medium text-center">
                   {serverError}
                 </span>
               )}

@@ -631,8 +631,8 @@ export default function EditProfilePage() {
                             )
                               ? userData.perfilTutor.notaAvaliacao.toFixed(1)
                               : userData.perfilTutor.notaAvaliacao.toFixed(
-                                  2,
-                                )}{" "}
+                                2,
+                              )}{" "}
                             como{" "}
                             <em className="text-slate-800 not-italic font-bold">
                               Tutor
@@ -713,7 +713,7 @@ export default function EditProfilePage() {
                       Nome<span className="text-rose-500">*</span>
                     </span>
                     <input
-                      id="inp-nomePerfil"
+                      id="inp-profileName"
                       type="text"
                       {...register("nomePerfil")}
                       className="
@@ -759,7 +759,7 @@ export default function EditProfilePage() {
                         Estado<span className="text-rose-500">*</span>
                       </span>
                       <select
-                        id="sel-estado"
+                        id="sel-uf"
                         {...register("estado")}
                         className="
                         bg-white  
@@ -799,7 +799,7 @@ export default function EditProfilePage() {
                         Cidade<span className="text-rose-500">*</span>
                       </span>
                       <select
-                        id="sel-cidade"
+                        id="sel-city"
                         {...register("cidade")}
                         className="
                         bg-white  
@@ -848,7 +848,7 @@ export default function EditProfilePage() {
                     >
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
-                        id="txt-sobreMim"
+                        id="txt-about"
                         {...register("sobreMim")}
                         rows={6}
                         className="
