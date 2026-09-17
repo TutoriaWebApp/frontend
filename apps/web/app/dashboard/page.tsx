@@ -121,7 +121,7 @@ export default function Dashboard(): React.ReactNode {
             "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
             "error",
           );
-        } else {
+        } else if (res.status !== 401) {
           showNotification(
             "Ocorreu um erro, não foi possível obter suas estatísticas",
             "error",
