@@ -6,6 +6,9 @@ import { UnlockAchievementAction } from "../../services/src/actions/achievements
 import { userLevel } from "@repo/lib/userLevel";
 
 const level5AchievementId = 7;
+const level10AchievementId = 14;
+const level25AchievementId = 20;
+const level50AchievementId = 22;
 
 export const useUnlockAchievement = () => {
   const {
@@ -50,15 +53,38 @@ export const useUnlockAchievement = () => {
           });
 
           // Verificando a conquista de Level 5 
-          if (
-            achievementId !== level5AchievementId &&
-            !hasAchievement(level5AchievementId)
-          ) {
+          if (achievementId !== level5AchievementId && !hasAchievement(level5AchievementId)) {
             const novaPontuacaoTotal = pontos + pontosGanhos;
             if (userLevel(novaPontuacaoTotal) >= 5) {
               console.log("🎖️ Usuário alcançou o Nível 5! Disparando conquista...");
               // Encadeia o desbloqueio da medalha de nível 5
               unlockAchievement(level5AchievementId);
+            }
+          }
+
+          // Verificando a conquista de Level 10 
+          if (achievementId !== level10AchievementId && !hasAchievement(level10AchievementId)) {
+            const novaPontuacaoTotal = pontos + pontosGanhos;
+            if (userLevel(novaPontuacaoTotal) >= 10) {
+              console.log("🎖️ Usuário alcançou o Nível 10! Disparando conquista...");
+              // Encadeia o desbloqueio da medalha de nível 5
+              unlockAchievement(level10AchievementId);
+            }
+          }
+          if (achievementId !== level25AchievementId && !hasAchievement(level25AchievementId)) {
+            const novaPontuacaoTotal = pontos + pontosGanhos;
+            if (userLevel(novaPontuacaoTotal) >= 25) {
+              console.log("🎖️ Usuário alcançou o Nível 25! Disparando conquista...");
+              // Encadeia o desbloqueio da medalha de nível 5
+              unlockAchievement(level25AchievementId);
+            }
+          }
+          if (achievementId !== level50AchievementId && !hasAchievement(level50AchievementId)) {
+            const novaPontuacaoTotal = pontos + pontosGanhos;
+            if (userLevel(novaPontuacaoTotal) >= 50) {
+              console.log("🎖️ Usuário alcançou o Nível 50! Disparando conquista...");
+              // Encadeia o desbloqueio da medalha de nível 5
+              unlockAchievement(level50AchievementId);
             }
           }
         }

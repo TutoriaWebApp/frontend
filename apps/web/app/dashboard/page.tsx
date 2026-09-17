@@ -19,6 +19,11 @@ import { levelThresholds, userLevel } from "@repo/lib/userLevel";
 import { GetUserDataClient } from "@repo/services/userClient";
 
 export default function Dashboard(): React.ReactNode {
+  const level5AchievementId = 7;
+  const level10AchievementId = 14;
+  const level25AchievementId = 20;
+  const level50AchievementId = 22;
+
   const { triggerEvaluation } = useEvaluation();
   const [statisticsData, setStatisticsData] =
     useState<DashboardStatisticsData>();
@@ -144,7 +149,19 @@ export default function Dashboard(): React.ReactNode {
         }
         //Verificando conquista de Level 5
         if (userLevel(pontos) >= 5) {
-          unlockAchievement(7);
+          unlockAchievement(level5AchievementId);
+        }
+        //Verificando conquista de Level 10
+        if (userLevel(pontos) >= 10) {
+          unlockAchievement(level10AchievementId);
+        }
+        //Verificando conquista de Level 25
+        if (userLevel(pontos) >= 25) {
+          unlockAchievement(level25AchievementId);
+        }
+         //Verificando conquista de Level 50
+        if (userLevel(pontos) == 50) {
+          unlockAchievement(level50AchievementId);
         }
       }
     };
