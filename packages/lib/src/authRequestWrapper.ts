@@ -18,6 +18,7 @@ export const authRequestWrapper = async (
   try {
     const response = await fetch(URL, {
       ...reqParams,
+      cache: "no-store",
       headers: {
         Accept: "application/json",
         ...(reqParams.headers || {}),
@@ -37,11 +38,18 @@ export const authRequestWrapper = async (
 
     if (response.status === 401) {
       if (typeof window !== "undefined") {
+        const isLoggingOut = sessionStorage.getItem("is_logging_out") === "true";
         const currentPath = window.location.pathname;
-        const isAuthRoute = currentPath === "/" || currentPath.startsWith("/criar-conta");
-        const isLoginRequest = URL.includes("/") || URL.includes("/token");
+        const isAuthRoute =
+          currentPath === "/" ||
+          currentPath.startsWith("/login") ||
+          currentPath.startsWith("/criar-conta") ||
+          currentPath.startsWith("/esqueci-senha") ||
+          currentPath.startsWith("/redefinir-senha");
 
-        if (!isAuthRoute && !isLoginRequest) {
+        const isLoginRequest = URL.includes("/login") || URL.includes("/token");
+
+        if (!isLoggingOut && !isAuthRoute && !isLoginRequest) {
           window.location.href = "/?session=expired";
         }
       }

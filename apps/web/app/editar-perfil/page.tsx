@@ -126,6 +126,8 @@ export default function EditProfilePage() {
     formState: { errors },
   } = methods;
 
+  const becameTutorAchievementId = 23;
+
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState<boolean>(false);
   const [changePasswordModalIsOpen, setChangePasswordModalIsOpen] =
@@ -410,7 +412,7 @@ export default function EditProfilePage() {
 
       if (resultadoTutor.success) {
         if (userId && inicializado) {
-          unlockAchievement(23);
+          unlockAchievement(becameTutorAchievementId);
         }
         specialties.forEach(async (specialty) => {
           console.log(

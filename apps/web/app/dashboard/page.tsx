@@ -12,17 +12,21 @@ import { DashboardStatisticsData } from "@repo/services/userTypes";
 import { GetStatistics } from "@repo/services/userClient";
 import { useUserAchievements } from "@repo/ui/userAchievementsContext";
 import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
-import { useAchievement } from "@repo/ui/achievementUnlockContext";
 import { ClipLoader } from "react-spinners";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 import { levelThresholds, userLevel } from "@repo/lib/userLevel";
 import { GetUserDataClient } from "@repo/services/userClient";
+import { GetAllUserSessions } from "@repo/services/sessions";
 
 export default function Dashboard(): React.ReactNode {
+  const helloWorldAchievementId = 1;
+  const becameTutorAchievementId = 23;
   const level5AchievementId = 7;
   const level10AchievementId = 14;
   const level25AchievementId = 20;
   const level50AchievementId = 22;
+  const stonePath1Id = 6;
+  const firstSessionCompletedAchievementId = 3;
 
   const { triggerEvaluation } = useEvaluation();
   const [statisticsData, setStatisticsData] =
@@ -31,7 +35,6 @@ export default function Dashboard(): React.ReactNode {
   const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
   const { showNotification } = useContext(NotificationContext);
-  const { showAchievement } = useAchievement();
 
   const { unlockAchievement } = useUnlockAchievement();
 
@@ -43,7 +46,6 @@ export default function Dashboard(): React.ReactNode {
     setUserId,
     hasAchievement,
     carregarDadosConquistas,
-    markAchievementUnlocked,
   } = useUserAchievements();
 
   useEffect(() => {
@@ -52,12 +54,6 @@ export default function Dashboard(): React.ReactNode {
 
       if (res.success && res.data) {
         const data = res.data;
-
-        if (res.data.length >= 1) {
-          if (!hasAchievement(3)) {
-            unlockAchievement(3);
-          }
-        }
 
         for (let i = 0; i < data.length; i++) {
           await triggerEvaluation(
@@ -78,9 +74,15 @@ export default function Dashboard(): React.ReactNode {
     fetchSessions();
   }, [triggerEvaluation]);
 
+
+  useEffect(() => {
+    sessionStorage.removeItem("is_logging_out");
+  }, [])
+
   useEffect(() => {
     async function fetchStatistics() {
       setLoading(true);
+
       const res = await GetStatistics();
 
       if (res.success && res.data) {
@@ -121,7 +123,7 @@ export default function Dashboard(): React.ReactNode {
             "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
             "error",
           );
-        } else if (res.status !== 401) {
+        } else {
           showNotification(
             "Ocorreu um erro, não foi possível obter suas estatísticas",
             "error",
@@ -137,31 +139,62 @@ export default function Dashboard(): React.ReactNode {
 
   useEffect(() => {
     const checkAchievements = async () => {
-      if (userId && inicializado) {
-        unlockAchievement(1);
+      if (!userId || !inicializado) return;
 
-        if (!hasAchievement(23)) {
-          const res = await GetUserDataClient();
+      // Conquista 1: Olá Mundo
+      unlockAchievement(helloWorldAchievementId);
 
-          if (res.success && res.data.perfilTutor != null) {
-            unlockAchievement(23);
+      // Conquistas de Nível
+      if (userLevel(pontos) >= 5) unlockAchievement(level5AchievementId);
+      if (userLevel(pontos) >= 10) unlockAchievement(level10AchievementId);
+      if (userLevel(pontos) >= 25) unlockAchievement(level25AchievementId);
+      if (userLevel(pontos) >= 50) unlockAchievement(level50AchievementId);
+
+      // Conquista 23: Agora é sua vez!
+      if (!hasAchievement(becameTutorAchievementId)) {
+        const res = await GetUserDataClient();
+        if (res.success && res.data?.perfilTutor != null) {
+          unlockAchievement(becameTutorAchievementId);
+        }
+      }
+
+      // Conquistas baseadas em sessões concluídas:
+      // Conquista 3: Primeiro Passo (1 sessão concluída)
+      // Conquista 6: O Caminho das Pedras I (5 sessões concluídas)
+      if (
+        !hasAchievement(firstSessionCompletedAchievementId) ||
+        !hasAchievement(stonePath1Id)
+      ) {
+        const resSessions = await GetAllUserSessions();
+
+        if (
+          resSessions &&
+          resSessions.success &&
+          Array.isArray(resSessions.data)
+        ) {
+          const now = new Date();
+
+          const completedSessions = resSessions.data.filter((session: any) => {
+            const sessionEndDateTime = new Date(
+              `${session.dataSessao}T${session.horarioFim}`,
+            );
+            return (
+              !isNaN(sessionEndDateTime.getTime()) && sessionEndDateTime <= now
+            );
+          });
+
+          // Conquista 3: completou pelo menos 1 sessão
+          if (
+            completedSessions.length >= 1 &&
+            !hasAchievement(firstSessionCompletedAchievementId)
+          ) {
+            unlockAchievement(firstSessionCompletedAchievementId);
           }
-        }
-        //Verificando conquista de Level 5
-        if (userLevel(pontos) >= 5) {
-          unlockAchievement(level5AchievementId);
-        }
-        //Verificando conquista de Level 10
-        if (userLevel(pontos) >= 10) {
-          unlockAchievement(level10AchievementId);
-        }
-        //Verificando conquista de Level 25
-        if (userLevel(pontos) >= 25) {
-          unlockAchievement(level25AchievementId);
-        }
-         //Verificando conquista de Level 50
-        if (userLevel(pontos) == 50) {
-          unlockAchievement(level50AchievementId);
+
+          // Conquista 6: completou 5 ou mais sessões
+          if (completedSessions.length >= 5 && !hasAchievement(stonePath1Id)) {
+            unlockAchievement(stonePath1Id);
+          }
         }
       }
     };

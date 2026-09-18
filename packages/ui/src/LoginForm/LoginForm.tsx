@@ -42,6 +42,12 @@ export default function LoginForm({
   }, [searchParams]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("is_logging_out");
+    }
+  }, []);
+
+  useEffect(() => {
     const checkToken = async (
       access_token: string | undefined,
       refresh_token: string | undefined,
@@ -245,7 +251,10 @@ export default function LoginForm({
                 Entrar
               </button>
               {serverError && (
-                <span id="lbl-errorMsg" className="text-rose-500 font-medium text-center">
+                <span
+                  id="lbl-errorMsg"
+                  className="text-rose-500 font-medium text-center"
+                >
                   {serverError}
                 </span>
               )}
@@ -272,7 +281,11 @@ export default function LoginForm({
               >
                 Esqueceu sua senha?
               </Link>
-              <Link href={"/criar-conta"} className="flex justify-center" id="lnk-createAccountWrapper">
+              <Link
+                href={"/criar-conta"}
+                className="flex justify-center"
+                id="lnk-createAccountWrapper"
+              >
                 <button
                   id="btn-createNewAccount"
                   className="

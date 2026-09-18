@@ -153,9 +153,17 @@ export default function Header({ onLogout }: HeaderProps) {
 
 
   const handleLogout = async () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("is_logging_out", "true");
+    }
+
     resetContext(); 
     
-    await onLogout!();
+    if (onLogout) {
+      await onLogout();
+    }
+
+    window.location.href = "/";
   };
 
   useEffect(() => {

@@ -160,8 +160,22 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   useEffect(() => {
+    // Se estiver no navegador e a rota atual for pública/login, não tenta buscar dados
+    if (typeof window !== "undefined") {
+      const pathname = window.location.pathname;
+      const rotasPublicas = ["/", "/criar-conta", "/esqueci-senha", "/redefinir-senha"];
+      
+      const isPublicRoute = rotasPublicas.some(
+        (rota) => pathname === rota || pathname.startsWith("/redefinir-senha")
+      );
+
+      if (isPublicRoute) {
+        return;
+      }
+    }
+
     carregarDadosConquistas();
-  }, []);
+  }, [carregarDadosConquistas]);
 
   const resetContext = useCallback(() => {
     setUserIdState(null);

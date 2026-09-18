@@ -17,12 +17,14 @@ interface SendFirstMessageModalProps {
 
 const MAX_CHARS = 200;
 
+
 export function SendFirstMessageModal({
   tutorName,
   tutorId,
   isOpen,
   onClose,
 }: SendFirstMessageModalProps) {
+  const firstMessageAchievement = 2;
   const [message, setMessage] = useState<string>("");
   const { showNotification } = useContext(NotificationContext);
 
@@ -51,7 +53,7 @@ export function SendFirstMessageModal({
     if (res.success) {
       showNotification("Chat criado com sucesso!", "success");
       if (userId && inicializado) {
-        unlockAchievement(2);
+        unlockAchievement(firstMessageAchievement);
       }
       onClose();
     } else {

@@ -92,6 +92,7 @@ export async function LogOutAction() {
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
   } catch (error) {
     console.error("Erro tentar o logout:", error);
@@ -99,8 +100,6 @@ export async function LogOutAction() {
 
   cookieStore.delete("access_token");
   cookieStore.delete("refresh_token");
-
-  redirect("/");
 }
 
 export async function RequestPasswordResetAction(
