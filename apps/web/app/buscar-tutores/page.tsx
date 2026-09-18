@@ -199,7 +199,7 @@ export default function BuscaTutores() {
                     Área de Conhecimento
                   </label>
                   <select
-                    id="sel-filterArea"
+                    id="sel-area"
                     defaultValue={""}
                     onChange={(e) => setQueryAreaId(Number(e.target.value))}
                     className="
@@ -240,7 +240,7 @@ export default function BuscaTutores() {
                     Especialidade
                   </label>
                   <select
-                    id="sel-filterSpecialty"
+                    id="sel-specialty"
                     disabled={queryAreaId ? false : true}
                     defaultValue={""}
                     onChange={(e) =>
@@ -429,7 +429,7 @@ export default function BuscaTutores() {
                 gap-4
               "
               >
-                <div>
+                <div id="div-howManyTutors" >
                   {resultsCount >= 1 && (
                     <p className="text-slate-500">
                       Foram encontrados{" "}
@@ -482,6 +482,7 @@ export default function BuscaTutores() {
             {/* Grid de Tutores */}
             {tutorsList && tutorsList?.length >= 1 && !loadingTutors && (
               <div
+                id="div-listTutors"
                 className="
                   grid 
                   grid-cols-1 

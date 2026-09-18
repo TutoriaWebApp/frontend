@@ -212,7 +212,7 @@ export default function GetRecommendationsPage() {
                     <span className="text-red-600 text-base">*</span>
                   </label>
                   <select
-                    id="sel-filterArea"
+                    id="sel-area"
                     defaultValue={""}
                     onChange={(e) => setQueryAreaId(Number(e.target.value))}
                     className="
@@ -255,7 +255,7 @@ export default function GetRecommendationsPage() {
                     Especialidade
                   </label>
                   <select
-                    id="sel-filterSpecialty"
+                    id="sel-specialty"
                     disabled={queryAreaId ? false : true}
                     defaultValue={""}
                     onChange={(e) =>
@@ -436,6 +436,7 @@ export default function GetRecommendationsPage() {
             {/* Grid de Tutores */}
             {tutorsList && tutorsList?.length >= 1 && !loadingTutors && (
               <div
+                id="div-listTutors"
                 className="
                   grid 
                   grid-cols-1 

@@ -24,6 +24,7 @@ export const TutorCard = ({
   bio,
 }: TutorCardProps) => (
   <div
+    id={`div-tutorCard-${id}`}
     className="
     bg-white 
     rounded-[2.5rem] 
@@ -111,6 +112,7 @@ export const TutorCard = ({
       <Grade className="text-amber-400" sx={{ fontSize: 20 }} />
       <span
         className="
+        div-grade
         font-bold 
         text-slate-700
         "
@@ -119,6 +121,7 @@ export const TutorCard = ({
       </span>
       <span
         className="
+        div-totalRatings
         text-slate-500 
         text-xs
         2xl:text-sm
@@ -130,6 +133,7 @@ export const TutorCard = ({
 
     <div
       className="
+      area-baloon
       flex 
       flex-wrap 
       gap-2
@@ -181,7 +185,7 @@ export const TutorCard = ({
       </div>
     )}
 
-    <Link id={`lnk-viewTutorProfile-${id}`} href={`/perfil/${id}`}  className="w-full">
+    <Link id={`lnk-viewTutorProfile-${id}`} href={`/perfil/${id}`} className="w-full">
       <button
         id={`btn-viewTutorProfile-${id}`}
         className="
