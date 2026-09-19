@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import Link from "next/link";
 import { PersonSearch, Star, EmojiEvents } from "@mui/icons-material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -25,8 +25,19 @@ export default function Dashboard(): React.ReactNode {
   const level10AchievementId = 14;
   const level25AchievementId = 20;
   const level50AchievementId = 22;
-  const stonePath1Id = 6;
+  const stonePathAchievement1Id = 6;
+  const stonePathAchievement2Id = 12;
+  const stonePathAchievement3Id = 13;
+  const stonePathAchievement4Id = 18;
+  const stonePathAchievement5Id = 19;
+  const stonePathAchievement6Id = 21;
   const firstSessionCompletedAchievementId = 3;
+  const weekendSessionAchievementId = 24;
+  const nightSessionAchievementId = 25;
+  const birthdaySessionAchievementId = 29;
+  const fiveDayStreakAchievementId = 16;
+  const loyaltyAchievementId = 10;
+  const jackOfAllTradesAchievementId = 11;
 
   const { triggerEvaluation } = useEvaluation();
   const [statisticsData, setStatisticsData] =
@@ -48,8 +59,13 @@ export default function Dashboard(): React.ReactNode {
     carregarDadosConquistas,
   } = useUserAchievements();
 
+  const isFetchingReviewsRef = useRef(false);
+
   useEffect(() => {
     async function fetchSessions() {
+      if (isFetchingReviewsRef.current) return;
+      isFetchingReviewsRef.current = true;
+
       const res = await GetPendingReviews();
 
       if (res.success && res.data) {
@@ -74,10 +90,9 @@ export default function Dashboard(): React.ReactNode {
     fetchSessions();
   }, [triggerEvaluation]);
 
-
   useEffect(() => {
     sessionStorage.removeItem("is_logging_out");
-  }, [])
+  }, []);
 
   useEffect(() => {
     async function fetchStatistics() {
@@ -118,16 +133,22 @@ export default function Dashboard(): React.ReactNode {
           setProgressPercentage(percentage);
         }
       } else {
-        if (res.status === 500) {
-          showNotification(
-            "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
-            "error",
-          );
-        } else {
-          showNotification(
-            "Ocorreu um erro, não foi possível obter suas estatísticas",
-            "error",
-          );
+        const isLoggingOut =
+          typeof window !== "undefined" &&
+          sessionStorage.getItem("is_logging_out") === "true";
+
+        if (!isLoggingOut && res.status !== 401) {
+          if (res.status === 500) {
+            showNotification(
+              "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
+              "error",
+            );
+          } else {
+            showNotification(
+              "Ocorreu um erro, não foi possível obter suas estatísticas",
+              "error",
+            );
+          }
         }
       }
 
@@ -144,12 +165,6 @@ export default function Dashboard(): React.ReactNode {
       // Conquista 1: Olá Mundo
       unlockAchievement(helloWorldAchievementId);
 
-      // Conquistas de Nível
-      if (userLevel(pontos) >= 5) unlockAchievement(level5AchievementId);
-      if (userLevel(pontos) >= 10) unlockAchievement(level10AchievementId);
-      if (userLevel(pontos) >= 25) unlockAchievement(level25AchievementId);
-      if (userLevel(pontos) >= 50) unlockAchievement(level50AchievementId);
-
       // Conquista 23: Agora é sua vez!
       if (!hasAchievement(becameTutorAchievementId)) {
         const res = await GetUserDataClient();
@@ -160,10 +175,32 @@ export default function Dashboard(): React.ReactNode {
 
       // Conquistas baseadas em sessões concluídas:
       // Conquista 3: Primeiro Passo (1 sessão concluída)
-      // Conquista 6: O Caminho das Pedras I (5 sessões concluídas)
+      // Conquista 6:  O Caminho das Pedras I (5 sessões concluídas)
+      // Conquista 12: O Caminho das Pedras II (15 sessões concluídas)
+      // Conquista 13: O Caminho das Pedras III (30 sessões concluídas)
+      // Conquista 18: O Caminho das Pedras IV (60 sessões concluídas)
+      // Conquista 19: O Caminho das Pedras V (100 sessões concluídas)
+      // Conquista 21: O Caminho das Pedras VI (300 sessões concluídas)
+      // Conquista 24: Fim de Semana Ativo (Sábado ou Domingo)
+      // Conquista 25 (Secreta): Coruja (sessão concluída entre 22h e 05h da manhã)
+      // Conquista 29 (Secreta): Nascimento do Conhecimento (tutoria no aniversário)
+      // Conquista 16: Incansável (sessões por 5 dias seguidos)
+      // Conquista 10: Fidelidade (5 sessões com o mesmo tutor)
+      // Conquista 11: Pau pra Toda Obra (deu tutoria em 3 áreas diferentes)
       if (
         !hasAchievement(firstSessionCompletedAchievementId) ||
-        !hasAchievement(stonePath1Id)
+        !hasAchievement(stonePathAchievement1Id) ||
+        !hasAchievement(stonePathAchievement2Id) ||
+        !hasAchievement(stonePathAchievement3Id) ||
+        !hasAchievement(stonePathAchievement4Id) ||
+        !hasAchievement(stonePathAchievement5Id) ||
+        !hasAchievement(stonePathAchievement6Id) ||
+        !hasAchievement(weekendSessionAchievementId) ||
+        !hasAchievement(nightSessionAchievementId) ||
+        !hasAchievement(birthdaySessionAchievementId) ||
+        !hasAchievement(fiveDayStreakAchievementId) ||
+        !hasAchievement(loyaltyAchievementId) ||
+        !hasAchievement(jackOfAllTradesAchievementId)
       ) {
         const resSessions = await GetAllUserSessions();
 
@@ -192,9 +229,178 @@ export default function Dashboard(): React.ReactNode {
           }
 
           // Conquista 6: completou 5 ou mais sessões
-          if (completedSessions.length >= 5 && !hasAchievement(stonePath1Id)) {
-            unlockAchievement(stonePath1Id);
+          if (
+            completedSessions.length >= 5 &&
+            !hasAchievement(stonePathAchievement1Id)
+          ) {
+            unlockAchievement(stonePathAchievement1Id);
           }
+          // Conquista 12: completou 15 ou mais sessões
+          if (
+            completedSessions.length >= 15 &&
+            !hasAchievement(stonePathAchievement2Id)
+          ) {
+            unlockAchievement(stonePathAchievement2Id);
+          }
+          // Conquista 13: completou 30 ou mais sessões
+          if (
+            completedSessions.length >= 30 &&
+            !hasAchievement(stonePathAchievement3Id)
+          ) {
+            unlockAchievement(stonePathAchievement3Id);
+          }
+          // Conquista 18: completou 60 ou mais sessões
+          if (
+            completedSessions.length >= 60 &&
+            !hasAchievement(stonePathAchievement4Id)
+          ) {
+            unlockAchievement(stonePathAchievement4Id);
+          }
+          // Conquista 19: completou 100 ou mais sessões
+          if (
+            completedSessions.length >= 100 &&
+            !hasAchievement(stonePathAchievement5Id)
+          ) {
+            unlockAchievement(stonePathAchievement5Id);
+          }
+          // Conquista 21: completou 300 ou mais sessões
+          if (
+            completedSessions.length >= 300 &&
+            !hasAchievement(stonePathAchievement6Id)
+          ) {
+            unlockAchievement(stonePathAchievement6Id);
+          }
+          // Conquista 24: Fim de Semana Ativo (Sessão realizada no Sábado ou Domingo)
+          if (!hasAchievement(weekendSessionAchievementId)) {
+            const hasWeekendSession = completedSessions.some((session: any) => {
+              const sessionDate = new Date(
+                `${session.dataSessao}T${session.horarioInicio}`,
+              );
+              const dayOfWeek = sessionDate.getDay();
+              return dayOfWeek === 0 || dayOfWeek === 6; // 0 = Domingo, 6 = Sábado
+            });
+
+            if (hasWeekendSession) {
+              unlockAchievement(weekendSessionAchievementId);
+            }
+          }
+          // Conquista 25: fez uma sessão entre 22h e 05h da manhã
+          if (!hasAchievement(nightSessionAchievementId)) {
+            for (let session of completedSessions) {
+              if (
+                session.horarioInicio >= "22:00:00" ||
+                session.horarioInicio <= "05:00:00" ||
+                session.horarioFim >= "22:00:00" ||
+                session.horarioFim <= "05:00:00"
+              ) {
+                unlockAchievement(nightSessionAchievementId);
+                break;
+              }
+            }
+          }
+          // Conquista 29: fez uma sessão na data de nascimento
+          if (!hasAchievement(birthdaySessionAchievementId)) {
+            const res = await GetUserDataClient();
+
+            if (res.success && res.data?.aniversario) {
+              // Pegando "MM-DD" da data de nascimento
+              const userBirthMonthDay = res.data.aniversario.slice(5);
+
+              for (let session of completedSessions) {
+                // Extrai "MM-DD" da data da sessão
+                const sessionMonthDay = session.dataSessao?.slice(5);
+
+                if (sessionMonthDay && sessionMonthDay === userBirthMonthDay) {
+                  unlockAchievement(birthdaySessionAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          // Conquista 16: Incansável (participou de tutorias por 5 dias seguidos)
+          if (!hasAchievement(fiveDayStreakAchievementId)) {
+            // Extraindo datas únicas e remove duplicatas do mesmo dia
+            const uniqueDates = Array.from(
+              new Set(
+                completedSessions.map((s: any) => s.dataSessao).filter(Boolean),
+              ),
+            ).sort() as string[];
+
+            let currentStreak = 1;
+            let hasFiveDayStreak = false;
+
+            //Diferença de 1 dia em MS
+            const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+            for (let i = 1; i < uniqueDates.length; i++) {
+              // Usando componentes de data para evitar distorções de fuso horário
+              const [prevY, prevM, prevD] =
+                uniqueDates[i - 1]!.split("-").map(Number);
+              const [currY, currM, currD] =
+                uniqueDates[i]!.split("-").map(Number);
+
+              const prevTime = Date.UTC(prevY!, prevM! - 1, prevD);
+              const currTime = Date.UTC(currY!, currM! - 1, currD);
+
+              // Verificando se a diferença é de exatamente 1 dia consecutivo
+              if (currTime - prevTime === MS_PER_DAY) {
+                currentStreak++;
+                if (currentStreak >= 5) {
+                  hasFiveDayStreak = true;
+                  break;
+                }
+              } else {
+                //Recomeçando a contagem se houver uma quebra na sequência
+                currentStreak = 1;
+              }
+            }
+
+            if (hasFiveDayStreak) {
+              unlockAchievement(fiveDayStreakAchievementId);
+            }
+          }
+
+          // Conquista 10: Fidelidade (realizou 5 ou mais tutorias com o mesmo tutor)
+          if (!hasAchievement(loyaltyAchievementId)) {
+            const tutorCountMap: Record<number, number> = {};
+
+            for (const session of completedSessions) {
+              const tid = session.tutorId;
+              if (tid != null) {
+                tutorCountMap[tid] = (tutorCountMap[tid] || 0) + 1;
+
+                if (tutorCountMap[tid]! >= 5) {
+                  unlockAchievement(loyaltyAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+
+          if (!hasAchievement(jackOfAllTradesAchievementId)) {
+            // Sessões concluídas onde o usuário atuou como tutor
+            const tutoredSessions = completedSessions.filter(
+              (session: any) => session.usuarioId !== userId
+            );
+
+            // IDs das áreas dessas sessões sem repetição
+            const distinctAreas = new Set(
+              tutoredSessions
+                .map((session: any) => session.areaId)
+                .filter((areaId: any) => areaId != null)
+            );
+
+            // Se ensinou em 3 ou mais áreas distintas, destrava a conquista
+            if (distinctAreas.size >= 3) {
+              unlockAchievement(jackOfAllTradesAchievementId);
+            }
+          }
+
+          // Conquistas de Nível
+          if (userLevel(pontos) >= 5) unlockAchievement(level5AchievementId);
+          if (userLevel(pontos) >= 10) unlockAchievement(level10AchievementId);
+          if (userLevel(pontos) >= 25) unlockAchievement(level25AchievementId);
+          if (userLevel(pontos) >= 50) unlockAchievement(level50AchievementId);
         }
       }
     };
