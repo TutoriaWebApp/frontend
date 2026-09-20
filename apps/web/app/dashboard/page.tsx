@@ -17,6 +17,8 @@ import { NotificationContext } from "@repo/ui/contexts/NotificationContext/Notif
 import { levelThresholds, userLevel } from "@repo/lib/userLevel";
 import { GetUserDataClient } from "@repo/services/userClient";
 import { GetAllUserSessions } from "@repo/services/sessions";
+import { GetHolidays } from "@repo/services/holidays";
+import { GetAllUserReviews } from "@repo/services/reviews";
 
 export default function Dashboard(): React.ReactNode {
   const helloWorldAchievementId = 1;
@@ -38,6 +40,16 @@ export default function Dashboard(): React.ReactNode {
   const fiveDayStreakAchievementId = 16;
   const loyaltyAchievementId = 10;
   const jackOfAllTradesAchievementId = 11;
+  const holidaySessionAchievementId = 26;
+  const veteranAchievementId = 17;
+  const firstReviewAchievementId = 5;
+  const fiveStarTutorReviewAchievementId = 8;
+  const fiveStarStudentReviewAchievementId = 9;
+  const threeHundredCommentReviewAchievementId = 15;
+  const twentyFiveStarReviewsAchievementId = 27;
+  const fiftyFiveStarReviewsAchievementId = 30;
+  const goodRatedTutorAchievementId = 28;
+  const legacyAchievementId = 31;
 
   const { triggerEvaluation } = useEvaluation();
   const [statisticsData, setStatisticsData] =
@@ -187,6 +199,7 @@ export default function Dashboard(): React.ReactNode {
       // Conquista 16: Incansável (sessões por 5 dias seguidos)
       // Conquista 10: Fidelidade (5 sessões com o mesmo tutor)
       // Conquista 11: Pau pra Toda Obra (deu tutoria em 3 áreas diferentes)
+      // Conquista 26: Guerreiro do Feriado (tutoria em feriado nacional)
       if (
         !hasAchievement(firstSessionCompletedAchievementId) ||
         !hasAchievement(stonePathAchievement1Id) ||
@@ -200,7 +213,9 @@ export default function Dashboard(): React.ReactNode {
         !hasAchievement(birthdaySessionAchievementId) ||
         !hasAchievement(fiveDayStreakAchievementId) ||
         !hasAchievement(loyaltyAchievementId) ||
-        !hasAchievement(jackOfAllTradesAchievementId)
+        !hasAchievement(jackOfAllTradesAchievementId) ||
+        !hasAchievement(holidaySessionAchievementId) ||
+        !hasAchievement(veteranAchievementId)
       ) {
         const resSessions = await GetAllUserSessions();
 
@@ -376,23 +391,74 @@ export default function Dashboard(): React.ReactNode {
               }
             }
           }
-
+          //Conquista 11: Pau pra Toda Obra (deu tutoria em 3 áreas diferentes)
           if (!hasAchievement(jackOfAllTradesAchievementId)) {
             // Sessões concluídas onde o usuário atuou como tutor
             const tutoredSessions = completedSessions.filter(
-              (session: any) => session.usuarioId !== userId
+              (session: any) => session.usuarioId !== userId,
             );
 
             // IDs das áreas dessas sessões sem repetição
             const distinctAreas = new Set(
               tutoredSessions
                 .map((session: any) => session.areaId)
-                .filter((areaId: any) => areaId != null)
+                .filter((areaId: any) => areaId != null),
             );
 
             // Se ensinou em 3 ou mais áreas distintas, destrava a conquista
             if (distinctAreas.size >= 3) {
               unlockAchievement(jackOfAllTradesAchievementId);
+            }
+          }
+          //Conquista 26: Guerreiro do Feriado (tutoria em feriado nacional)
+          if (!hasAchievement(holidaySessionAchievementId)) {
+            const sessionYears = Array.from(
+              new Set(
+                completedSessions
+                  .map((s: any) => Number(s.dataSessao?.split("-")[0]))
+                  .filter((year: number) => !isNaN(year) && year > 0),
+              ),
+            );
+
+            const holidayResponses = await Promise.all(
+              sessionYears.map((year: number) => GetHolidays(year)),
+            );
+
+            const holidayDates = new Set<string>();
+            holidayResponses.forEach((res) => {
+              if (res.success && Array.isArray(res.data)) {
+                res.data.forEach((h) => {
+                  if (h.date) holidayDates.add(h.date);
+                });
+              }
+            });
+
+            const hasHolidaySession = completedSessions.some((s: any) =>
+              holidayDates.has(s.dataSessao),
+            );
+
+            if (hasHolidaySession) {
+              unlockAchievement(holidaySessionAchievementId);
+            }
+          }
+          //Conquista 17: Veterano (50 tutorias em uma única área)
+          if (!hasAchievement(veteranAchievementId)) {
+            const tutoredSessions = completedSessions.filter(
+              (session: any) => session.usuarioId !== userId,
+            );
+
+            const areaCountMap: Record<number, number> = {};
+
+            for (const session of tutoredSessions) {
+              const aid = session.areaId;
+              if (aid != null) {
+                areaCountMap[aid] = (areaCountMap[aid] || 0) + 1;
+
+                if (areaCountMap[aid] >= 50) {
+                  unlockAchievement(veteranAchievementId);
+                  break;
+                }
+              }
             }
           }
 
@@ -401,6 +467,152 @@ export default function Dashboard(): React.ReactNode {
           if (userLevel(pontos) >= 10) unlockAchievement(level10AchievementId);
           if (userLevel(pontos) >= 25) unlockAchievement(level25AchievementId);
           if (userLevel(pontos) >= 50) unlockAchievement(level50AchievementId);
+        }
+      }
+      // Conquistas baseadas em avaliações e nota do perfil
+      // Conquista 5: Primeira Impressão (1 avaliação como tutor ou aprendiz)
+      // Conquista 8: Volte Sempre (ter uma avaliação 5 estrelas como tutor)
+      // Conquista 9: O Prazer Foi Meu (ter uma avaliação 5 estrelas como aprendiz)
+      // Conquista 15: Feedback de Peso (ter três ou mais avaliações com mais de 100 caracteres)
+      // Conquista 27: Estrela Ascendente (ter 20 ou mais avaliações 5 estrelas)
+      // Conquista 30: Mestre das Estrelas (50 avaliações 5 estrelas)
+      // Conquista 28: Mestre Bem-Avaliado (ter uma média maior ou igual a 4.7 como tutor após 20 avaliações)
+      // Conquista 31: Deixando uma Marca (ter uma média maior ou igual a 4.7 como tutor ou aprendiz após 80 avaliações)
+      if (
+        !hasAchievement(firstReviewAchievementId) ||
+        !hasAchievement(fiveStarTutorReviewAchievementId) ||
+        !hasAchievement(fiveStarStudentReviewAchievementId) ||
+        !hasAchievement(threeHundredCommentReviewAchievementId) ||
+        !hasAchievement(twentyFiveStarReviewsAchievementId) ||
+        !hasAchievement(fiftyFiveStarReviewsAchievementId) ||
+        !hasAchievement(goodRatedTutorAchievementId) ||
+        !hasAchievement(legacyAchievementId)
+      ) {
+        const res = await GetAllUserReviews();
+
+        if (res.success) {
+          //Conquista 5: Primeira Impressão (ter uma avaliação)
+          if (
+            res.data!.comoAprendiz.length >= 1 ||
+            res.data!.comoTutor.length >= 1
+          ) {
+            unlockAchievement(firstReviewAchievementId);
+          }
+          //Conquista 8: Volte Sempre (ter uma avaliação 5 estrelas como tutor)
+          if (!hasAchievement(fiveStarTutorReviewAchievementId)) {
+            if (res.data!.comoTutor.length >= 1) {
+              for (const review of res.data!.comoTutor) {
+                if (review.nota === 5.0) {
+                  unlockAchievement(fiveStarTutorReviewAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          // Conquista 9: O Prazer Foi Meu (ter uma avaliação 5 estrelas como aprendiz)
+          if (!hasAchievement(fiveStarStudentReviewAchievementId)) {
+            if (res.data!.comoAprendiz.length >= 1) {
+              for (const review of res.data!.comoAprendiz) {
+                if (review.nota === 5.0) {
+                  unlockAchievement(fiveStarStudentReviewAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          // Conquista 15: Feedback de Peso (ter três ou mais avaliações com mais de 100 caracteres)
+          if (!hasAchievement(threeHundredCommentReviewAchievementId)) {
+            if (
+              res.data!.comoAprendiz.length >= 1 ||
+              res.data!.comoTutor.length >= 1
+            ) {
+              const allReviews = [
+                ...res.data!.comoAprendiz,
+                ...res.data!.comoTutor,
+              ];
+
+              const filteredReviews = allReviews.filter((review) => {
+                if (review.comentario && review.comentario.length > 100) {
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+
+              if (filteredReviews.length >= 3) {
+                unlockAchievement(threeHundredCommentReviewAchievementId);
+              }
+            }
+          }
+          // Conquista 27: Estrela Ascendente (20 avaliações 5 estrelas)
+          // Conquista 30: Mestre das Estrelas (50 avaliações 5 estrelas)
+          if (
+            !hasAchievement(twentyFiveStarReviewsAchievementId) ||
+            !hasAchievement(fiftyFiveStarReviewsAchievementId)
+          ) {
+            const allReviews = [
+              ...(res.data?.comoAprendiz || []),
+              ...(res.data?.comoTutor || []),
+            ];
+            const fiveStarReviews = allReviews.filter(
+              (review) => review.nota === 5,
+            );
+
+            if (
+              !hasAchievement(twentyFiveStarReviewsAchievementId) &&
+              fiveStarReviews.length >= 20
+            ) {
+              unlockAchievement(twentyFiveStarReviewsAchievementId);
+            }
+
+            if (
+              !hasAchievement(fiftyFiveStarReviewsAchievementId) &&
+              fiveStarReviews.length >= 50
+            ) {
+              unlockAchievement(fiftyFiveStarReviewsAchievementId);
+            }
+          }
+          // Conquista 28: Mestre Bem-Avaliado (ter uma média maior ou igual a 4.7 como tutor após 20 avaliações)
+          if (
+            !hasAchievement(goodRatedTutorAchievementId) &&
+            res.data!.comoTutor.length >= 20
+          ) {
+            let gradeSum = 0;
+
+            for (const review of res.data!.comoTutor) {
+              gradeSum += review.nota;
+            }
+
+            if (gradeSum / res.data!.comoTutor.length >= 4.7) {
+              unlockAchievement(goodRatedTutorAchievementId);
+            }
+          }
+          // Conquista 31: Deixando uma Marca (ter uma média maior ou igual a 4.7 como tutor ou aprendiz após 80 avaliações)
+          if (
+            (!hasAchievement(legacyAchievementId) &&
+              res.data!.comoTutor.length >= 80) ||
+            res.data!.comoAprendiz.length >= 80
+          ) {
+            let gradeSumTutor = 0;
+            let gradeSumStudent = 0;
+
+            if (res.data!.comoTutor.length >= 80) {
+              for (const review of res.data!.comoTutor) {
+                gradeSumTutor += review.nota;
+              }
+              if (gradeSumTutor / res.data!.comoTutor.length >= 4.7) {
+                unlockAchievement(legacyAchievementId);
+              }
+            }
+            if (res.data!.comoAprendiz.length >= 80) {
+              for (const review of res.data!.comoAprendiz) {
+                gradeSumStudent += review.nota;
+              }
+              if (gradeSumStudent / res.data!.comoAprendiz.length >= 4.7 && !hasAchievement(legacyAchievementId)) {
+                unlockAchievement(legacyAchievementId);
+              }
+            }
+          }
         }
       }
     };

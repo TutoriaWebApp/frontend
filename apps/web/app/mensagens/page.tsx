@@ -2,10 +2,16 @@
 
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { GetChatResultData, MessageGetData } from "@repo/services/chatTypes";
-import { GetChats, GetChatMessages, MarkMessagesAsRead } from "@repo/services/chat";
+import {
+  GetChats,
+  GetChatMessages,
+  MarkMessagesAsRead,
+} from "@repo/services/chat";
 import { PostMessageAction } from "@repo/services/chatAction";
 import { formatMessageDate } from "@repo/lib/formatMessageDate";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
 import { ClipLoader } from "react-spinners";
 import Link from "next/link";
 
@@ -15,7 +21,8 @@ export default function ChatPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [inputMessage, setInputMessage] = useState<string>("");
   const [loadingChats, setLoadingChats] = useState<boolean>(true);
-  const [loadingChatMessages, setLoadingChatMessages] = useState<boolean>(false);
+  const [loadingChatMessages, setLoadingChatMessages] =
+    useState<boolean>(false);
   const [disableSendButton, setDisableSendButton] = useState<boolean>(false);
   const [messages, setMessages] = useState<MessageGetData[]>([]);
 
@@ -30,12 +37,20 @@ export default function ChatPage() {
   const activeChat = chats.find((chat) => chat.id === activeChatId) || null;
   const qtdNaoLidasAtivo = activeChat?.mensagensNaoLidas || 0;
 
+  //Conquista 2: Primeiro Contato (enviar uma mensagem)
+  const firstMessageAchievementId = 2;
+  //Conquista 4: Networking Inicial (entrar em contato com 5 usuários diferentes)
+  const networkingAchievementId = 4;
+
+  const { userId, inicializado, hasAchievement } = useUserAchievements();
+  const { unlockAchievement } = useUnlockAchievement();
+
   // Sincroniza e zera as mensagens não lidas no estado e no backend
   const marcarChatComoLido = useCallback(async (chatId: number) => {
     setChats((prevChats) =>
       prevChats.map((c) =>
-        c.id === chatId ? { ...c, mensagensNaoLidas: 0 } : c
-      )
+        c.id === chatId ? { ...c, mensagensNaoLidas: 0 } : c,
+      ),
     );
     await MarkMessagesAsRead(chatId);
   }, []);
@@ -72,7 +87,7 @@ export default function ChatPage() {
         } else {
           showNotification(
             "Ocorreu um erro no servidor ao buscar os chats.",
-            "error"
+            "error",
           );
         }
       }
@@ -81,7 +96,7 @@ export default function ChatPage() {
         setLoadingChats(false);
       }
     },
-    [showNotification]
+    [showNotification],
   );
 
   useEffect(() => {
@@ -141,12 +156,12 @@ export default function ChatPage() {
       if (res.status !== 500) {
         showNotification(
           "Ocorreu um erro na busca das mensagens desse chat.",
-          "error"
+          "error",
         );
       } else {
         showNotification(
           "Ocorreu um erro no servidor ao obter as mensagens.",
-          "error"
+          "error",
         );
       }
     }
@@ -154,7 +169,7 @@ export default function ChatPage() {
   };
 
   const filteredChats = chats.filter((chat) =>
-    chat.nomePessoa.toLowerCase().includes(searchTerm.toLowerCase())
+    chat.nomePessoa.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -184,6 +199,21 @@ export default function ChatPage() {
       }
       if (chatsRes.success && chatsRes.data) {
         setChats(chatsRes.data);
+      }
+
+      if (userId && inicializado) {
+        //Conquista 2: Primeiro Contato (enviar uma mensagem)
+        if (!hasAchievement(firstMessageAchievementId)) {
+          unlockAchievement(firstMessageAchievementId);
+        }
+        //Conquista 4: Networking Inicial (entrar em contato com 5 usuários diferentes)
+        if (!hasAchievement(networkingAchievementId)) {
+          const res = await GetChats();
+
+          if (res.success && res.data!.length >= 5) {
+            unlockAchievement(networkingAchievementId);
+          }
+        }
       }
     } else {
       setInputMessage(messageToSend);
@@ -315,7 +345,9 @@ export default function ChatPage() {
                       <div className="flex justify-between items-center gap-1">
                         <p
                           className={`font-semibold text-sm truncate ${
-                            activeChatId === chat.id ? "text-white" : "text-slate-800"
+                            activeChatId === chat.id
+                              ? "text-white"
+                              : "text-slate-800"
                           }`}
                         >
                           {chat.nomePessoa}

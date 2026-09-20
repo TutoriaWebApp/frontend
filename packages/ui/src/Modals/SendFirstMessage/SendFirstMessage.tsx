@@ -7,6 +7,7 @@ import { CreateChatAction } from "@repo/services/chatAction";
 import { CreateChatResult } from "@repo/services/chatTypes";
 import { useUserAchievements } from "@repo/ui/userAchievementsContext";
 import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
+import { GetChats } from "@repo/services/chat";
 
 interface SendFirstMessageModalProps {
   tutorName: string;
@@ -24,11 +25,14 @@ export function SendFirstMessageModal({
   isOpen,
   onClose,
 }: SendFirstMessageModalProps) {
-  const firstMessageAchievement = 2;
+  //Conquista 2: Primeiro Contato (enviar uma mensagem)
+  const firstMessageAchievementId = 2;
+  //Conquista 4: Networking Inicial (entrar em contato com 5 usuários diferentes)
+  const networkingAchievementId = 4;
   const [message, setMessage] = useState<string>("");
   const { showNotification } = useContext(NotificationContext);
 
-  const { userId, inicializado } = useUserAchievements();
+  const { userId, inicializado, hasAchievement } = useUserAchievements();
 
   const { unlockAchievement } = useUnlockAchievement();
 
@@ -53,7 +57,18 @@ export function SendFirstMessageModal({
     if (res.success) {
       showNotification("Chat criado com sucesso!", "success");
       if (userId && inicializado) {
-        unlockAchievement(firstMessageAchievement);
+        //Conquista 2: Primeiro Contato (enviar uma mensagem)
+        if(!hasAchievement(firstMessageAchievementId)){
+          unlockAchievement(firstMessageAchievementId);
+        }
+        //Conquista 4: Networking Inicial (entrar em contato com 5 usuários diferentes)
+        if(!hasAchievement(networkingAchievementId)){
+          const res = await GetChats();
+
+          if(res.success && res.data.length >= 5){
+            unlockAchievement(networkingAchievementId);
+          }
+        }
       }
       onClose();
     } else {

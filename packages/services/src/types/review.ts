@@ -31,7 +31,6 @@ export interface GetPendingReview {
   nomeEspecialidade: string;
   tipoPendente: string;
 }
-
 export interface GetPendingReviewsResult {
   success: boolean;
   status: number;
@@ -55,4 +54,23 @@ export interface SendTutorReviewData {
 export interface SendReviewResult {
   success: boolean;
   status: number;
+}
+
+export interface AllUserReviewsData{
+  comoAprendiz: [{
+    id: number;
+    nota: number;
+    comentario?: string;
+  }];
+  comoTutor: [{
+    id: number;
+    nota: number;
+    comentario?: string;
+  }]
+}
+
+export interface GetAllUserReviewsResult{
+  success: boolean;
+  status: number;
+  data?: AllUserReviewsData;
 }

@@ -18,7 +18,6 @@ import {
 import { Grade } from "@mui/icons-material";
 
 import { ReviewSection } from "@repo/ui/reviewSection";
-import { EditProfileButton } from "@repo/ui/editProfileButton";
 import { SendFirstMessageButton } from "@repo/ui/sendFirstMessageButton";
 import { AvailabilitySection } from "@repo/ui/availabilitySection";
 import { TimeSlot } from "@repo/services/availabilityTypes";

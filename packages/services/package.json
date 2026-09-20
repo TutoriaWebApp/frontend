@@ -7,6 +7,7 @@
     "./auth": "./src/auth.ts",
     "./states": "./src/states.ts",
     "./cities": "./src/cities.ts",
+    "./holidays": "./src/holidays.ts",
 
     "./authAction": "./src/actions/auth.ts",
     "./userAction": "./src/actions/user.ts",
