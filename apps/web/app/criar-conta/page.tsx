@@ -45,12 +45,13 @@ const registerSchema = z
     password: z
       .string()
       .min(10, "A senha deve possuir 10 ou mais caracteres.")
-      .max(256, "A senha só pode possuir até 256 caracteres.")
+      .max(35, "A senha só pode possuir até 35 caracteres.")
       .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
       .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
     passwordConfirm: z
       .string()
       .min(10, "A senha deve possuir 10 ou mais caracteres.")
+      .max(35, "A senha só pode possuir até 35 caracteres.")
       .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
       .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
     nomePerfil: z
