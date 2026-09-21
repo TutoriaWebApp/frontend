@@ -16,28 +16,41 @@ const redirectToLogin = (req: NextRequest) => {
 const validateSession = async (req: NextRequest) => {
   const accessToken = req.cookies.get("access_token")?.value;
 
+  // Se o access token existir e ainda for válido, prossegue normalmente
   if (accessToken && !isTokenExpired(accessToken)) {
     return NextResponse.next();
   }
 
   const refreshToken = req.cookies.get("refresh_token")?.value;
 
+  // Se o refresh token existir e estiver válido, tenta renovar no Django
   if (refreshToken && !isTokenExpired(refreshToken)) {
     try {
       const baseURL = getBackendUrl();
-      const res = await fetch(`${baseURL}/login/refresh/`, {
+      const res = await fetch(`${baseURL}/login/refresh`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           Cookie: `refresh_token=${refreshToken}`,
         },
-        credentials: "include",
       });
 
       if (res.ok) {
+        // Pega todos os Set-Cookie retornados pelo Django (contendo o novo access_token)
         const newCookies = res.headers.getSetCookie();
-        const response = NextResponse.next();
-        newCookies.forEach((c) => response.headers.append("Set-Cookie", c));
+
+        // Cria a resposta permitindo que a rota continue
+        const response = NextResponse.next({
+          request: {
+            headers: new Headers(req.headers),
+          },
+        });
+
+        // Aplica o Set-Cookie na resposta para salvar no navegador do usuário
+        newCookies.forEach((cookieStr) => {
+          response.headers.append("Set-Cookie", cookieStr);
+        });
+
         return response;
       }
     } catch (e) {
@@ -45,6 +58,7 @@ const validateSession = async (req: NextRequest) => {
     }
   }
 
+  // Se o refresh falhar ou já estiver vencido (> 3 min), redireciona para login
   return redirectToLogin(req);
 };
 
