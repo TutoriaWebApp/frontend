@@ -3,11 +3,11 @@
 import React, { useState, useContext } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import {PostUserReviewAction, PostTutorReviewAction } from "@repo/services/reviewsAction"
-import {GetSpecificUserData} from "@repo/services/userClient";
+import { PostUserReviewAction, PostTutorReviewAction } from "@repo/services/reviewsAction";
+import { GetSpecificUserData } from "@repo/services/userClient";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 import { formatarDataBR } from "@repo/lib/formatData";
-import {formatTime} from "@repo/lib/formatTime"
+import { formatTime } from "@repo/lib/formatTime";
 
 interface EvaluateUserModalProps {
   isOpen: boolean;
@@ -22,6 +22,8 @@ interface EvaluateUserModalProps {
   userId: number;
   setClose: () => void;
 }
+
+const MAX_CHARS = 200;
 
 export function EvaluateUserModal({
   isOpen,
@@ -44,41 +46,50 @@ export function EvaluateUserModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = async(e: React.FormEvent) => {
+  const remainingChars = MAX_CHARS - comment.length;
+
+  const getRemainingCharsText = () => {
+    if (remainingChars === 0) {
+      return "Nenhum caractere restante.";
+    }
+    if (remainingChars === 1) {
+      return "1 caractere restante!";
+    }
+    return `${remainingChars} caracteres restantes.`;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if(reviewType === "APRENDIZ"){
-        const resultsUserData = await GetSpecificUserData(userId);
+    if (reviewType === "APRENDIZ") {
+      const resultsUserData = await GetSpecificUserData(userId);
 
-        const tutorId = resultsUserData.data.tutorId;
+      const tutorId = resultsUserData.data.tutorId;
 
-        const res = await PostTutorReviewAction({
-          nota: rating,
-          comentario: comment,
-          tutorId: tutorId,
-          sessaoId: sessionId
-        })
+      const res = await PostTutorReviewAction({
+        nota: rating,
+        comentario: comment,
+        tutorId: tutorId,
+        sessaoId: sessionId,
+      });
 
-      if(res.success){
+      if (res.success) {
         showNotification("Avaliação enviada com sucesso!", "success");
-      }
-      else{
+      } else {
         showNotification("Ocorreu um erro ao tentar enviar a avaliação.", "error");
         return;
       }
-    }
-    else{
+    } else {
       const res = await PostUserReviewAction({
         nota: rating,
         comentario: comment,
         usuarioId: userId,
-        sessaoId: sessionId
-      })
+        sessaoId: sessionId,
+      });
 
-      if(res.success){
+      if (res.success) {
         showNotification("Avaliação enviada com sucesso!", "success");
-      }
-      else{
+      } else {
         showNotification("Ocorreu um erro ao tentar enviar a avaliação.", "error");
         return;
       }
@@ -266,7 +277,7 @@ export function EvaluateUserModal({
             </div>
 
             {/* Campo de Comentário */}
-            <div className="space-y-3">
+            <div className="space-y-1.5">
               <label
                 className="
                 text-xs 
@@ -282,7 +293,8 @@ export function EvaluateUserModal({
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder={`Conte como foi sua experiência com esse  os pontos positivos ou que pode melhorar.`}
+                placeholder="Conte como foi sua experiência, os pontos positivos ou o que pode melhorar."
+                maxLength={MAX_CHARS}
                 rows={4}
                 className="
                     w-full 
@@ -299,6 +311,19 @@ export function EvaluateUserModal({
                     resize-none 
                     placeholder:text-slate-300"
               />
+
+              {/* Contador de Caracteres Dinâmico */}
+              <div className="flex justify-end px-3">
+                <span
+                  className={`text-xs font-medium transition-colors ${
+                    remainingChars <= 20
+                      ? "text-amber-600 font-semibold"
+                      : "text-slate-400"
+                  }`}
+                >
+                  {getRemainingCharsText()}
+                </span>
+              </div>
             </div>
 
             <div
