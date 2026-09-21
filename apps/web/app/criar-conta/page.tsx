@@ -659,6 +659,8 @@ export default function CreateAccountPage(): React.ReactNode {
                         border-slate-300
                       "
                         placeholder="Digite uma senha"
+                        minLength={10}
+                        maxLength={35}
                       />
                     </label>
                     <div
@@ -730,6 +732,8 @@ export default function CreateAccountPage(): React.ReactNode {
                           border-slate-300
                       "
                         placeholder="Digite a nova senha novamente"
+                        minLength={10}
+                        maxLength={35}
                       />
                     </label>
                     <div
