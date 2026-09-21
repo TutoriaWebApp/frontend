@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { DaySelector } from "./DaySelector/DaySelector";
 import { TimePicker } from "./TimePicker/TimePicker";
-import { ScheduleModal} from "../Modals/ScheduleModal/ScheduleModal"
+import { ScheduleModal } from "../Modals/ScheduleModal/ScheduleModal"
 
 import { TimeSlot } from "@repo/services/availabilityTypes";
 import { Specialty, TutorArea } from "@repo/services/userTypes";
@@ -13,7 +13,7 @@ interface AvailabilitySectionProps {
   ownProfile: boolean;
   areas?: TutorArea[];
   specialties?: Specialty[];
-  tutorId?:number;
+  tutorId?: number;
 }
 
 export function AvailabilitySection({
@@ -92,7 +92,7 @@ export function AvailabilitySection({
               if (dayTarget?.isAvailable) {
                 setSelectedDayKey(dayKey as TimeSlot["dia"]);
               }
-              
+
             }}
           />
 
@@ -190,6 +190,7 @@ export function AvailabilitySection({
             </div>
             {!ownProfile && (
               <button
+                id="btn-requestSession"
                 type="button"
                 className="
               w-full 
@@ -213,11 +214,11 @@ export function AvailabilitySection({
           </div>
         </div>
       </section>
-      <ScheduleModal 
-        isOpen={modalIsOpen} 
-        onClose={closeModal} 
-        availabilities={availabilities} 
-        areas={areas!} 
+      <ScheduleModal
+        isOpen={modalIsOpen}
+        onClose={closeModal}
+        availabilities={availabilities}
+        areas={areas!}
         specialties={specialties!}
         tutorId={tutorId!}
       />

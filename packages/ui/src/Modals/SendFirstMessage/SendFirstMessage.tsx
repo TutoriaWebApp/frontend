@@ -58,14 +58,14 @@ export function SendFirstMessageModal({
       showNotification("Chat criado com sucesso!", "success");
       if (userId && inicializado) {
         //Conquista 2: Primeiro Contato (enviar uma mensagem)
-        if(!hasAchievement(firstMessageAchievementId)){
+        if (!hasAchievement(firstMessageAchievementId)) {
           unlockAchievement(firstMessageAchievementId);
         }
         //Conquista 4: Networking Inicial (entrar em contato com 5 usuários diferentes)
-        if(!hasAchievement(networkingAchievementId)){
+        if (!hasAchievement(networkingAchievementId)) {
           const res = await GetChats();
 
-          if(res.success && res.data.length >= 5){
+          if (res.success && res.data.length >= 5) {
             unlockAchievement(networkingAchievementId);
           }
         }
@@ -121,6 +121,7 @@ export function SendFirstMessageModal({
 
             <div className="flex flex-col gap-1.5">
               <textarea
+                id="txt-firstMessage"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 maxLength={MAX_CHARS}
@@ -147,11 +148,10 @@ export function SendFirstMessageModal({
               {/* Contador de Caracteres Dinâmico */}
               <div className="flex justify-end">
                 <span
-                  className={`text-xs font-medium transition-colors ${
-                    remainingChars <= 20
-                      ? "text-amber-600 font-semibold"
-                      : "text-slate-400"
-                  }`}
+                  className={`text-xs font-medium transition-colors ${remainingChars <= 20
+                    ? "text-amber-600 font-semibold"
+                    : "text-slate-400"
+                    }`}
                 >
                   {remainingChars}{" "}
                   {remainingChars === 1
@@ -165,6 +165,7 @@ export function SendFirstMessageModal({
           {/* Footer */}
           <div className="p-6 bg-slate-50/80 flex justify-end items-center gap-3 border-t border-slate-100">
             <button
+              id="btn-cancelFirstMessage"
               type="button"
               onClick={handleClose}
               className="
@@ -183,6 +184,7 @@ export function SendFirstMessageModal({
             </button>
 
             <button
+              id="btn-submitFirstMessage"
               type="submit"
               disabled={!message.trim()}
               className="
