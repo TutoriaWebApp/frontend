@@ -27,14 +27,13 @@ import { AvailabilityManager } from "@repo/ui/Availability/AvailabilityManager";
 
 import { StudentArea, TutorArea, Specialty } from "@repo/services/userTypes";
 
-import { CreateAccountAction } from "@repo/services/userAction";
-
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { DeleteStudentAreaModal } from "@repo/ui/Modals/StudentAreas/DeleteStudentArea";
 import { DeleteTutorAreaModal } from "@repo/ui/Modals/TutorAreas/DeleteTutorAreas";
 import { DeleteSpecialtyModal } from "@repo/ui/Modals/Specialty/DeleteSpecialtyModal";
 import { TimeSlot } from "@repo/services/availabilityTypes";
+import { CreateAccountAction } from "@repo/services/userAction";
 
 const registerSchema = z
   .object({
@@ -1400,7 +1399,7 @@ export default function CreateAccountPage(): React.ReactNode {
                 >
                   <div
                     id="div-backInterests"
-                    onClick={() => setStep(2)}
+                    onClick={() => setStep(1)}
                     className="
                     p-4 
                     pb-0 
