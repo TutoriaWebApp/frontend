@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 interface ImageUploadProps {
@@ -16,9 +14,22 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
     watch,
     formState: { errors },
   } = useFormContext();
-  const [preview, setPreview] = useState<string | null>(null);
 
   const currentFile = watch(name);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (currentFile instanceof File) {
+      const objectUrl = URL.createObjectURL(currentFile);
+      setPreview(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } else if (!currentFile) {
+      setPreview(null);
+    }
+  }, [currentFile]);
 
   const resizeImage = (file: File): Promise<File> => {
     return new Promise((resolve, reject) => {
@@ -61,13 +72,7 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
     const file = e.target.files?.[0];
     if (file) {
       const resized = await resizeImage(file);
-      setValue(name, resized);
-
-      if (preview) URL.revokeObjectURL(preview);
-
-      const objectUrl = URL.createObjectURL(resized);
-      setPreview(objectUrl);
-
+      setValue(name, resized, { shouldValidate: true, shouldDirty: true });
       trigger(name);
     }
   };

@@ -60,13 +60,9 @@ const registerSchema = z
     estado: z.string().min(1, "É obrigatório informar seu estado."),
     cidade: z.string().min(1, "É obrigatório infomar sua cidade"),
     aniversario: z
-      .string()
+      .string({ message: "É obrigatório informar sua data de nascimento." })
       .refine(
         (stringDate) => {
-          if (!stringDate) {
-            return true;
-          }
-
           const date = new Date(stringDate);
 
           return !isNaN(date.getTime());
@@ -75,9 +71,6 @@ const registerSchema = z
       )
       .refine(
         (stringDate) => {
-          if (!stringDate) {
-            return true;
-          }
           const date = new Date(stringDate);
 
           const currentDate = new Date();
@@ -88,23 +81,19 @@ const registerSchema = z
       )
       .refine(
         (stringDate) => {
-          if (!stringDate) {
-            return true;
-          }
           const birthDate = new Date(stringDate);
           const today = new Date();
 
           const minAgeDate = new Date(
             today.getFullYear() - 15,
             today.getMonth(),
-            today.getDate()
+            today.getDate(),
           );
 
           return birthDate <= minAgeDate;
         },
         { message: "É necessário ter pelo menos 15 anos para se registar." },
-      )
-      .nullable(),
+      ),
     foto: z
       .any()
       .refine(
@@ -127,6 +116,7 @@ export default function CreateAccountPage(): React.ReactNode {
   const methods = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
+    shouldUnregister: false,
   });
 
   const {
@@ -393,9 +383,10 @@ export default function CreateAccountPage(): React.ReactNode {
                       border-2 
                       transition-all 
                       duration-300 
-                    ${step >= 1
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "bg-white border-slate-300 text-slate-400"
+                    ${
+                      step >= 1
+                        ? "bg-indigo-600 border-indigo-600 text-white"
+                        : "bg-white border-slate-300 text-slate-400"
                     }`}
                 >
                   {step > 1 ? "✓" : "1"}
@@ -474,9 +465,10 @@ export default function CreateAccountPage(): React.ReactNode {
                       border-2 
                       transition-all 
                       duration-300 
-                    ${step >= 3
-                      ? "bg-indigo-600 border-indigo-600 text-white"
-                      : "bg-white border-slate-300 text-slate-400"
+                    ${
+                      step >= 3
+                        ? "bg-indigo-600 border-indigo-600 text-white"
+                        : "bg-white border-slate-300 text-slate-400"
                     }`}
                 >
                   2
@@ -965,8 +957,16 @@ export default function CreateAccountPage(): React.ReactNode {
                       gap-2
                     "
                     >
-                      <span className="font-semibold">Data de Nascimento</span>
-                      - <input id="inp-birthdate" type="date" {...register("aniversario")} />
+                      <span className="font-semibold">
+                        Data de Nascimento
+                        <span className="text-rose-500">*</span>
+                      </span>
+                      -{" "}
+                      <input
+                        id="inp-birthdate"
+                        type="date"
+                        {...register("aniversario")}
+                      />
                     </label>
                     <div
                       className="
@@ -980,6 +980,19 @@ export default function CreateAccountPage(): React.ReactNode {
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div
+                    className="
+                    lg:hidden
+                    lg:mb-6 
+                    pl-6 
+                  "
+                  >
+                    {errors.aniversario && (
+                      <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
+                        {errors.aniversario.message}
+                      </span>
+                    )}
                   </div>
                   <div></div>
                   <div
@@ -1022,12 +1035,15 @@ export default function CreateAccountPage(): React.ReactNode {
                         mt-4
                       "
                     >
-                      <span className="
+                      <span
+                        className="
                         text-xs 
                         2xl:text-sm 
                         text-slate-400
-                      ">
-                        {(watch("sobreMim") || "").length} / 500 caracteres restantes.
+                      "
+                      >
+                        {(watch("sobreMim") || "").length} / 500 caracteres
+                        restantes.
                       </span>
                       {errors.sobreMim && (
                         <span className="text-rose-500 md:text-sm 2xl:text-base mt-1">
