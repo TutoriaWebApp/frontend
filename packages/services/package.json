@@ -23,6 +23,7 @@
     "./reviews": "./src/review.ts",
     "./chat": "./src/chat.ts",
     "./achievements": "./src/achievements.ts",
+    "./notification": "./src/notifications.ts",
 
     "./userTypes": "./src/types/user.ts",
     "./authTypes": "./src/types/auth.ts",
@@ -31,7 +32,8 @@
     "./solicitationTypes": "./src/types/solicitations.ts",
     "./reviewTypes": "./src/types/review.ts",
     "./chatTypes": "./src/types/chat.ts",
-    "./achievementTypes": "./src/types/achievements.ts"
+    "./achievementTypes": "./src/types/achievements.ts",
+    "./notificationTypes": "./src/types/notification.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.15",

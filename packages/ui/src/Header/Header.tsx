@@ -6,49 +6,16 @@ import Image from "next/image";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
-import { GetChats } from "@repo/services/chat";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
-import { 
-  GetAllFutureTutorSolicitations, 
-  GetResolvedLearnerSolicitations 
-} from "@repo/services/solicitations";
-
+import { GetNotifications } from "@repo/services/notification";
 import { useUserAchievements } from "@repo/ui/userAchievementsContext";
-
 
 interface HeaderProps {
   onLogout?: () => void;
 }
 
-const useUnreadMessages = (loggedIn: boolean) => {
+const useHeaderNotifications = (loggedIn: boolean) => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
-
-  useEffect(() => {
-    if (!loggedIn) return;
-
-    const fetchUnread = async () => {
-      if (document.hidden) return;
-
-      const res = await GetChats();
-      if (res.success && res.data) {
-        const total = res.data.reduce(
-          (acc: number, chat: any) => acc + (chat.mensagensNaoLidas || 0),
-          0,
-        );
-        setUnreadCount(total);
-      }
-    };
-
-    fetchUnread();
-    const intervalId = setInterval(fetchUnread, 4000);
-
-    return () => clearInterval(intervalId);
-  }, [loggedIn]);
-
-  return unreadCount;
-};
-
-const useSolicitationsNotifications = (loggedIn: boolean) => {
   const [pendingTutorCount, setPendingTutorCount] = useState<number>(0);
   const [confirmedLearnerCount, setConfirmedLearnerCount] = useState<number>(0);
 
@@ -62,14 +29,18 @@ const useSolicitationsNotifications = (loggedIn: boolean) => {
     const checkNotifications = async () => {
       if (document.hidden) return;
 
-      const [tutorRes, learnerRes] = await Promise.all([
-        GetAllFutureTutorSolicitations(),
-        GetResolvedLearnerSolicitations(),
-      ]);
+      const res = await GetNotifications();
 
-      if (tutorRes.success && tutorRes.data) {
-        const pendentes = tutorRes.data.length;
+      if (res.success && res.data) {
+        const {
+          mensagensNaoLidas,
+          solicitacoesTutorPendentes,
+          solicitacoesResolvidasAprendiz,
+        } = res.data;
 
+        setUnreadCount(mensagensNaoLidas || 0);
+
+        const pendentes = solicitacoesTutorPendentes || 0;
         if (prevPendingTutorRef.current !== null && pendentes > prevPendingTutorRef.current) {
           const novas = pendentes - prevPendingTutorRef.current;
           showNotification(
@@ -77,13 +48,10 @@ const useSolicitationsNotifications = (loggedIn: boolean) => {
             "info"
           );
         }
-
         prevPendingTutorRef.current = pendentes;
         setPendingTutorCount(pendentes);
-      }
 
-      if (learnerRes.success && learnerRes.data) {
-        const resolvidas = learnerRes.data;
+        const resolvidas = solicitacoesResolvidasAprendiz || [];
         const confirmadas = resolvidas.filter((s: any) => s.estado === "ACEITO").length;
 
         if (prevResolvedLearnerMapRef.current !== null) {
@@ -117,12 +85,12 @@ const useSolicitationsNotifications = (loggedIn: boolean) => {
     };
 
     checkNotifications();
-    const intervalId = setInterval(checkNotifications, 5000);
+    const intervalId = setInterval(checkNotifications, 2000);
 
     return () => clearInterval(intervalId);
   }, [loggedIn, showNotification]);
 
-  return { pendingTutorCount, confirmedLearnerCount };
+  return { unreadCount, pendingTutorCount, confirmedLearnerCount };
 };
 
 export default function Header({ onLogout }: HeaderProps) {
@@ -130,8 +98,8 @@ export default function Header({ onLogout }: HeaderProps) {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  const unreadCount = useUnreadMessages(loggedIn);
-  const { pendingTutorCount, confirmedLearnerCount } = useSolicitationsNotifications(loggedIn);
+  const { unreadCount, pendingTutorCount, confirmedLearnerCount } =
+    useHeaderNotifications(loggedIn);
 
   const notLoggedInRoutes = [
     "/",
@@ -151,14 +119,13 @@ export default function Header({ onLogout }: HeaderProps) {
 
   const { resetContext } = useUserAchievements();
 
-
   const handleLogout = async () => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem("is_logging_out", "true");
     }
 
-    resetContext(); 
-    
+    resetContext();
+
     if (onLogout) {
       await onLogout();
     }
@@ -207,7 +174,7 @@ export default function Header({ onLogout }: HeaderProps) {
         <>
           {/* Botão Hambúrguer (Mobile) */}
           <button
-            className="lg:hidden mr-6 text-slate-600 hover:text-brand-primary transition-colors"
+            className="lg:hidden mr-6 text-slate-600 hover:text-brand-primary transition-colors relative"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
@@ -215,12 +182,12 @@ export default function Header({ onLogout }: HeaderProps) {
             ) : (
               <MenuIcon fontSize="large" />
             )}
-            {unreadCount > 0 || pendingTutorCount > 0 || confirmedLearnerCount > 0 ? (
+            {!isMenuOpen && unreadCount > 0 || pendingTutorCount > 0 || confirmedLearnerCount > 0 ? (
               <span
                 className="
                   absolute 
-                  top-2 
-                  right-2 
+                  top-0 
+                  right-0 
                   bg-rose-500 
                   text-white 
                   text-[10px] 
@@ -240,7 +207,7 @@ export default function Header({ onLogout }: HeaderProps) {
                   ? "+99"
                   : unreadCount + pendingTutorCount + confirmedLearnerCount}
               </span>
-            ) : null} 
+            ) : null}
           </button>
 
           {/* Navegação Desktop */}
@@ -290,7 +257,7 @@ export default function Header({ onLogout }: HeaderProps) {
                       </span>
                     )}
 
-                    {/* Badges de Solicitações Desktop (Vermelha para Tutor / Verde para Aprendiz) */}
+                    {/* Badges de Solicitações Desktop */}
                     {link.name === "Solicitações" && (
                       <div className="absolute top-2 right-2 flex items-center gap-1">
                         {pendingTutorCount > 0 && (
