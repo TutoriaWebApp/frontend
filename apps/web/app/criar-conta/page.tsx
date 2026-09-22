@@ -86,6 +86,24 @@ const registerSchema = z
         },
         { message: "A data não pode ser futura." },
       )
+      .refine(
+        (stringDate) => {
+          if (!stringDate) {
+            return true;
+          }
+          const birthDate = new Date(stringDate);
+          const today = new Date();
+
+          const minAgeDate = new Date(
+            today.getFullYear() - 15,
+            today.getMonth(),
+            today.getDate()
+          );
+
+          return birthDate <= minAgeDate;
+        },
+        { message: "É necessário ter pelo menos 15 anos para se registar." },
+      )
       .nullable(),
     foto: z
       .any()

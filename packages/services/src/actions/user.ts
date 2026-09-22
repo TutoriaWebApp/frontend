@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-import { CreateAccount } from "../userServer";
+import { CreateAccount } from "../userClient";
 import {
   ChangePassword,
   EditProfile,
@@ -36,7 +36,7 @@ export async function CreateAccountAction(
     }
     return {
       success: false,
-      message: result.data.message,
+      message: result.data?.message || "Ocorreu um erro ao criar a conta.",
     };
   } catch (error) {
     return {
