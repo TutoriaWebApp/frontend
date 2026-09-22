@@ -268,30 +268,26 @@ export const SolicitationCard = ({
               )}
             </p>
           )}
+          {mode == "solicitacoes_tutor" && recurrent && (
+            <div className="flex items-center">
+                <div
+                  className="
+                  bg-slate-50/60 
+                  rounded-2xl 
+                  p-4 
+                  border 
+                  border-slate-200 
+                  space-y-3 
+                  w-full 
+                  h-fit"
+                >
+                  <p className="text-gray-500 text-xs text-justify">
+                    Essa solicitação é recorrente. Caso aceite, uma nova solicitação idêntica a essa será automaticamente criada para esse mesmo dia e horário na semana que vem.
+                  </p>
+                </div>
+                </div>
+          )}
         </div>
-
-        {mode == "sessoes_tutor" && (
-          <button
-            id={`btn-cancelSession-${userId}`}
-            className="
-          mt-6
-          mb-2
-      w-full 
-      py-1.5 
-        bg-rose-600 
-        hover:bg-rose-700 
-        text-white 
-        font-black 
-        rounded-xl 
-        shadow-lg 
-        shadow-rose-100 
-        transition-all 
-        active:scale-[0.98]
-        "
-          >
-            Cancelar
-          </button>
-        )}
         {/* {mode == "minhas" && (
       <button
       className="
