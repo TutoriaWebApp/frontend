@@ -262,6 +262,7 @@ export default function Header({ onLogout }: HeaderProps) {
                       <div className="absolute top-2 right-2 flex items-center gap-1">
                         {pendingTutorCount > 0 && (
                           <span
+                            id="span-pendingRequestBadge"
                             title="Solicitações Pendentes (Tutor)"
                             className="
                               bg-rose-500 
@@ -285,6 +286,7 @@ export default function Header({ onLogout }: HeaderProps) {
 
                         {confirmedLearnerCount > 0 && (
                           <span
+                            id="span-confirmedLearnerBadge"
                             title="Sessões Confirmadas (Aprendiz)"
                             className="
                               bg-emerald-500 

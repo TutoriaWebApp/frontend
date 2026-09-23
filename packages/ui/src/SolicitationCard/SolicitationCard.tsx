@@ -66,6 +66,7 @@ export const SolicitationCard = ({
     <>
       <div
         className="
+      div-sessionCard
       bg-white
       rounded-[2.5rem] 
       border 
@@ -270,8 +271,8 @@ export const SolicitationCard = ({
           )}
           {mode == "solicitacoes_tutor" && recurrent && (
             <div className="flex items-center">
-                <div
-                  className="
+              <div
+                className="
                   bg-slate-50/60 
                   rounded-2xl 
                   p-4 
@@ -280,12 +281,12 @@ export const SolicitationCard = ({
                   space-y-3 
                   w-full 
                   h-fit"
-                >
-                  <p className="text-gray-500 text-xs text-justify">
-                    Essa solicitação é recorrente. Caso aceite, uma nova solicitação idêntica a essa será automaticamente criada para esse mesmo dia e horário na semana que vem.
-                  </p>
-                </div>
-                </div>
+              >
+                <p className="text-gray-500 text-xs text-justify">
+                  Essa solicitação é recorrente. Caso aceite, uma nova solicitação idêntica a essa será automaticamente criada para esse mesmo dia e horário na semana que vem.
+                </p>
+              </div>
+            </div>
           )}
         </div>
         {/* {mode == "minhas" && (
@@ -315,6 +316,7 @@ export const SolicitationCard = ({
               id={`btn-acceptSolicitation-${userId}`}
               onClick={onAccept}
               className="
+              btn-acceptSolicitation
               mt-6
               mb-2
               py-1.5
@@ -336,6 +338,7 @@ export const SolicitationCard = ({
               id={`btn-rejectSolicitation-${userId}`}
               onClick={onReject}
               className="
+            btn-rejectSolicitation
             mt-6
             mb-2
             py-1.5

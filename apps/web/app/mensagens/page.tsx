@@ -269,6 +269,7 @@ export default function ChatPage() {
         <div className="flex flex-1 min-h-0 overflow-hidden relative">
           {/* Menu Lateral Esquerdo */}
           <aside
+            id="aside-messageHistory"
             className={`
               w-full md:w-72 lg:w-80 bg-slate-100/80 border-r border-slate-200 
               flex flex-col p-4 gap-4 absolute md:relative inset-0 
@@ -297,6 +298,7 @@ export default function ChatPage() {
               </svg>
               <input
                 type="text"
+                id="inp-messageSearch"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -305,7 +307,7 @@ export default function ChatPage() {
             </div>
 
             {/* Lista de Contatos */}
-            <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
+            <div id="div-contactList" className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
               {filteredChats.map((chat) => {
                 const temNaoLidas = Number(chat.mensagensNaoLidas) > 0;
 
@@ -314,11 +316,10 @@ export default function ChatPage() {
                     key={chat.id}
                     onClick={() => selectChat(chat.id)}
                     className={`
-                      w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left relative
-                      ${
-                        activeChatId === chat.id
-                          ? "bg-brand-primary shadow-sm border border-indigo-800 text-white"
-                          : "bg-slate-200/70 hover:bg-slate-300/80 text-slate-800 border border-transparent"
+                      btn-contact w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left relative
+                      ${activeChatId === chat.id
+                        ? "bg-brand-primary shadow-sm border border-indigo-800 text-white"
+                        : "bg-slate-200/70 hover:bg-slate-300/80 text-slate-800 border border-transparent"
                       }
                     `}
                   >
@@ -344,22 +345,20 @@ export default function ChatPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex justify-between items-center gap-1">
                         <p
-                          className={`font-semibold text-sm truncate ${
-                            activeChatId === chat.id
-                              ? "text-white"
-                              : "text-slate-800"
-                          }`}
+                          className={`font-semibold text-sm truncate ${activeChatId === chat.id
+                            ? "text-white"
+                            : "text-slate-800"
+                            }`}
                         >
                           {chat.nomePessoa}
                         </p>
 
                         {chat.horarioUltimaMensagem && (
                           <span
-                            className={`text-[10px] shrink-0 ${
-                              activeChatId === chat.id
-                                ? "text-indigo-200"
-                                : "text-slate-500"
-                            }`}
+                            className={`text-[10px] shrink-0 ${activeChatId === chat.id
+                              ? "text-indigo-200"
+                              : "text-slate-500"
+                              }`}
                           >
                             {formatMessageDate(chat.horarioUltimaMensagem)}
                           </span>
@@ -368,11 +367,10 @@ export default function ChatPage() {
 
                       <div className="flex justify-between items-center gap-2 mt-0.5">
                         <p
-                          className={`text-xs truncate ${
-                            activeChatId === chat.id
-                              ? "text-indigo-100"
-                              : "text-slate-500"
-                          }`}
+                          className={`text-xs truncate ${activeChatId === chat.id
+                            ? "text-indigo-100"
+                            : "text-slate-500"
+                            }`}
                         >
                           {chat.ultimaMensagem || "Sem mensagens"}
                         </p>
@@ -472,17 +470,15 @@ export default function ChatPage() {
                         messages.map((msg) => (
                           <div
                             key={msg.id}
-                            className={`flex flex-col ${
-                              msg.ehMinha ? "items-end" : "items-start"
-                            }`}
+                            className={`flex flex-col ${msg.ehMinha ? "items-end" : "items-start"
+                              }`}
                           >
                             <div
                               className={`
                                 max-w-[85%] md:max-w-md px-4 py-2.5 md:py-3 rounded-2xl text-sm shadow-2xs 
-                                ${
-                                  msg.ehMinha
-                                    ? "bg-brand-primary text-white rounded-br-xs"
-                                    : "bg-slate-200 text-slate-800 rounded-bl-xs"
+                                ${msg.ehMinha
+                                  ? "bg-brand-primary text-white rounded-br-xs"
+                                  : "bg-slate-200 text-slate-800 rounded-bl-xs"
                                 }
                               `}
                             >
@@ -490,11 +486,10 @@ export default function ChatPage() {
                                 {msg.conteudo}
                               </p>
                               <span
-                                className={`text-[10px] block text-right mt-1 ${
-                                  msg.ehMinha
-                                    ? "text-indigo-200"
-                                    : "text-slate-500"
-                                }`}
+                                className={`text-[10px] block text-right mt-1 ${msg.ehMinha
+                                  ? "text-indigo-200"
+                                  : "text-slate-500"
+                                  }`}
                               >
                                 {formatMessageDate(msg.horario)}
                               </span>
@@ -566,6 +561,7 @@ export default function ChatPage() {
                     className="flex items-center gap-2 md:gap-3 max-w-5xl mx-auto"
                   >
                     <input
+                      id="inp-message"
                       type="text"
                       placeholder="Digite sua mensagem..."
                       value={inputMessage}
@@ -574,6 +570,7 @@ export default function ChatPage() {
                       className="flex-1 border border-slate-300 rounded-xl px-3.5 md:px-4 py-2.5 md:py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all bg-slate-50/50"
                     />
                     <button
+                      id="btn-submitMessage"
                       type="submit"
                       disabled={!inputMessage.trim() || disableSendButton}
                       className="w-10 h-10 md:w-11 md:h-11 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl flex items-center justify-center transition-all shrink-0 shadow-md shadow-indigo-600/20 cursor-pointer disabled:cursor-not-allowed"
