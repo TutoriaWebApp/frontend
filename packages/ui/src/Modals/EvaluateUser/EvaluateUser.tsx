@@ -236,6 +236,7 @@ export function EvaluateUserModal({
               >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
+                    id={`btn-${star}Stars`}
                     key={star}
                     type="button"
                     onMouseEnter={() => setHover(star)}
@@ -291,6 +292,7 @@ export function EvaluateUserModal({
                 Comentário (Opcional)
               </label>
               <textarea
+                id="txt-reviewSession"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Conte como foi sua experiência, os pontos positivos ou o que pode melhorar."
@@ -315,11 +317,10 @@ export function EvaluateUserModal({
               {/* Contador de Caracteres Dinâmico */}
               <div className="flex justify-end px-3">
                 <span
-                  className={`text-xs font-medium transition-colors ${
-                    remainingChars <= 20
-                      ? "text-amber-600 font-semibold"
-                      : "text-slate-400"
-                  }`}
+                  className={`text-xs font-medium transition-colors ${remainingChars <= 20
+                    ? "text-amber-600 font-semibold"
+                    : "text-slate-400"
+                    }`}
                 >
                   {getRemainingCharsText()}
                 </span>
@@ -353,14 +354,14 @@ export function EvaluateUserModal({
 
             {/* Botão de Ação */}
             <button
+              id="btn-submitReview"
               type="submit"
               disabled={rating === 0}
               className={`
                 w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-xl
-                ${
-                  rating > 0
-                    ? "bg-brand-primary text-white shadow-brand-primary/20 hover:bg-indigo-700 active:scale-[0.98]"
-                    : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"
+                ${rating > 0
+                  ? "bg-brand-primary text-white shadow-brand-primary/20 hover:bg-indigo-700 active:scale-[0.98]"
+                  : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"
                 }
               `}
             >

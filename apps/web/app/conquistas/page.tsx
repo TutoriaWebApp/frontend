@@ -93,7 +93,7 @@ export default function AchievementsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div id="div-achievementList" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {achievements.map((conquista) => (
               <AchievementCard key={conquista.id} conquista={conquista} />
             ))}

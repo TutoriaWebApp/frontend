@@ -173,6 +173,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
   return (
     <div
       className={`
+        div-achievementCard
         relative 
         p-2.5 
         rounded-2xl 
@@ -223,6 +224,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
       >
         {/* Selo */}
         <div className="
+          div-badge
           absolute 
           top-3 
           right-3
@@ -246,6 +248,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Emblema */}
         <div
           className={`
+              div-medal
               w-28 
               h-28
               mb-3 
@@ -281,7 +284,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
                 ${isObtained ? `
                   grayscale-0 
                   opacity-100 
-                  drop-shadow-md` : 
+                  drop-shadow-md`:
                   `grayscale 
                   opacity-30`
                 }
@@ -293,13 +296,14 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Título */}
         <h3
           className={`
+            h3-title
             text-base 
             font-extrabold 
             tracking-tight 
             mb-1
             ${isObtained ? `
               text-stone-900 
-              drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]` : 
+              drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]` :
               `text-stone-500`
             }
           `}
@@ -309,6 +313,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
 
         {/* Pontuação */}
         <div className="
+          div-points
           flex 
           items-center 
           gap-1 
@@ -333,11 +338,11 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Descrição ou Pista */}
         <p
           className={`
+            p-description
             text-xs 
             leading-relaxed
-            ${
-              isSecretLocked
-                ? `italic 
+            ${isSecretLocked
+              ? `italic 
                 text-stone-700 
                 font-semibold 
                 bg-white/70 
@@ -347,9 +352,9 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
                 border-dashed
                 border-stone-400 
                 w-full`
-                : isObtained
-                ?   "text-stone-800 font-medium"
-                  : "text-stone-500 font-normal"
+              : isObtained
+                ? "text-stone-800 font-medium"
+                : "text-stone-500 font-normal"
             }
           `}
         >
