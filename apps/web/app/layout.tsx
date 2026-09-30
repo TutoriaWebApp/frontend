@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 import "./normalize.css";
 import "./grid.css";
@@ -48,20 +48,22 @@ export default function RootLayout({
       className={`${inter.variable} ${montserrat.variable} ${quicksand.variable}`}
     >
       <body className="font-inter">
-        <SessionExpiredContextProvider>
-          <NotificationContextProvider>
-            <EvaluateUserContextProvider>
-              <AchievementProvider>
-                <UserAchievementsProvider>
-                  <Header onLogout={LogOutAction} />
-                  {children}
-                  <CookieBanner />
-                  <Footer />
-                </UserAchievementsProvider>
-              </AchievementProvider>
-            </EvaluateUserContextProvider>
-          </NotificationContextProvider>
-        </SessionExpiredContextProvider>
+        <Suspense fallback={null}>
+          <SessionExpiredContextProvider>
+            <NotificationContextProvider>
+              <EvaluateUserContextProvider>
+                <AchievementProvider>
+                  <UserAchievementsProvider>
+                    <Header onLogout={LogOutAction} />
+                    {children}
+                    <CookieBanner />
+                    <Footer />
+                  </UserAchievementsProvider>
+                </AchievementProvider>
+              </EvaluateUserContextProvider>
+            </NotificationContextProvider>
+          </SessionExpiredContextProvider>
+        </Suspense>
       </body>
     </html>
   );

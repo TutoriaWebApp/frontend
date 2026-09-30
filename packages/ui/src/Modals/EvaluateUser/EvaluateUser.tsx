@@ -3,7 +3,10 @@
 import React, { useState, useContext } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { PostUserReviewAction, PostTutorReviewAction } from "@repo/services/reviewsAction";
+import {
+  PostUserReviewAction,
+  PostTutorReviewAction,
+} from "@repo/services/reviewsAction";
 import { GetSpecificUserData } from "@repo/services/userClient";
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
 import { formatarDataBR } from "@repo/lib/formatData";
@@ -64,8 +67,16 @@ export function EvaluateUserModal({
     if (reviewType === "APRENDIZ") {
       const resultsUserData = await GetSpecificUserData(userId);
 
-      const tutorId = resultsUserData.data.tutorId;
+      if (!resultsUserData?.data?.tutorId) {
+        showNotification(
+          "Não foi possível encontrar as informações do tutor.",
+          "error",
+        );
+        return;
+      }
 
+      const tutorId = resultsUserData.data.tutorId;
+      
       const res = await PostTutorReviewAction({
         nota: rating,
         comentario: comment,
@@ -76,7 +87,10 @@ export function EvaluateUserModal({
       if (res.success) {
         showNotification("Avaliação enviada com sucesso!", "success");
       } else {
-        showNotification("Ocorreu um erro ao tentar enviar a avaliação.", "error");
+        showNotification(
+          "Ocorreu um erro ao tentar enviar a avaliação.",
+          "error",
+        );
         return;
       }
     } else {
@@ -90,7 +104,10 @@ export function EvaluateUserModal({
       if (res.success) {
         showNotification("Avaliação enviada com sucesso!", "success");
       } else {
-        showNotification("Ocorreu um erro ao tentar enviar a avaliação.", "error");
+        showNotification(
+          "Ocorreu um erro ao tentar enviar a avaliação.",
+          "error",
+        );
         return;
       }
     }
@@ -214,8 +231,12 @@ export function EvaluateUserModal({
                 mt-4
             "
             >
-              Vocês tiveram uma sessão de tutoria em <b>{areaName} ({specialtyName})</b> no
-              dia <b>{formatarDataBR(sessionDate)}</b> às <b>{formatTime(startTime)}</b>.
+              Vocês tiveram uma sessão de tutoria em{" "}
+              <b>
+                {areaName} ({specialtyName})
+              </b>{" "}
+              no dia <b>{formatarDataBR(sessionDate)}</b> às{" "}
+              <b>{formatTime(startTime)}</b>.
             </p>
           </div>
 
@@ -317,10 +338,11 @@ export function EvaluateUserModal({
               {/* Contador de Caracteres Dinâmico */}
               <div className="flex justify-end px-3">
                 <span
-                  className={`text-xs font-medium transition-colors ${remainingChars <= 20
-                    ? "text-amber-600 font-semibold"
-                    : "text-slate-400"
-                    }`}
+                  className={`text-xs font-medium transition-colors ${
+                    remainingChars <= 20
+                      ? "text-amber-600 font-semibold"
+                      : "text-slate-400"
+                  }`}
                 >
                   {getRemainingCharsText()}
                 </span>
@@ -345,7 +367,8 @@ export function EvaluateUserModal({
             "
               >
                 Ao enviar, sua avaliação ficará visível no perfil desse{" "}
-                {reviewType === "APRENDIZ" ? "tutor" : "aprendiz"} e ajudará outros{" "}
+                {reviewType === "APRENDIZ" ? "tutor" : "aprendiz"} e ajudará
+                outros{" "}
                 {reviewType === "APRENDIZ"
                   ? "aprendizes a escolherem melhor seus tutores."
                   : "tutores a escolherem melhor seus aprendizes."}
@@ -359,9 +382,10 @@ export function EvaluateUserModal({
               disabled={rating === 0}
               className={`
                 w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-xl
-                ${rating > 0
-                  ? "bg-brand-primary text-white shadow-brand-primary/20 hover:bg-indigo-700 active:scale-[0.98]"
-                  : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"
+                ${
+                  rating > 0
+                    ? "bg-brand-primary text-white shadow-brand-primary/20 hover:bg-indigo-700 active:scale-[0.98]"
+                    : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"
                 }
               `}
             >
