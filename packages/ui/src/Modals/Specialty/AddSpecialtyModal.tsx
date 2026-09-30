@@ -71,7 +71,7 @@ export function AddSpecialtyModal({
       if (!res.success) {
         showNotification("Não foi possível obter as especialidades!", "error");
         return;
-      } 
+      }
       else {
         setAvailableSpecialties(res.data);
       }
@@ -183,6 +183,7 @@ export function AddSpecialtyModal({
                 Adicionar Área e Especialidade de Tutoria
               </h2>
               <button
+                id="btn-closeAddSpecialtyModal"
                 onClick={onClose}
                 className="
             text-slate-400 
@@ -191,7 +192,7 @@ export function AddSpecialtyModal({
                 p-1
                 "
               >
-                <CloseIcon onClick={handleClose} />
+                <CloseIcon id="btn-iconCloseAddSpecialty" onClick={handleClose} />
               </button>
             </div>
 
@@ -228,6 +229,7 @@ export function AddSpecialtyModal({
                   </label>
                   <div className="relative">
                     <select
+                      id="sel-area"
                       required
                       value={selectedArea?.id || ""}
                       onChange={handleAreaChange}
@@ -275,6 +277,7 @@ export function AddSpecialtyModal({
 
                   <div className="relative">
                     <select
+                      id="sel-specialty"
                       required
                       disabled={!selectedArea}
                       value={selectedSpecialty?.id || ""}
@@ -290,11 +293,10 @@ export function AddSpecialtyModal({
                     font-medium 
                     outline-none 
                     transition-all
-                    ${
-                      !selectedArea
-                        ? "border-slate-100 text-slate-300 cursor-not-allowed bg-slate-50"
-                        : "border-slate-200 text-slate-700 cursor-pointer"
-                    }
+                    ${!selectedArea
+                          ? "border-slate-100 text-slate-300 cursor-not-allowed bg-slate-50"
+                          : "border-slate-200 text-slate-700 cursor-pointer"
+                        }
                     `}
                     >
                       <option value="" disabled>
@@ -328,6 +330,7 @@ export function AddSpecialtyModal({
             "
               >
                 <button
+                  id="btn-cancelAddSpecialty"
                   type="button"
                   onClick={handleClose}
                   className="
@@ -346,6 +349,7 @@ export function AddSpecialtyModal({
                   Cancelar
                 </button>
                 <button
+                  id="btn-submitAddSpecialty"
                   type="submit"
                   disabled={!selectedSpecialty}
                   className="

@@ -28,6 +28,7 @@ export const AddSpecialty = ({
       <button
         type="button"
         onClick={setModalOpen}
+        id="btn-addSpecialty"
         className="
       w-auto 
       md:w-auto 

@@ -55,7 +55,11 @@ export async function GetSpecificAchievement(achievementId: number): Promise<Get
 }
 
 export async function GetUserAchievements(userId: number): Promise<GetUserAchievementsResult> {
-  const URL = `${getBackendUrl()}/conquistas/usuario/${userId}/`;
+  if (!userId || isNaN(Number(userId))) {
+    return { success: false, status: 400 };
+  }
+
+  const URL = `${getBackendUrl()}/conquistas/usuario/${userId}`;
 
   try {
     const res = await authRequestWrapper(
@@ -71,7 +75,7 @@ export async function GetUserAchievements(userId: number): Promise<GetUserAchiev
       return {
         success: true,
         status: res.status,
-        data: res.data.results,
+        data: res.data,
       };
     }
     return { success: false, status: res.status };
@@ -83,8 +87,8 @@ export async function GetUserAchievements(userId: number): Promise<GetUserAchiev
 export async function UnlockAchievement(
   userId: number,
   achievementId: number,
-  // cookieString: string,
-  // csrfTokenString: string | undefined,
+  cookieString: string,
+  csrfTokenString: string | undefined,
 ): Promise<AchivementUnlockedResult> {
   const URL = `${process.env.backendBaseURL}/consegue/`;
 
@@ -96,8 +100,8 @@ export async function UnlockAchievement(
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          // Cookie: cookieString,
-          // "X-CSRFToken": csrfTokenString,
+          Cookie: cookieString,
+          "X-CSRFToken": csrfTokenString,
         },
         body: JSON.stringify({usuarioId: userId, conquistaId: achievementId}),
       },
@@ -108,6 +112,7 @@ export async function UnlockAchievement(
       return {
         success: res.success,
         status: res.status,
+        data: res.data
       };
     } else {
       return {

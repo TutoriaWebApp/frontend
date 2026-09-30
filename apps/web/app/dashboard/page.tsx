@@ -1,90 +1,134 @@
 "use client";
 
-import React, { useEffect, useState, useContext } from "react";
-
+import React, { useEffect, useState, useContext, useRef } from "react";
 import Link from "next/link";
-
 import { PersonSearch, Star, EmojiEvents } from "@mui/icons-material";
-
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 import { DashboardCard } from "@repo/ui/dashboardCard";
-
 import { useEvaluation } from "@repo/ui/contexts/EvaluateUserContext/EvaluateUserContext";
 import { GetPendingReviews } from "@repo/services/reviews";
 import { DashboardStatisticsData } from "@repo/services/userTypes";
 import { GetStatistics } from "@repo/services/userClient";
-
-import { UnlockAchievementAction } from "@repo/services/achievementAction";
-import {
-  GetSpecificAchievement,
-  UnlockAchievement,
-} from "@repo/services/achievements";
-
-import { useAchievement } from "@repo/ui/achievementUnlockContext";
-
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
 import { ClipLoader } from "react-spinners";
-
 import { NotificationContext } from "@repo/ui/contexts/NotificationContext/NotificationContext";
-
 import { levelThresholds, userLevel } from "@repo/lib/userLevel";
+import { GetUserDataClient } from "@repo/services/userClient";
+import { GetAllUserSessions } from "@repo/services/sessions";
+import { GetHolidays } from "@repo/services/holidays";
+import { GetAllUserReviews } from "@repo/services/reviews";
 
 export default function Dashboard(): React.ReactNode {
+  const helloWorldAchievementId = 1;
+  const becameTutorAchievementId = 23;
+  const level5AchievementId = 7;
+  const level10AchievementId = 14;
+  const level25AchievementId = 20;
+  const level50AchievementId = 22;
+  const stonePathAchievement1Id = 6;
+  const stonePathAchievement2Id = 12;
+  const stonePathAchievement3Id = 13;
+  const stonePathAchievement4Id = 18;
+  const stonePathAchievement5Id = 19;
+  const stonePathAchievement6Id = 21;
+  const firstSessionCompletedAchievementId = 3;
+  const weekendSessionAchievementId = 24;
+  const nightSessionAchievementId = 25;
+  const birthdaySessionAchievementId = 29;
+  const fiveDayStreakAchievementId = 16;
+  const loyaltyAchievementId = 10;
+  const jackOfAllTradesAchievementId = 11;
+  const holidaySessionAchievementId = 26;
+  const veteranAchievementId = 17;
+  const firstReviewAchievementId = 5;
+  const fiveStarTutorReviewAchievementId = 8;
+  const fiveStarStudentReviewAchievementId = 9;
+  const threeHundredCommentReviewAchievementId = 15;
+  const twentyFiveStarReviewsAchievementId = 27;
+  const fiftyFiveStarReviewsAchievementId = 30;
+  const goodRatedTutorAchievementId = 28;
+  const legacyAchievementId = 31;
+
   const { triggerEvaluation } = useEvaluation();
   const [statisticsData, setStatisticsData] =
     useState<DashboardStatisticsData>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [pointsToNextLevel, setPointsToNextLevel] = useState<number>();
-
   const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
   const { showNotification } = useContext(NotificationContext);
-  const { showAchievement } = useAchievement();
+
+  const { unlockAchievement } = useUnlockAchievement();
+
+  const {
+    userId,
+    inicializado,
+    pontos,
+    totalConquistasDesbloqueadas,
+    setUserId,
+    hasAchievement,
+    carregarDadosConquistas,
+  } = useUserAchievements();
+
+  const isFetchingReviewsRef = useRef(false);
 
   useEffect(() => {
     async function fetchSessions() {
+      if (isFetchingReviewsRef.current) return;
+      isFetchingReviewsRef.current = true;
+
       const res = await GetPendingReviews();
 
-      if (res.success) {
+      if (res.success && res.data) {
         const data = res.data;
 
-        for (let i = 0; i < data!.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           await triggerEvaluation(
-            data![i]!.sessaoId,
-            data![i]!.dataSessao,
-            data![i]!.horarioInicio,
-            data![i]!.nomeArea,
-            data![i]!.nomeEspecialidade,
-            data![i]!.nome,
-            data![i]!.fotoURL,
-            data![i]!.tipoPendente,
-            data![i]!.usuarioAvaliadoId,
+            data[i]!.sessaoId,
+            data[i]!.dataSessao,
+            data[i]!.horarioInicio,
+            data[i]!.nomeArea,
+            data[i]!.nomeEspecialidade,
+            data[i]!.nome,
+            data[i]!.fotoURL,
+            data[i]!.tipoPendente,
+            data[i]!.usuarioAvaliadoId,
           );
         }
       }
     }
 
     fetchSessions();
+  }, [triggerEvaluation]);
+
+  useEffect(() => {
+    sessionStorage.removeItem("is_logging_out");
   }, []);
 
   useEffect(() => {
     async function fetchStatistics() {
       setLoading(true);
+
       const res = await GetStatistics();
+
       if (res.success && res.data) {
         setStatisticsData(res.data);
+
+        const currentUserId = res.data.usuarioId;
+        if (currentUserId) {
+          setUserId(currentUserId);
+          await carregarDadosConquistas(currentUserId, true);
+        }
 
         const currentPoints = res.data.pontos ?? 0;
         const currentLevel = userLevel(currentPoints);
 
-        // Se o usuário já atingiu o nível máximo (nível 50)
         if (currentLevel >= levelThresholds.length) {
           setProgressPercentage(100);
         } else {
-          // XP base do nível atual (se for nível 1, a base é 0)
           const currentLevelBaseXp =
             currentLevel > 1 ? (levelThresholds[currentLevel - 2] ?? 0) : 0;
-          // XP necessária para o próximo nível
           const nextLevelTargetXp = levelThresholds[currentLevel - 1] ?? 100;
 
           const range = nextLevelTargetXp - currentLevelBaseXp;
@@ -101,16 +145,22 @@ export default function Dashboard(): React.ReactNode {
           setProgressPercentage(percentage);
         }
       } else {
-        if (res.status === 500) {
-          showNotification(
-            "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
-            "error",
-          );
-        } else {
-          showNotification(
-            "Ocorreu um erro, não foi possível obter suas estatísticas",
-            "error",
-          );
+        const isLoggingOut =
+          typeof window !== "undefined" &&
+          sessionStorage.getItem("is_logging_out") === "true";
+
+        if (!isLoggingOut && res.status !== 401) {
+          if (res.status === 500) {
+            showNotification(
+              "Ocorreu um erro no servidor, não foi possível obter suas estatísticas",
+              "error",
+            );
+          } else {
+            showNotification(
+              "Ocorreu um erro, não foi possível obter suas estatísticas",
+              "error",
+            );
+          }
         }
       }
 
@@ -118,49 +168,461 @@ export default function Dashboard(): React.ReactNode {
     }
 
     fetchStatistics();
-  }, []);
+  }, [carregarDadosConquistas, setUserId, showNotification]);
 
   useEffect(() => {
-    const fetchAchievement = async () => {
-      const resAchie = await UnlockAchievement(10, 30);
+    const checkAchievements = async () => {
+      if (!userId || !inicializado) return;
 
-      if (resAchie.success) {
-        const res = await GetSpecificAchievement(30);
+      // Conquista 1: Olá Mundo
+      unlockAchievement(helloWorldAchievementId);
 
-        // if (res.success) {
-        //   showAchievement({
-        //     titulo: res.data!.titulo,
-        //     descricao: res.data!.descricao,
-        //     pontos: res.data!.pontos,
-        //     urlImagem: `${process.env.NEXT_PUBLIC_backendAchivementsBaseImageURL}${res.data!.urlImagem}`,
-        //   });
-        // }
+      // Conquista 23: Agora é sua vez!
+      if (!hasAchievement(becameTutorAchievementId)) {
+        const res = await GetUserDataClient();
+        if (res.success && res.data?.perfilTutor != null) {
+          unlockAchievement(becameTutorAchievementId);
+        }
+      }
+
+      // Conquistas baseadas em sessões concluídas:
+      // Conquista 3: Primeiro Passo (1 sessão concluída)
+      // Conquista 6:  O Caminho das Pedras I (5 sessões concluídas)
+      // Conquista 12: O Caminho das Pedras II (15 sessões concluídas)
+      // Conquista 13: O Caminho das Pedras III (30 sessões concluídas)
+      // Conquista 18: O Caminho das Pedras IV (60 sessões concluídas)
+      // Conquista 19: O Caminho das Pedras V (100 sessões concluídas)
+      // Conquista 21: O Caminho das Pedras VI (300 sessões concluídas)
+      // Conquista 24: Fim de Semana Ativo (Sábado ou Domingo)
+      // Conquista 25 (Secreta): Coruja (sessão concluída entre 22h e 05h da manhã)
+      // Conquista 29 (Secreta): Nascimento do Conhecimento (tutoria no aniversário)
+      // Conquista 16: Incansável (sessões por 5 dias seguidos)
+      // Conquista 10: Fidelidade (5 sessões com o mesmo tutor)
+      // Conquista 11: Pau pra Toda Obra (deu tutoria em 3 áreas diferentes)
+      // Conquista 26: Guerreiro do Feriado (tutoria em feriado nacional)
+      if (
+        !hasAchievement(firstSessionCompletedAchievementId) ||
+        !hasAchievement(stonePathAchievement1Id) ||
+        !hasAchievement(stonePathAchievement2Id) ||
+        !hasAchievement(stonePathAchievement3Id) ||
+        !hasAchievement(stonePathAchievement4Id) ||
+        !hasAchievement(stonePathAchievement5Id) ||
+        !hasAchievement(stonePathAchievement6Id) ||
+        !hasAchievement(weekendSessionAchievementId) ||
+        !hasAchievement(nightSessionAchievementId) ||
+        !hasAchievement(birthdaySessionAchievementId) ||
+        !hasAchievement(fiveDayStreakAchievementId) ||
+        !hasAchievement(loyaltyAchievementId) ||
+        !hasAchievement(jackOfAllTradesAchievementId) ||
+        !hasAchievement(holidaySessionAchievementId) ||
+        !hasAchievement(veteranAchievementId)
+      ) {
+        const resSessions = await GetAllUserSessions();
+
+        if (
+          resSessions &&
+          resSessions.success &&
+          Array.isArray(resSessions.data)
+        ) {
+          const now = new Date();
+
+          const completedSessions = resSessions.data.filter((session: any) => {
+            const sessionEndDateTime = new Date(
+              `${session.dataSessao}T${session.horarioFim}`,
+            );
+            return (
+              !isNaN(sessionEndDateTime.getTime()) && sessionEndDateTime <= now
+            );
+          });
+
+          // Conquista 3: completou pelo menos 1 sessão
+          if (
+            completedSessions.length >= 1 &&
+            !hasAchievement(firstSessionCompletedAchievementId)
+          ) {
+            unlockAchievement(firstSessionCompletedAchievementId);
+          }
+
+          // Conquista 6: completou 5 ou mais sessões
+          if (
+            completedSessions.length >= 5 &&
+            !hasAchievement(stonePathAchievement1Id)
+          ) {
+            unlockAchievement(stonePathAchievement1Id);
+          }
+          // Conquista 12: completou 15 ou mais sessões
+          if (
+            completedSessions.length >= 15 &&
+            !hasAchievement(stonePathAchievement2Id)
+          ) {
+            unlockAchievement(stonePathAchievement2Id);
+          }
+          // Conquista 13: completou 30 ou mais sessões
+          if (
+            completedSessions.length >= 30 &&
+            !hasAchievement(stonePathAchievement3Id)
+          ) {
+            unlockAchievement(stonePathAchievement3Id);
+          }
+          // Conquista 18: completou 60 ou mais sessões
+          if (
+            completedSessions.length >= 60 &&
+            !hasAchievement(stonePathAchievement4Id)
+          ) {
+            unlockAchievement(stonePathAchievement4Id);
+          }
+          // Conquista 19: completou 100 ou mais sessões
+          if (
+            completedSessions.length >= 100 &&
+            !hasAchievement(stonePathAchievement5Id)
+          ) {
+            unlockAchievement(stonePathAchievement5Id);
+          }
+          // Conquista 21: completou 300 ou mais sessões
+          if (
+            completedSessions.length >= 300 &&
+            !hasAchievement(stonePathAchievement6Id)
+          ) {
+            unlockAchievement(stonePathAchievement6Id);
+          }
+          // Conquista 24: Fim de Semana Ativo (Sessão realizada no Sábado ou Domingo)
+          if (!hasAchievement(weekendSessionAchievementId)) {
+            const hasWeekendSession = completedSessions.some((session: any) => {
+              const sessionDate = new Date(
+                `${session.dataSessao}T${session.horarioInicio}`,
+              );
+              const dayOfWeek = sessionDate.getDay();
+              return dayOfWeek === 0 || dayOfWeek === 6; // 0 = Domingo, 6 = Sábado
+            });
+
+            if (hasWeekendSession) {
+              unlockAchievement(weekendSessionAchievementId);
+            }
+          }
+          // Conquista 25: fez uma sessão entre 22h e 05h da manhã
+          if (!hasAchievement(nightSessionAchievementId)) {
+            for (let session of completedSessions) {
+              if (
+                session.horarioInicio >= "22:00:00" ||
+                session.horarioInicio <= "05:00:00" ||
+                session.horarioFim >= "22:00:00" ||
+                session.horarioFim <= "05:00:00"
+              ) {
+                unlockAchievement(nightSessionAchievementId);
+                break;
+              }
+            }
+          }
+          // Conquista 29: fez uma sessão na data de nascimento
+          if (!hasAchievement(birthdaySessionAchievementId)) {
+            const res = await GetUserDataClient();
+
+            if (res.success && res.data?.aniversario) {
+              // Pegando "MM-DD" da data de nascimento
+              const userBirthMonthDay = res.data.aniversario.slice(5);
+
+              for (let session of completedSessions) {
+                // Extrai "MM-DD" da data da sessão
+                const sessionMonthDay = session.dataSessao?.slice(5);
+
+                if (sessionMonthDay && sessionMonthDay === userBirthMonthDay) {
+                  unlockAchievement(birthdaySessionAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          // Conquista 16: Incansável (participou de tutorias por 5 dias seguidos)
+          if (!hasAchievement(fiveDayStreakAchievementId)) {
+            // Extraindo datas únicas e remove duplicatas do mesmo dia
+            const uniqueDates = Array.from(
+              new Set(
+                completedSessions.map((s: any) => s.dataSessao).filter(Boolean),
+              ),
+            ).sort() as string[];
+
+            let currentStreak = 1;
+            let hasFiveDayStreak = false;
+
+            //Diferença de 1 dia em MS
+            const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+            for (let i = 1; i < uniqueDates.length; i++) {
+              // Usando componentes de data para evitar distorções de fuso horário
+              const [prevY, prevM, prevD] =
+                uniqueDates[i - 1]!.split("-").map(Number);
+              const [currY, currM, currD] =
+                uniqueDates[i]!.split("-").map(Number);
+
+              const prevTime = Date.UTC(prevY!, prevM! - 1, prevD);
+              const currTime = Date.UTC(currY!, currM! - 1, currD);
+
+              // Verificando se a diferença é de exatamente 1 dia consecutivo
+              if (currTime - prevTime === MS_PER_DAY) {
+                currentStreak++;
+                if (currentStreak >= 5) {
+                  hasFiveDayStreak = true;
+                  break;
+                }
+              } else {
+                //Recomeçando a contagem se houver uma quebra na sequência
+                currentStreak = 1;
+              }
+            }
+
+            if (hasFiveDayStreak) {
+              unlockAchievement(fiveDayStreakAchievementId);
+            }
+          }
+
+          // Conquista 10: Fidelidade (realizou 5 ou mais tutorias com o mesmo tutor)
+          if (!hasAchievement(loyaltyAchievementId)) {
+            const tutorCountMap: Record<number, number> = {};
+
+            for (const session of completedSessions) {
+              const tid = session.tutorId;
+              if (tid != null) {
+                tutorCountMap[tid] = (tutorCountMap[tid] || 0) + 1;
+
+                if (tutorCountMap[tid]! >= 5) {
+                  unlockAchievement(loyaltyAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          //Conquista 11: Pau pra Toda Obra (deu tutoria em 3 áreas diferentes)
+          if (!hasAchievement(jackOfAllTradesAchievementId)) {
+            // Sessões concluídas onde o usuário atuou como tutor
+            const tutoredSessions = completedSessions.filter(
+              (session: any) => session.usuarioId !== userId,
+            );
+
+            // IDs das áreas dessas sessões sem repetição
+            const distinctAreas = new Set(
+              tutoredSessions
+                .map((session: any) => session.areaId)
+                .filter((areaId: any) => areaId != null),
+            );
+
+            // Se ensinou em 3 ou mais áreas distintas, destrava a conquista
+            if (distinctAreas.size >= 3) {
+              unlockAchievement(jackOfAllTradesAchievementId);
+            }
+          }
+          //Conquista 26: Guerreiro do Feriado (tutoria em feriado nacional)
+          if (!hasAchievement(holidaySessionAchievementId)) {
+            const sessionYears = Array.from(
+              new Set(
+                completedSessions
+                  .map((s: any) => Number(s.dataSessao?.split("-")[0]))
+                  .filter((year: number) => !isNaN(year) && year > 0),
+              ),
+            );
+
+            const holidayResponses = await Promise.all(
+              sessionYears.map((year: number) => GetHolidays(year)),
+            );
+
+            const holidayDates = new Set<string>();
+            holidayResponses.forEach((res) => {
+              if (res.success && Array.isArray(res.data)) {
+                res.data.forEach((h) => {
+                  if (h.date) holidayDates.add(h.date);
+                });
+              }
+            });
+
+            const hasHolidaySession = completedSessions.some((s: any) =>
+              holidayDates.has(s.dataSessao),
+            );
+
+            if (hasHolidaySession) {
+              unlockAchievement(holidaySessionAchievementId);
+            }
+          }
+          //Conquista 17: Veterano (50 tutorias em uma única área)
+          if (!hasAchievement(veteranAchievementId)) {
+            const tutoredSessions = completedSessions.filter(
+              (session: any) => session.usuarioId !== userId,
+            );
+
+            const areaCountMap: Record<number, number> = {};
+
+            for (const session of tutoredSessions) {
+              const aid = session.areaId;
+              if (aid != null) {
+                areaCountMap[aid] = (areaCountMap[aid] || 0) + 1;
+
+                if (areaCountMap[aid] >= 50) {
+                  unlockAchievement(veteranAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+
+          // Conquistas de Nível
+          if (userLevel(pontos) >= 5) unlockAchievement(level5AchievementId);
+          if (userLevel(pontos) >= 10) unlockAchievement(level10AchievementId);
+          if (userLevel(pontos) >= 25) unlockAchievement(level25AchievementId);
+          if (userLevel(pontos) >= 50) unlockAchievement(level50AchievementId);
+        }
+      }
+      // Conquistas baseadas em avaliações e nota do perfil
+      // Conquista 5: Primeira Impressão (1 avaliação como tutor ou aprendiz)
+      // Conquista 8: Volte Sempre (ter uma avaliação 5 estrelas como tutor)
+      // Conquista 9: O Prazer Foi Meu (ter uma avaliação 5 estrelas como aprendiz)
+      // Conquista 15: Feedback de Peso (ter três ou mais avaliações com mais de 100 caracteres)
+      // Conquista 27: Estrela Ascendente (ter 20 ou mais avaliações 5 estrelas)
+      // Conquista 30: Mestre das Estrelas (50 avaliações 5 estrelas)
+      // Conquista 28: Mestre Bem-Avaliado (ter uma média maior ou igual a 4.7 como tutor após 20 avaliações)
+      // Conquista 31: Deixando uma Marca (ter uma média maior ou igual a 4.7 como tutor ou aprendiz após 80 avaliações)
+      if (
+        !hasAchievement(firstReviewAchievementId) ||
+        !hasAchievement(fiveStarTutorReviewAchievementId) ||
+        !hasAchievement(fiveStarStudentReviewAchievementId) ||
+        !hasAchievement(threeHundredCommentReviewAchievementId) ||
+        !hasAchievement(twentyFiveStarReviewsAchievementId) ||
+        !hasAchievement(fiftyFiveStarReviewsAchievementId) ||
+        !hasAchievement(goodRatedTutorAchievementId) ||
+        !hasAchievement(legacyAchievementId)
+      ) {
+        const res = await GetAllUserReviews();
+
+        if (res.success) {
+          //Conquista 5: Primeira Impressão (ter uma avaliação)
+          if (
+            res.data!.comoAprendiz.length >= 1 ||
+            res.data!.comoTutor.length >= 1
+          ) {
+            unlockAchievement(firstReviewAchievementId);
+          }
+          //Conquista 8: Volte Sempre (ter uma avaliação 5 estrelas como tutor)
+          if (!hasAchievement(fiveStarTutorReviewAchievementId)) {
+            if (res.data!.comoTutor.length >= 1) {
+              for (const review of res.data!.comoTutor) {
+                if (review.nota === 5.0) {
+                  unlockAchievement(fiveStarTutorReviewAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          // Conquista 9: O Prazer Foi Meu (ter uma avaliação 5 estrelas como aprendiz)
+          if (!hasAchievement(fiveStarStudentReviewAchievementId)) {
+            if (res.data!.comoAprendiz.length >= 1) {
+              for (const review of res.data!.comoAprendiz) {
+                if (review.nota === 5.0) {
+                  unlockAchievement(fiveStarStudentReviewAchievementId);
+                  break;
+                }
+              }
+            }
+          }
+          // Conquista 15: Feedback de Peso (ter três ou mais avaliações com mais de 100 caracteres)
+          if (!hasAchievement(threeHundredCommentReviewAchievementId)) {
+            if (
+              res.data!.comoAprendiz.length >= 1 ||
+              res.data!.comoTutor.length >= 1
+            ) {
+              const allReviews = [
+                ...res.data!.comoAprendiz,
+                ...res.data!.comoTutor,
+              ];
+
+              const filteredReviews = allReviews.filter((review) => {
+                if (review.comentario && review.comentario.length > 100) {
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+
+              if (filteredReviews.length >= 3) {
+                unlockAchievement(threeHundredCommentReviewAchievementId);
+              }
+            }
+          }
+          // Conquista 27: Estrela Ascendente (20 avaliações 5 estrelas)
+          // Conquista 30: Mestre das Estrelas (50 avaliações 5 estrelas)
+          if (
+            !hasAchievement(twentyFiveStarReviewsAchievementId) ||
+            !hasAchievement(fiftyFiveStarReviewsAchievementId)
+          ) {
+            const allReviews = [
+              ...(res.data?.comoAprendiz || []),
+              ...(res.data?.comoTutor || []),
+            ];
+            const fiveStarReviews = allReviews.filter(
+              (review) => review.nota === 5,
+            );
+
+            if (
+              !hasAchievement(twentyFiveStarReviewsAchievementId) &&
+              fiveStarReviews.length >= 20
+            ) {
+              unlockAchievement(twentyFiveStarReviewsAchievementId);
+            }
+
+            if (
+              !hasAchievement(fiftyFiveStarReviewsAchievementId) &&
+              fiveStarReviews.length >= 50
+            ) {
+              unlockAchievement(fiftyFiveStarReviewsAchievementId);
+            }
+          }
+          // Conquista 28: Mestre Bem-Avaliado (ter uma média maior ou igual a 4.7 como tutor após 20 avaliações)
+          if (
+            !hasAchievement(goodRatedTutorAchievementId) &&
+            res.data!.comoTutor.length >= 20
+          ) {
+            let gradeSum = 0;
+
+            for (const review of res.data!.comoTutor) {
+              gradeSum += review.nota;
+            }
+
+            if (gradeSum / res.data!.comoTutor.length >= 4.7) {
+              unlockAchievement(goodRatedTutorAchievementId);
+            }
+          }
+          // Conquista 31: Deixando uma Marca (ter uma média maior ou igual a 4.7 como tutor ou aprendiz após 80 avaliações)
+          if (
+            (!hasAchievement(legacyAchievementId) &&
+              res.data!.comoTutor.length >= 80) ||
+            res.data!.comoAprendiz.length >= 80
+          ) {
+            let gradeSumTutor = 0;
+            let gradeSumStudent = 0;
+
+            if (res.data!.comoTutor.length >= 80) {
+              for (const review of res.data!.comoTutor) {
+                gradeSumTutor += review.nota;
+              }
+              if (gradeSumTutor / res.data!.comoTutor.length >= 4.7) {
+                unlockAchievement(legacyAchievementId);
+              }
+            }
+            if (res.data!.comoAprendiz.length >= 80) {
+              for (const review of res.data!.comoAprendiz) {
+                gradeSumStudent += review.nota;
+              }
+              if (gradeSumStudent / res.data!.comoAprendiz.length >= 4.7 && !hasAchievement(legacyAchievementId)) {
+                unlockAchievement(legacyAchievementId);
+              }
+            }
+          }
+        }
       }
     };
-    fetchAchievement();
-  }, []);
+
+    checkAchievements();
+  }, [userId, inicializado]);
 
   return (
-    <div
-      className="
-        h-fit 
-        bg-slate-50 
-        p-6 
-        md:p-12
-      "
-    >
-      <div
-        className="
-        max-w-5xl 
-        mx-auto 
-        bg-white 
-        rounded-[3rem] 
-        shadow-2xl 
-        shadow-slate-200/50 
-        border 
-        border-slate-100
-      "
-      >
+    <div className="h-fit bg-slate-50 p-6 md:p-12">
+      <div className="max-w-5xl mx-auto bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
         <section className="pt-12 pb-8 px-8 text-center">
           <h1 className="text-3xl font-black text-slate-800 mb-4">
             Bem-vindo ao{" "}
@@ -175,16 +637,7 @@ export default function Dashboard(): React.ReactNode {
           </p>
         </section>
 
-        <section
-          className="
-          grid 
-          grid-cols-1 
-          md:grid-cols-3 
-          gap-6 
-          px-10 
-          pb-12
-        "
-        >
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 px-10 pb-12">
           <DashboardCard
             title="Encontre um Tutor"
             description="Descubra tutores com base nas suas necessidades de aprendizado."
@@ -221,6 +674,7 @@ export default function Dashboard(): React.ReactNode {
             size={120}
           />
         )}
+
         {!loading && (
           <section className="bg-slate-50/80 mx-10 mb-10 rounded-[2rem] p-8 border border-slate-100">
             <h2 className="text-xl font-black text-slate-700 text-center mb-8">
@@ -238,7 +692,8 @@ export default function Dashboard(): React.ReactNode {
               </div>
               <div>
                 <p className="text-3xl font-black text-purple-500">
-                  {statisticsData?.conquistasDesbloqueadas ?? 0}
+                  {totalConquistasDesbloqueadas ||
+                    (statisticsData?.conquistasDesbloqueadas ?? 0)}
                 </p>
                 <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
                   Conquistas Desbloqueadas
@@ -246,7 +701,7 @@ export default function Dashboard(): React.ReactNode {
               </div>
               <div>
                 <p className="text-3xl font-black text-purple-500">
-                  {statisticsData?.pontos ?? 0}
+                  {pontos || (statisticsData?.pontos ?? 0)}
                 </p>
                 <p className="sm:text-xs 2xl:text-sm font-bold text-slate-400 uppercase mt-1">
                   Pontos
@@ -269,14 +724,10 @@ export default function Dashboard(): React.ReactNode {
             </div>
           </section>
         )}
-        <div
-          className="
-          flex 
-          justify-center 
-          pb-12
-        "
-        >
+
+        <div className="flex justify-center pb-12">
           <Link
+            id="lnk-viewSolicitations"
             href="/solicitacoes"
             className="
               bg-indigo-600 

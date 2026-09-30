@@ -34,14 +34,14 @@ export function AcceptSolicitationModal({
         setSolicitationsList((prevList) =>
           prevList.filter((item) => item.id !== solicitation.id)
         );
-        
+
         showNotification("Solicitação aceita com sucesso!", "success");
         onClose();
       } else {
         showNotification("Não foi possível aceitar a solicitação.", "error");
       }
     } catch (error) {
-        showNotification("Ocorreu um erro no sistema.", "error");
+      showNotification("Ocorreu um erro no sistema.", "error");
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ export function AcceptSolicitationModal({
         transition-all 
         border 
         border-slate-100
-      ">  
+      ">
         {/* Header */}
         <div className="
           p-6 
@@ -86,9 +86,10 @@ export function AcceptSolicitationModal({
             font-black 
             text-slate-800
           ">
-            Recusar Solicitação
+            Aceitar Solicitação
           </h3>
           <button
+            id="btn-closeAcceptSolicitationModal"
             onClick={onClose}
             className="
               p-1 
@@ -126,6 +127,7 @@ export function AcceptSolicitationModal({
           border-slate-100
         ">
           <button
+            id="btn-confirmAcceptSolicitation"
             disabled={loading}
             onClick={handleConfirmAccept}
             className="
@@ -156,6 +158,7 @@ export function AcceptSolicitationModal({
             )}
           </button>
           <button
+            id="btn-cancelAcceptSolicitation"
             disabled={loading}
             onClick={onClose}
             className="
@@ -175,7 +178,7 @@ export function AcceptSolicitationModal({
           >
             Cancelar
           </button>
-          
+
         </div>
       </div>
     </div>

@@ -130,6 +130,7 @@ export default function ForgotPassword(): React.ReactNode {
             >
               <span className="font-semibold mb-2">E-mail</span>
               <input
+                id="inp-email"
                 type="email"
                 {...register("email")}
                 className="
@@ -153,6 +154,7 @@ export default function ForgotPassword(): React.ReactNode {
               </span>
             )}
             <button
+              id="btn-submitReset"
               className="
               bg-indigo-600
               hover:bg-indigo-800
@@ -173,6 +175,7 @@ export default function ForgotPassword(): React.ReactNode {
             </button>{" "}
           </form>
           <Link
+            id="lnk-backLogin"
             href={"/"}
             className="
               p-4 

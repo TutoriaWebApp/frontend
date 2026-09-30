@@ -88,6 +88,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             Adicionar Área de Tutoria
           </h2>
           <button
+            id="btn-closeAddTutorArea"
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 transition-colors p-1"
           >
@@ -112,7 +113,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             <div className="space-y-3">
               <div className="relative group">
                 <select
-                  id="area"
+                  id="sel-area"
                   name="area"
                   required
                   defaultValue=""
@@ -171,6 +172,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             border-slate-100
         ">
             <button
+              id="btn-cancelAddTutorArea"
               type="button"
               onClick={onClose}
               className="
@@ -189,6 +191,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
               Cancelar
             </button>
             <button
+              id="btn-submitAddTutorArea"
               type="submit"
               className="
                 order-1 

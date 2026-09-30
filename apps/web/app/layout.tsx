@@ -13,6 +13,7 @@ import { NotificationContextProvider } from "@repo/ui/contexts/NotificationConte
 import { SessionExpiredContextProvider } from "@repo/ui/contexts/SessionExpiredContext/SessionExpiredContext";
 import { EvaluateUserContextProvider } from "@repo/ui/contexts/EvaluateUserContext/EvaluateUserContext";
 import { AchievementProvider } from "@repo/ui/achievementUnlockContext";
+import { UserAchievementsProvider } from "@repo/ui/userAchievementsContext";
 
 import { LogOutAction } from "@repo/services/authAction";
 
@@ -51,10 +52,12 @@ export default function RootLayout({
           <NotificationContextProvider>
             <EvaluateUserContextProvider>
               <AchievementProvider>
-                <Header onLogout={LogOutAction} />
-                {children}
-                <CookieBanner />
-                <Footer />
+                <UserAchievementsProvider>
+                  <Header onLogout={LogOutAction} />
+                  {children}
+                  <CookieBanner />
+                  <Footer />
+                </UserAchievementsProvider>
               </AchievementProvider>
             </EvaluateUserContextProvider>
           </NotificationContextProvider>

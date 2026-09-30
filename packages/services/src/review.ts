@@ -1,22 +1,28 @@
-import { authRequestWrapper } from '@repo/lib/authRequestWrapper';
-import { getBackendUrl } from '@repo/lib/getBackendUrl';
-import { GetReviewsResult, SendTutorReviewData, 
-          SendUserReviewData, SendReviewResult, GetPendingReviewsResult } from './types/review';
+import { authRequestWrapper } from "@repo/lib/authRequestWrapper";
+import { getBackendUrl } from "@repo/lib/getBackendUrl";
+import {
+  GetReviewsResult,
+  SendTutorReviewData,
+  SendUserReviewData,
+  SendReviewResult,
+  GetPendingReviewsResult,
+  GetAllUserReviewsResult,
+} from "./types/review";
 
 export async function GetReviewsStudent(
   pageNumber: number = 1,
   gradeOrder: string,
   userId: number,
-  page_size: number = 6
+  page_size: number = 6,
 ): Promise<GetReviewsResult> {
   let URL = `${getBackendUrl()}/avaliacoes/aprendiz/?page=${pageNumber}`;
 
-  if(gradeOrder != ""){
-    URL += `&ordering=${gradeOrder}`
+  if (gradeOrder != "") {
+    URL += `&ordering=${gradeOrder}`;
   }
 
-  URL += `&usuario=${userId}`
-  
+  URL += `&usuario=${userId}`;
+
   URL += `&page_size=${page_size}`;
 
   const res = await authRequestWrapper(
@@ -52,7 +58,7 @@ export async function GetReviewsTutor(
   tutorId: number,
   areaId?: number,
   specialtyId?: number,
-  page_size: number = 6
+  page_size: number = 6,
 ): Promise<GetReviewsResult> {
   let URL = `${getBackendUrl()}/avaliacoes/tutor/?page=${pageNumber}`;
 
@@ -64,12 +70,12 @@ export async function GetReviewsTutor(
     URL += `&especialidade=${specialtyId}`;
   }
 
-  if(gradeOrder != ""){
-    URL += `&ordering=${gradeOrder}`
+  if (gradeOrder != "") {
+    URL += `&ordering=${gradeOrder}`;
   }
 
-  URL += `&tutor=${tutorId}`
-  
+  URL += `&tutor=${tutorId}`;
+
   URL += `&page_size=${page_size}`;
 
   const res = await authRequestWrapper(
@@ -189,30 +195,69 @@ export async function PostTutorReview(
 
 export async function GetPendingReviews(): Promise<GetPendingReviewsResult> {
   const URL = `${getBackendUrl()}/avaliacoes/pendentes`;
-
-  const res = await authRequestWrapper(
-    URL,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    },
-    "Request Pending Reviews",
-  );
+      "Request Pending Reviews",
+    );
 
-  if (res.success) {
-    const successGetRelations: GetPendingReviewsResult = {
-      success: true,
-      status: res.status,
-      data: res.data,
-    };
-    return successGetRelations;
-  } else {
-    const failedRequest: GetPendingReviewsResult = {
+    if (res.success) {
+      return {
+        success: true,
+        status: res.status,
+        data: res.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    return {
       success: false,
-      status: res.status,
+      status: 500,
     };
-    return failedRequest;
+  }
+}
+
+export async function GetAllUserReviews(): Promise<GetAllUserReviewsResult> {
+  const URL = `${getBackendUrl()}/avaliacoes/todas/`;
+
+  try {
+    const res = await authRequestWrapper(
+      URL,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+      "Request Pending Reviews",
+    );
+
+    if (res.success) {
+      return {
+        success: true,
+        status: res.status,
+        data: res.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: res.status,
+      };
+    }
+  } catch (e) {
+    return {
+      success: false,
+      status: 500,
+    };
   }
 }

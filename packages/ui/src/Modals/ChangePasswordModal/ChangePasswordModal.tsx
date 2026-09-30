@@ -21,14 +21,14 @@ const registerSchema = z
     newPassword: z
       .string()
       .min(10, "A senha deve possuir 10 ou mais caracteres.")
-      .max(256, "A senha só pode possuir até 256 caracteres.")
+      .max(35, "A senha só pode possuir até 35 caracteres.")
       .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
       .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
 
     newPasswordConfirm: z
       .string()
       .min(10, "A senha deve possuir 10 ou mais caracteres.")
-      .max(256, "A senha só pode possuir até 256 caracteres.")
+      .max(35, "A senha só pode possuir até 35 caracteres.")
       .regex(/[!@#$%^&*]/, "A senha deve conter um caractere especial.")
       .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
   })
@@ -88,10 +88,15 @@ export function ChangePasswordModal({
     }
     if (!res.success) {
       if (res.status === 500) {
-        showNotification("Ocorreu um erro no servidor, não foi possível mudar sua senha.", "error");
-      } 
-      else{
-        showNotification("Ocorreu um erro, não foi possível mudar sua senha.", "error");
+        showNotification(
+          "Ocorreu um erro no servidor, não foi possível mudar sua senha.",
+          "error",
+        );
+      } else {
+        showNotification(
+          "Ocorreu um erro, não foi possível mudar sua senha.",
+          "error",
+        );
       }
     }
   };
@@ -108,7 +113,8 @@ export function ChangePasswordModal({
         bg-black/50 
         backdrop-blur-sm 
         md:p-4
-    ">
+    "
+    >
       <div
         className="
             bg-white
@@ -119,7 +125,8 @@ export function ChangePasswordModal({
             rounded-3xl 
             shadow-2xl 
             overflow-hidden 
-      ">
+      "
+      >
         {/* Header */}
         <div
           className="
@@ -157,6 +164,7 @@ export function ChangePasswordModal({
               <label className="flex flex-col pl-6 w-full">
                 <span className="font-semibold mb-2">Senha Atual</span>
                 <input
+                  id="inp-currentPassword"
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
                   className="
@@ -169,6 +177,8 @@ export function ChangePasswordModal({
                 border-slate-300
                 "
                   placeholder="Digite a senha atual"
+                  minLength={10}
+                  maxLength={35}
                 />
               </label>
               <div
@@ -183,6 +193,7 @@ export function ChangePasswordModal({
               <label className="flex flex-col pl-6 w-full">
                 <span className="font-semibold mb-2">Nova Senha</span>
                 <input
+                  id="inp-password"
                   type={showNewPassword ? "text" : "password"}
                   {...register("newPassword")}
                   className="
@@ -195,6 +206,8 @@ export function ChangePasswordModal({
                 border-slate-300
                 "
                   placeholder="Digite a nova senha"
+                  minLength={10}
+                  maxLength={35}
                 />
               </label>
               <div
@@ -218,6 +231,7 @@ export function ChangePasswordModal({
                   Confirme a nova senha
                 </span>
                 <input
+                  id="inp-passwordConfirm"
                   type={showConfirmNewPassword ? "text" : "password"}
                   {...register("newPasswordConfirm")}
                   className="
@@ -230,6 +244,8 @@ export function ChangePasswordModal({
                 border-slate-300
                           "
                   placeholder="Digite a nova senha novamente"
+                  minLength={10}
+                  maxLength={35}
                 />
               </label>
               <div
@@ -267,6 +283,7 @@ export function ChangePasswordModal({
         "
             >
               <div
+                id="btn-cancelChangePasswordModal"
                 onClick={onClose}
                 className="
                 px-6 
@@ -284,6 +301,7 @@ export function ChangePasswordModal({
                 Cancelar
               </div>
               <button
+                id="btn-saveChangePasswordModal"
                 type="submit"
                 className={`
                 px-8 

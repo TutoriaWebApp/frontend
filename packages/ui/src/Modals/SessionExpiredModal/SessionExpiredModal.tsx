@@ -22,7 +22,9 @@ export function SessionExpiredModal({ isOpen }: SessionExpiredModalProps) {
   
   const handleLoginRedirect = async () => {
     sessionExpired.closeSessionExpired();
-    await LogOutAction();
+    if (window.location.pathname !== "/") {
+      await LogOutAction();
+    }
   };
 
   return (

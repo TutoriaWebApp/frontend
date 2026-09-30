@@ -71,6 +71,7 @@ export function DeleteStudentAreaModal({
             Remover Área de Interesse
           </h2>
           <button
+            id="btn-closeDeleteStudentArea"
             type="button"
             onClick={onClose}
             className="
@@ -116,6 +117,7 @@ export function DeleteStudentAreaModal({
           border-slate-100
         ">
           <button
+            id="btn-cancelDeleteStudentArea"
             type="button"
             onClick={onClose}
             className="
@@ -134,6 +136,7 @@ export function DeleteStudentAreaModal({
             Cancelar
           </button>
           <button
+            id="btn-submitDeleteStudentArea"
             type="button"
             onClick={deleteArea}
             className="

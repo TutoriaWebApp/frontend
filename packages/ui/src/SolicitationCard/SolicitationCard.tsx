@@ -66,6 +66,7 @@ export const SolicitationCard = ({
     <>
       <div
         className="
+      div-sessionCard
       bg-white
       rounded-[2.5rem] 
       border 
@@ -103,7 +104,7 @@ export const SolicitationCard = ({
         justify-center
         "
         >
-          <Link href={`/perfil/${userId}`}>
+          <Link id={`lnk-viewUserProfile-${userId}`} href={`/perfil/${userId}`}>
             <div
               className="
             w-32 
@@ -169,7 +170,7 @@ export const SolicitationCard = ({
           gap-1
         "
         >
-          <Link href={`/perfil/${userId}`}>
+          <Link id={`lnk-viewUserName-${userId}`} href={`/perfil/${userId}`}>
             <p
               className="
             text-base
@@ -268,29 +269,26 @@ export const SolicitationCard = ({
               )}
             </p>
           )}
+          {mode == "solicitacoes_tutor" && recurrent && (
+            <div className="flex items-center">
+              <div
+                className="
+                  bg-slate-50/60 
+                  rounded-2xl 
+                  p-4 
+                  border 
+                  border-slate-200 
+                  space-y-3 
+                  w-full 
+                  h-fit"
+              >
+                <p className="text-gray-500 text-xs text-justify">
+                  Essa solicitação é recorrente. Caso aceite, uma nova solicitação idêntica a essa será automaticamente criada para esse mesmo dia e horário na semana que vem.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-
-        {mode == "sessoes_tutor" && (
-          <button
-            className="
-          mt-6
-          mb-2
-      w-full 
-      py-1.5 
-        bg-rose-600 
-        hover:bg-rose-700 
-        text-white 
-        font-black 
-        rounded-xl 
-        shadow-lg 
-        shadow-rose-100 
-        transition-all 
-        active:scale-[0.98]
-        "
-          >
-            Cancelar
-          </button>
-        )}
         {/* {mode == "minhas" && (
       <button
       className="
@@ -315,8 +313,10 @@ export const SolicitationCard = ({
         {mode == "solicitacoes_tutor" && (
           <div className="flex gap-4">
             <button
+              id={`btn-acceptSolicitation-${userId}`}
               onClick={onAccept}
               className="
+              btn-acceptSolicitation
               mt-6
               mb-2
               py-1.5
@@ -335,8 +335,10 @@ export const SolicitationCard = ({
               Confirmar
             </button>
             <button
+              id={`btn-rejectSolicitation-${userId}`}
               onClick={onReject}
               className="
+            btn-rejectSolicitation
             mt-6
             mb-2
             py-1.5

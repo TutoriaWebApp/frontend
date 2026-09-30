@@ -11,7 +11,8 @@
     "./formatData": "./src/formatDataToBR.ts",
     "./formatTime": "./src/formatTime.ts",
     "./formatMessageDate": "./src/formatMessageDate.ts",
-    "./getBackendUrl": "./src/getBackendUrl.ts"
+    "./getBackendUrl": "./src/getBackendUrl.ts",
+    "./useUnlockAchievement": "./src/useUnlockAchievement.ts"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
+    "@types/react": "^19.3.0",
     "typescript": "5.9.2"
   },
   "dependencies": {

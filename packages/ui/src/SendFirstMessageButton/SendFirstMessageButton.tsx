@@ -12,7 +12,7 @@ interface SendFirstMessageButtonProps {
 export function SendFirstMessageButton({
   tutorName,
   tutorId
-}: SendFirstMessageButtonProps){ 
+}: SendFirstMessageButtonProps) {
 
   const [changePasswordModalIsOpen, setChangePasswordModalIsOpen] =
     useState(false);
@@ -23,6 +23,7 @@ export function SendFirstMessageButton({
   return (
     <>
       <button
+        id="btn-sendMessage"
         onClick={openChangePasswordModal}
         className="
         w-fit

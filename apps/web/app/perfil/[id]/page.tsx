@@ -15,12 +15,9 @@ import {
   TutorData,
 } from "@repo/services/userTypes";
 
-import { redirect } from "next/navigation";
-
 import { Grade } from "@mui/icons-material";
 
 import { ReviewSection } from "@repo/ui/reviewSection";
-import { EditProfileButton } from "@repo/ui/editProfileButton";
 import { SendFirstMessageButton } from "@repo/ui/sendFirstMessageButton";
 import { AvailabilitySection } from "@repo/ui/availabilitySection";
 import { TimeSlot } from "@repo/services/availabilityTypes";
@@ -138,6 +135,7 @@ export default async function ProfilePage({
                   "
                   >
                     <h1
+                      id='h1-profileName'
                       className="
                       text-3xl 
                       font-bold 
@@ -147,12 +145,14 @@ export default async function ProfilePage({
                       {userData!.nomePerfil}
                     </h1>
                     <p
+                      id='p-profileLocation'
                       className="text-slate-500 font-medium
                     "
                     >
                       {userData!.cidade} - {userData!.estado}
                     </p>
                     <p
+                      id='p-profileLevel'
                       className="
                     text-brand-primary 
                     md:text-sm 
@@ -242,6 +242,7 @@ export default async function ProfilePage({
                     Sobre Mim
                   </h2>
                   <p
+                    id='p-about'
                     className="
                     text-slate-600 
                       leading-relaxed 

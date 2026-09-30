@@ -28,7 +28,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
   const isSecretLocked = conquista.secreta && !isObtained;
 
   // Gerador de faixas e brilhos
-  const getTierTheme = (pontos: number) => {
+  const getTierTheme = (tier: string) => {
     if (!isObtained) {
       return {
         outerFrame: "bg-stone-300 border-2 border-stone-400/80 shadow-xs",
@@ -43,7 +43,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     }
 
     // 1. Bronze: Sem brilhos
-    if (pontos <= 200) {
+    if (tier === "B") {
       return {
         outerFrame:
           "bg-gradient-to-br from-[#7a3e1d] via-[#d68c59] to-[#4a220e] shadow-md shadow-[#4a220e]/30 border-2 border-[#8c481f]",
@@ -60,7 +60,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     }
 
     // 2. Prata: Poucos brilhos prateados/claros ocasionais
-    if (pontos <= 700) {
+    if (tier === "P") {
       return {
         outerFrame:
           "bg-gradient-to-br from-[#64748b] via-[#ffffff] to-[#334155] shadow-lg shadow-slate-400/40 border-2 border-slate-300",
@@ -93,7 +93,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     }
 
     // 3. Ouro: Quantidade média, frequentes e dourados
-    if (pontos <= 1500) {
+    if (tier === "O") {
       return {
         outerFrame:
           "bg-gradient-to-br from-[#92400e] via-[#fef08a] to-[#713f12] shadow-xl shadow-amber-900/30 border-2 border-yellow-300",
@@ -168,11 +168,12 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
     };
   };
 
-  const theme = getTierTheme(conquista.pontos);
+  const theme = getTierTheme(conquista.tier);
 
   return (
     <div
       className={`
+        div-achievementCard
         relative 
         p-2.5 
         rounded-2xl 
@@ -223,6 +224,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
       >
         {/* Selo */}
         <div className="
+          div-badge
           absolute 
           top-3 
           right-3
@@ -246,6 +248,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Emblema */}
         <div
           className={`
+              div-medal
               w-28 
               h-28
               mb-3 
@@ -281,7 +284,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
                 ${isObtained ? `
                   grayscale-0 
                   opacity-100 
-                  drop-shadow-md` : 
+                  drop-shadow-md`:
                   `grayscale 
                   opacity-30`
                 }
@@ -293,13 +296,14 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Título */}
         <h3
           className={`
+            h3-title
             text-base 
             font-extrabold 
             tracking-tight 
             mb-1
             ${isObtained ? `
               text-stone-900 
-              drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]` : 
+              drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]` :
               `text-stone-500`
             }
           `}
@@ -309,6 +313,7 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
 
         {/* Pontuação */}
         <div className="
+          div-points
           flex 
           items-center 
           gap-1 
@@ -333,11 +338,11 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
         {/* Descrição ou Pista */}
         <p
           className={`
+            p-description
             text-xs 
             leading-relaxed
-            ${
-              isSecretLocked
-                ? `italic 
+            ${isSecretLocked
+              ? `italic 
                 text-stone-700 
                 font-semibold 
                 bg-white/70 
@@ -347,9 +352,9 @@ export function AchievementCard({ conquista }: AchievementCardProps) {
                 border-dashed
                 border-stone-400 
                 w-full`
-                : isObtained
-                ?   "text-stone-800 font-medium"
-                  : "text-stone-500 font-normal"
+              : isObtained
+                ? "text-stone-800 font-medium"
+                : "text-stone-500 font-normal"
             }
           `}
         >

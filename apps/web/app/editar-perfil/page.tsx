@@ -10,7 +10,7 @@ import { userTitle } from "@repo/lib/userTitle";
 
 import { UserData } from "@repo/services/userTypes";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { Grade, TurnLeftOutlined } from "@mui/icons-material";
@@ -57,6 +57,9 @@ import { GetAllSolicitations } from "@repo/services/solicitations";
 import { GetSpecificTutorSessions } from "@repo/services/sessions";
 import { SolicitationGetData } from "@repo/services/solicitationTypes";
 import { SessionGetData } from "@repo/services/sessionTypes";
+
+import { useUserAchievements } from "@repo/ui/userAchievementsContext";
+import { useUnlockAchievement } from "@repo/lib/useUnlockAchievement";
 
 const registerSchema = z.object({
   nomePerfil: z
@@ -123,6 +126,8 @@ export default function EditProfilePage() {
     formState: { errors },
   } = methods;
 
+  const becameTutorAchievementId = 23;
+
   const [userData, setUserData] = useState<UserData>();
   const [loading, setLoading] = useState<boolean>(false);
   const [changePasswordModalIsOpen, setChangePasswordModalIsOpen] =
@@ -138,7 +143,8 @@ export default function EditProfilePage() {
 
   const [availabilities, setAvailabilities] = useState<TimeSlot[]>([]);
 
-  const [userSolicitations, setUserSolicitations] = useState<SolicitationGetData[]>();
+  const [userSolicitations, setUserSolicitations] =
+    useState<SolicitationGetData[]>();
 
   const [tutorSessions, setTutorSessions] = useState<SessionGetData[]>();
 
@@ -148,8 +154,12 @@ export default function EditProfilePage() {
 
   const todayDate = new Date();
 
-  const todayDateString = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
-  
+  const todayDateString = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
+
+  const { userId, inicializado } = useUserAchievements();
+
+  const { unlockAchievement } = useUnlockAchievement();
+
   // Change Password Modal
   const openChangePasswordModal = () => setChangePasswordModalIsOpen(true);
   const closeChangePasswordModal = () => setChangePasswordModalIsOpen(false);
@@ -276,9 +286,11 @@ export default function EditProfilePage() {
 
       if (!results.success) {
         if (results.status === 500) {
-          showNotification("Ocorreu um erro no servidor. Não foi possível obter suas informações.", "error");
-        }
-        else{
+          showNotification(
+            "Ocorreu um erro no servidor. Não foi possível obter suas informações.",
+            "error",
+          );
+        } else {
           showNotification("Ocorreu um erro, obter suas informações.", "error");
         }
       } else {
@@ -296,24 +308,30 @@ export default function EditProfilePage() {
             setAvailabilities(tutorSchedules.data);
           }
 
-          const responseTutorSessions = await GetSpecificTutorSessions(results.data.perfilTutor.id);
-        
-          if(responseTutorSessions.data){
+          const responseTutorSessions = await GetSpecificTutorSessions(
+            results.data.perfilTutor.id,
+          );
 
-            setTutorSessions((responseTutorSessions.data).filter(
-              (session) => session.tutorId === results.data.perfilTutor?.id 
-                && session.dataSessao >= todayDateString 
-            ))
+          if (responseTutorSessions.data) {
+            setTutorSessions(
+              responseTutorSessions.data.filter(
+                (session) =>
+                  session.tutorId === results.data.perfilTutor?.id &&
+                  session.dataSessao >= todayDateString,
+              ),
+            );
           }
 
           const responseSolicitations = await GetAllSolicitations();
 
-          if(responseSolicitations.data){
-            
-            setUserSolicitations((responseSolicitations.data).filter(
-              (solicitation) => solicitation.dataPretendida >= todayDateString
-                            && solicitation.estado == "PENDENTE" 
-            ))
+          if (responseSolicitations.data) {
+            setUserSolicitations(
+              responseSolicitations.data.filter(
+                (solicitation) =>
+                  solicitation.dataPretendida >= todayDateString &&
+                  solicitation.estado == "PENDENTE",
+              ),
+            );
           }
         }
       }
@@ -393,6 +411,9 @@ export default function EditProfilePage() {
       const resultadoTutor = await BecomeTutorAction();
 
       if (resultadoTutor.success) {
+        if (userId && inicializado) {
+          unlockAchievement(becameTutorAchievementId);
+        }
         specialties.forEach(async (specialty) => {
           console.log(
             await InsertSpecialtyAction(specialty.id, resultadoTutor.data!.id),
@@ -579,11 +600,10 @@ export default function EditProfilePage() {
                         >
                           {Number.isInteger(userData.notaAvaliacao)
                             ? userData.notaAvaliacao.toFixed(1)
-                            : userData.notaAvaliacao.toFixed(
-                                2,
-                              )}{" "} como {" "}
+                            : userData.notaAvaliacao.toFixed(2)}{" "}
+                          como{" "}
                           <em className="text-slate-800 not-italic font-bold">
-                             Aprendiz
+                            Aprendiz
                           </em>{" "}
                           ({userData.totalAvaliacoes} avaliações)
                         </span>
@@ -613,8 +633,8 @@ export default function EditProfilePage() {
                             )
                               ? userData.perfilTutor.notaAvaliacao.toFixed(1)
                               : userData.perfilTutor.notaAvaliacao.toFixed(
-                                  2,
-                                )}{" "}
+                                2,
+                              )}{" "}
                             como{" "}
                             <em className="text-slate-800 not-italic font-bold">
                               Tutor
@@ -695,6 +715,7 @@ export default function EditProfilePage() {
                       Nome<span className="text-rose-500">*</span>
                     </span>
                     <input
+                      id="inp-profileName"
                       type="text"
                       {...register("nomePerfil")}
                       className="
@@ -740,6 +761,7 @@ export default function EditProfilePage() {
                         Estado<span className="text-rose-500">*</span>
                       </span>
                       <select
+                        id="sel-uf"
                         {...register("estado")}
                         className="
                         bg-white  
@@ -779,6 +801,7 @@ export default function EditProfilePage() {
                         Cidade<span className="text-rose-500">*</span>
                       </span>
                       <select
+                        id="sel-city"
                         {...register("cidade")}
                         className="
                         bg-white  
@@ -827,6 +850,7 @@ export default function EditProfilePage() {
                     >
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
+                        id="txt-about"
                         {...register("sobreMim")}
                         rows={6}
                         className="
@@ -844,6 +868,7 @@ export default function EditProfilePage() {
                     </label>
                   </div>
                   <button
+                    id="btn-openChangePasswordModal"
                     className="
                     bg-brand-primary 
                     hover:bg-indigo-800 
@@ -1077,6 +1102,7 @@ export default function EditProfilePage() {
                 </section>
                 <div className="flex justify-between">
                   <Link
+                    id="lnk-backToProfile"
                     href={"/meu-perfil"}
                     className="
                       p-4 
@@ -1093,6 +1119,7 @@ export default function EditProfilePage() {
                     <span>Voltar para Perfil</span>
                   </Link>
                   <button
+                    id="btn-saveProfile"
                     onClick={handleSubmit(onSubmit)}
                     type="button"
                     className="

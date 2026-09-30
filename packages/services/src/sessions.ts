@@ -93,35 +93,28 @@ export async function GetSpecificTutorSessions(
   }
 }
 
-export async function GetAllUserSessions(): Promise<AllUserSessionGetResult | boolean> {
+export async function GetAllUserSessions(): Promise<AllUserSessionGetResult> {
   try {
-    const res = await GetUserDataClient();
+    const URL = `${getBackendUrl()}/todas-sessoes-usuario/`;
 
-    if (res.success && res.data.perfilTutor != null) {
-      let URL = `${getBackendUrl()}/todas-sessoes-usuario/`;
+    const sessionRes = await authRequestWrapper(
+      URL,
+      { method: "GET" },
+      "Request All User Sessions Data",
+    );
 
-      const sessionRes = await authRequestWrapper(
-        URL,
-        { method: "GET" },
-        "Request All User Sessions Data",
-      );
-
-      if (sessionRes.success) {
-        return {
-          success: true,
-          status: sessionRes.status,
-          data: sessionRes.data,
-        };
-      } else {
-        return {
-          success: false,
-          status: sessionRes.status,
-        };
-      }
+    if (sessionRes.success) {
+      return {
+        success: true,
+        status: sessionRes.status,
+        data: sessionRes.data,
+      };
     }
-    else{
-      return false;
-    }
+
+    return {
+      success: false,
+      status: sessionRes.status,
+    };
   } catch (e) {
     return {
       success: false,

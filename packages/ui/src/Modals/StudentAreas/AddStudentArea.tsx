@@ -94,6 +94,7 @@ export function AddStudentAreaModal({
             Adicionar Área de Interesse
           </h2>
           <button
+            id="btn-closeAddStudentArea"
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 transition-colors p-1"
           >
@@ -122,7 +123,7 @@ export function AddStudentAreaModal({
             <div className="space-y-3">
               <div className="relative group">
                 <select
-                  id="area"
+                  id="sel-area"
                   name="area"
                   required
                   defaultValue=""
@@ -186,6 +187,7 @@ export function AddStudentAreaModal({
         "
           >
             <button
+              id="btn-cancelAddStudentArea"
               type="button"
               onClick={onClose}
               className="
@@ -205,6 +207,7 @@ export function AddStudentAreaModal({
               Cancelar
             </button>
             <button
+              id="btn-submitAddStudentArea"
               type="submit"
               className="
                 order-1 

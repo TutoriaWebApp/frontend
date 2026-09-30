@@ -372,6 +372,7 @@ export default function GerenciadorSolicitacoes() {
 			"
             >
               <button
+                id="btn-acceptedTutor"
                 onClick={() => setActiveTab("sessoes_tutor")}
                 className={`
 					px-6 
@@ -382,15 +383,15 @@ export default function GerenciadorSolicitacoes() {
 					2xl:text-base 
 					transition-all 
 					cursor-pointer 
-					${
-            activeTab === "sessoes_tutor"
-              ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-              : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
-          }`}
+					${activeTab === "sessoes_tutor"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                    : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 Sessões Aceitas como Tutor
               </button>
               <button
+                id="btn-acceptedLearner"
                 onClick={() => setActiveTab("sessoes_aprendiz")}
                 className={`
 					px-6 
@@ -401,15 +402,15 @@ export default function GerenciadorSolicitacoes() {
 					2xl:text-base 
 					transition-all 
 					cursor-pointer 
-			${
-        activeTab === "sessoes_aprendiz"
-          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-          : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
-      }`}
+			${activeTab === "sessoes_aprendiz"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                    : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 Sessões Aceitas como Aprendiz
               </button>
               <button
+                id="btn-pendingRequests"
                 onClick={() => setActiveTab("solicitacoes_tutor")}
                 className={`
 					px-6 
@@ -420,15 +421,15 @@ export default function GerenciadorSolicitacoes() {
 					2xl:text-base 
 					transition-all 
 					cursor-pointer 
-				${
-          activeTab === "solicitacoes_tutor"
-            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-            : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
-        }`}
+				${activeTab === "solicitacoes_tutor"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                    : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 Solicitações Pendentes
               </button>
               <button
+                id="btn-myRequests"
                 onClick={() => setActiveTab("solicitacoes_aprendiz")}
                 className={`
 					px-6 
@@ -439,11 +440,10 @@ export default function GerenciadorSolicitacoes() {
 					2xl:text-base 
 					transition-all 
 					cursor-pointer 
-				${
-          activeTab === "solicitacoes_aprendiz"
-            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-            : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
-        }`}
+				${activeTab === "solicitacoes_aprendiz"
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                    : "bg-white text-slate-400 border border-slate-200 hover:bg-slate-100"
+                  }`}
               >
                 Minhas Solicitações
               </button>
@@ -600,6 +600,7 @@ export default function GerenciadorSolicitacoes() {
 
               <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                 <button
+                  id="btn-applyFilter"
                   onClick={handleFilterSubmit}
                   className="
 										bg-emerald-600 
@@ -625,6 +626,7 @@ export default function GerenciadorSolicitacoes() {
                   Aplicar Filtros
                 </button>
                 <button
+                  id="btn-clearFilter"
                   onClick={handleClearFilters}
                   className="
 										bg-slate-200 
@@ -723,6 +725,7 @@ export default function GerenciadorSolicitacoes() {
                 >
                   <span>Exibir:</span>
                   <select
+                    id="btn-displayPageSize"
                     value={pageSize}
                     onChange={(e) =>
                       handlePageSizeChange(Number(e.target.value))
@@ -772,11 +775,11 @@ export default function GerenciadorSolicitacoes() {
                     startTime={session.horarioInicio}
                     endTime={session.horarioFim}
                     status={"ACEITO"}
-                    mode={activeTab} 
-                    userId={session.idUsuarioSessao} 
-                    grade={session.nota} 
-                    totalReviews={session.quantidadeAvaliacoes} 
-                    filter={"aprendiz"}                    
+                    mode={activeTab}
+                    userId={session.idUsuarioSessao}
+                    grade={session.nota}
+                    totalReviews={session.quantidadeAvaliacoes}
+                    filter={"aprendiz"}
                   />
                 ))}
               {sessionsList.length > 0 &&
@@ -792,11 +795,11 @@ export default function GerenciadorSolicitacoes() {
                     startTime={session.horarioInicio}
                     endTime={session.horarioFim}
                     status={"ACEITO"}
-                    mode={activeTab} 
-                    userId={session.idUsuarioSessao} 
-                    grade={session.nota} 
-                    totalReviews={session.quantidadeAvaliacoes} 
-                    filter={"tutor"}                  
+                    mode={activeTab}
+                    userId={session.idUsuarioSessao}
+                    grade={session.nota}
+                    totalReviews={session.quantidadeAvaliacoes}
+                    filter={"tutor"}
                   />
                 ))}
               {solicitationsList.length > 0 &&
@@ -815,8 +818,8 @@ export default function GerenciadorSolicitacoes() {
                     mode={activeTab}
                     userId={solicitation.idUsuarioSolicitacao}
                     grade={solicitation.nota}
-                    totalReviews={solicitation.quantidadeAvaliacoes} 
-                    filter={"aprendiz"}                  
+                    totalReviews={solicitation.quantidadeAvaliacoes}
+                    filter={"aprendiz"}
                   />
                 ))}
               {solicitationsList.length > 0 &&
@@ -839,8 +842,8 @@ export default function GerenciadorSolicitacoes() {
                     onAccept={() => handleOpenAcceptModal(solicitation)}
                     userId={solicitation.idUsuarioSolicitacao}
                     grade={solicitation.nota}
-                    totalReviews={solicitation.quantidadeAvaliacoes} 
-                    filter={"tutor"}                  
+                    totalReviews={solicitation.quantidadeAvaliacoes}
+                    filter={"tutor"}
                   />
                 ))}
             </div>

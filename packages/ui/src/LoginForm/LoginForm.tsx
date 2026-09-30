@@ -42,6 +42,12 @@ export default function LoginForm({
   }, [searchParams]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("is_logging_out");
+    }
+  }, []);
+
+  useEffect(() => {
     const checkToken = async (
       access_token: string | undefined,
       refresh_token: string | undefined,
@@ -157,6 +163,7 @@ export default function LoginForm({
                   E-mail
                 </span>
                 <input
+                  id="inp-email"
                   type="email"
                   {...register("username")}
                   className="
@@ -197,6 +204,7 @@ export default function LoginForm({
                   Senha
                 </span>
                 <input
+                  id="inp-password"
                   type="password"
                   {...register("password")}
                   className="
@@ -221,6 +229,7 @@ export default function LoginForm({
               )}
 
               <button
+                id="btn-submitLogin"
                 className="
               bg-indigo-600 
               hover:bg-indigo-800
@@ -242,7 +251,10 @@ export default function LoginForm({
                 Entrar
               </button>
               {serverError && (
-                <span className="text-rose-500 font-medium text-center">
+                <span
+                  id="lbl-errorMsg"
+                  className="text-rose-500 font-medium text-center"
+                >
                   {serverError}
                 </span>
               )}
@@ -256,6 +268,7 @@ export default function LoginForm({
           "
               ></div>
               <Link
+                id="lnk-forgotPassword"
                 href={"esqueci-senha"}
                 className="
               text-brand-primary 
@@ -268,8 +281,13 @@ export default function LoginForm({
               >
                 Esqueceu sua senha?
               </Link>
-              <Link href={"/criar-conta"} className="flex justify-center">
+              <Link
+                href={"/criar-conta"}
+                className="flex justify-center"
+                id="lnk-createAccountWrapper"
+              >
                 <button
+                  id="btn-createNewAccount"
                   className="
             bg-emerald-600 
             hover:bg-emerald-800 

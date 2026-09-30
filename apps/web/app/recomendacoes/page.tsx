@@ -212,6 +212,7 @@ export default function GetRecommendationsPage() {
                     <span className="text-red-600 text-base">*</span>
                   </label>
                   <select
+                    id="sel-area"
                     defaultValue={""}
                     onChange={(e) => setQueryAreaId(Number(e.target.value))}
                     className="
@@ -254,6 +255,7 @@ export default function GetRecommendationsPage() {
                     Especialidade
                   </label>
                   <select
+                    id="sel-specialty"
                     disabled={queryAreaId ? false : true}
                     defaultValue={""}
                     onChange={(e) =>
@@ -297,6 +299,7 @@ export default function GetRecommendationsPage() {
                     Localização (Raio em KM)
                   </label>
                   <input
+                    id="inp-filterRadius"
                     type="number"
                     placeholder="KM"
                     value={queryRadius}
@@ -321,6 +324,7 @@ export default function GetRecommendationsPage() {
                   />
                 </div>
                 <button
+                  id="btn-searchRecommendations"
                   onClick={handleSubmit}
                   className="
               bg-emerald-600 
@@ -400,6 +404,7 @@ export default function GetRecommendationsPage() {
                 >
                   <span>Exibir:</span>
                   <select
+                    id="sel-pageSize"
                     value={pageSize}
                     onChange={(e) =>
                       handlePageSizeChange(Number(e.target.value))
@@ -431,6 +436,7 @@ export default function GetRecommendationsPage() {
             {/* Grid de Tutores */}
             {tutorsList && tutorsList?.length >= 1 && !loadingTutors && (
               <div
+                id="div-listTutors"
                 className="
                   grid 
                   grid-cols-1 
@@ -483,6 +489,7 @@ export default function GetRecommendationsPage() {
               "
               >
                 <button
+                  id="btn-prevPage"
                   disabled={!hasPrevious}
                   onClick={handlePrevPage}
                   className={`
@@ -510,6 +517,7 @@ export default function GetRecommendationsPage() {
                 </span>
 
                 <button
+                  id="btn-nextPage"
                   disabled={!hasNext}
                   onClick={handleNextPage}
                   className={`
@@ -527,8 +535,9 @@ export default function GetRecommendationsPage() {
               </div>
             )}
 
-            <Link href={"/buscar-tutores"}>
+            <Link id="lnk-viewSearchTutors" href={"/buscar-tutores"}>
               <button
+                id="btn-viewSearchTutors"
                 className="
           group 
           flex 

@@ -271,8 +271,8 @@ export function ScheduleModal({
 
     const daySolicitations = userSolicitations
       ? userSolicitations.filter(
-          (solicitation) => solicitation.dataPretendida === dateStr && solicitation.estado != "RECUSADO",
-        )
+        (solicitation) => solicitation.dataPretendida === dateStr && solicitation.estado != "RECUSADO",
+      )
       : [];
 
     const tutorDaySessions = tutorSessions
@@ -562,6 +562,7 @@ export function ScheduleModal({
 
               {/* Grade de Dias */}
               <div
+                id='div-calendar'
                 className="
 				grid 
 				grid-cols-7 
@@ -575,7 +576,7 @@ export function ScheduleModal({
                     selectedDate.getDate() === item.dateInstance.getDate() &&
                     selectedDate.getMonth() === item.dateInstance.getMonth() &&
                     selectedDate.getFullYear() ===
-                      item.dateInstance.getFullYear();
+                    item.dateInstance.getFullYear();
 
                   if (item.dayNumber === null) {
                     return <div key={`empty-${idx}`} className="h-10" />;
@@ -636,6 +637,7 @@ export function ScheduleModal({
                   Área de Conhecimento<span className="text-red-500">*</span>
                 </label>
                 <select
+                  id='sel-area'
                   value={selectedAreaId || ""}
                   onChange={(e) => handleAreaChange(Number(e.target.value))}
                   className="
@@ -677,6 +679,7 @@ export function ScheduleModal({
                   Especialidade<span className="text-red-500">*</span>
                 </label>
                 <select
+                  id='sel-specialty'
                   disabled={!selectedAreaId}
                   value={selectedSpecialtyId || ""}
                   onChange={(e) =>
@@ -724,7 +727,7 @@ export function ScheduleModal({
                     : "Selecione um dia disponível no calendário para ver os horários:"}
                 </p>
 
-                <div className="flex flex-wrap gap-2.5">
+                <div id='div-availableTimes' className="flex flex-wrap gap-2.5">
                   {selectedDate &&
                     availableTimesForSelectedDay.length === 0 && (
                       <p className="text-xs font-semibold text-rose-500">
@@ -836,6 +839,7 @@ export function ScheduleModal({
               Cancelar
             </button>
             <button
+              id="btn-submitSession"
               disabled={!isFormValid}
               onClick={handleSubmit}
               className={`
@@ -845,11 +849,10 @@ export function ScheduleModal({
 							font-bold 
 							text-sm
 							transition-all
-							${
-                !isFormValid
+							${!isFormValid
                   ? "bg-slate-300 text-slate-400 cursor-not-allowed"
                   : "bg-brand-primary text-white shadow-lg shadow-brand-primary/20 hover:bg-indigo-800 cursor-pointer"
-              }
+                }
 						`}
             >
               Confirmar Solicitação

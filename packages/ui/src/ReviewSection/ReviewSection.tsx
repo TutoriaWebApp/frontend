@@ -162,6 +162,7 @@ export function ReviewSection({
         "
             >
               <button
+                id='btn-avaliacaoAprendiz'
                 onClick={() => setActiveTab("aprendiz")}
                 className={`
                 px-4 
@@ -174,6 +175,7 @@ export function ReviewSection({
                 Avaliações (Aprendiz)
               </button>
               <button
+                id='btn-avaliacaoTutor'
                 disabled={tutorId === null}
                 onClick={() => setActiveTab("tutor")}
                 className={`
@@ -333,13 +335,13 @@ export function ReviewSection({
               block
               text-center            
               text-slate-600 
-            "> 
+            ">
               Não foram encontradas avaliações para exibir.
             </span>
           )}
           {reviewsList.length > 0 &&
             reviewsList.map((review) => (
-              <div className="min-h-[220px]" key={review.id}>
+              <div id="div-review" className="min-h-[220px]" key={review.id}>
                 <ReviewCard
                   id={review.usuarioAvaliadorId}
                   photo={review.fotoURL}
@@ -351,8 +353,8 @@ export function ReviewSection({
             ))}
           {reviewsList.length > 0 && (
             <>
-            <div
-              className="
+              <div
+                className="
                 bg-white border 
                 border-slate-100 
                 shadow-sm 
@@ -366,11 +368,11 @@ export function ReviewSection({
                 max-w-md
                 mx-auto
               "
-            >
-              <button
-                disabled={!hasPrevious}
-                onClick={handlePrevPage}
-                className={`
+              >
+                <button
+                  disabled={!hasPrevious}
+                  onClick={handlePrevPage}
+                  className={`
                     p-2 
                     rounded-xl 
                     border-2 
@@ -379,25 +381,25 @@ export function ReviewSection({
                     items-center 
                     justify-center 
                     ${hasPrevious ? "border-slate-300 text-slate-600 hover:bg-slate-100 active:scale-95 cursor-pointer" : "border-slate-100 text-slate-300 cursor-not-allowed"}`}
-              >
-                <ArrowBackIosNewIcon sx={{ fontSize: 16 }} />
-              </button>
+                >
+                  <ArrowBackIosNewIcon sx={{ fontSize: 16 }} />
+                </button>
 
-              <span
-                className="
+                <span
+                  className="
                   text-slate-600 
                   font-black 
                   text-sm 
                   select-none
                 "
-              >
-                Página {currentPage}
-              </span>
+                >
+                  Página {currentPage}
+                </span>
 
-              <button
-                disabled={!hasNext}
-                onClick={handleNextPage}
-                className={`
+                <button
+                  disabled={!hasNext}
+                  onClick={handleNextPage}
+                  className={`
                     p-2 
                     rounded-xl 
                     border-2 
@@ -406,12 +408,12 @@ export function ReviewSection({
                     items-center 
                     justify-center 
                     ${hasNext ? "border-slate-300 text-slate-600 hover:bg-slate-100 active:scale-95 cursor-pointer" : "border-slate-100 text-slate-300 cursor-not-allowed"}`}
-              >
-                <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-              </button>
-            </div>
-            <div
-              className="
+                >
+                  <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
+                </button>
+              </div>
+              <div
+                className="
                 flex 
                 items-center
                 justify-end 
@@ -420,20 +422,20 @@ export function ReviewSection({
                 font-semibold 
                 whitespace-nowrap
               "
-            >
-              <span>Exibir:</span>
-              <select
-                    value={pageSize}
-                    onChange={(e) =>
-                      handlePageSizeChange(Number(e.target.value))
-                    }
-                    className="bg-slate-50 border-2 border-slate-300 rounded-lg p-1 outline-none text-slate-700 font-bold focus:border-indigo-600 transition-all"
-                  >
-                    <option value={6}>6 por página</option>
-                    <option value={12}>12 por página</option>
-                    <option value={18}>18 por página</option>
-                  </select>
-                </div>
+              >
+                <span>Exibir:</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) =>
+                    handlePageSizeChange(Number(e.target.value))
+                  }
+                  className="bg-slate-50 border-2 border-slate-300 rounded-lg p-1 outline-none text-slate-700 font-bold focus:border-indigo-600 transition-all"
+                >
+                  <option value={6}>6 por página</option>
+                  <option value={12}>12 por página</option>
+                  <option value={18}>18 por página</option>
+                </select>
+              </div>
             </>
           )}
         </>

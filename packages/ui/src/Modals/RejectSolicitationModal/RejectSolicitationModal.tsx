@@ -89,6 +89,7 @@ export function RejectSolicitationModal({
             Recusar Solicitação
           </h3>
           <button
+            id="btn-closeRejectSolicitationModal"
             onClick={onClose}
             className="
               p-1 
@@ -126,6 +127,7 @@ export function RejectSolicitationModal({
           border-slate-100
         ">
           <button
+            id="btn-confirmRejectSolicitation"
             disabled={loading}
             onClick={handleConfirmReject}
             className="
@@ -156,6 +158,7 @@ export function RejectSolicitationModal({
             )}
           </button>
           <button
+            id="btn-cancelRejectSolicitation"
             disabled={loading}
             onClick={onClose}
             className="

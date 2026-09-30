@@ -32,6 +32,7 @@ export interface GetSpecificAchievementsResult {
     descricao: string;
     urlImagem: string;
     pontos: number;
+    tier: string;
   };
 }
 
@@ -45,9 +46,12 @@ export interface AchivementUnlockedResult {
   success: boolean;
   status: number;
   data?: {
-    id: number;
-    dataObtido: string;
-    usuarioId: number;
-    conquistaId: number;
+    desbloqueadoAgora: boolean;
+    dados: {
+      id: number;
+      dataObtido: string;
+      usuarioId: number;
+      conquistaId: number;
+    }
   };
 }
