@@ -67,8 +67,6 @@ export function ReviewSection({
         page,
         gradeOrder,
         userId,
-        queryAreaId,
-        querySpecialtyId,
         pageSize,
       );
     } else {

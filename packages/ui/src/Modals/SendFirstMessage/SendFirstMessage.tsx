@@ -65,7 +65,7 @@ export function SendFirstMessageModal({
         if (!hasAchievement(networkingAchievementId)) {
           const res = await GetChats();
 
-          if (res.success && res.data.length >= 5) {
+          if (res.success && res.data && res.data.length >= 5) {
             unlockAchievement(networkingAchievementId);
           }
         }

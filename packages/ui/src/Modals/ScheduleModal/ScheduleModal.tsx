@@ -382,7 +382,7 @@ export function ScheduleModal({
       const bodyData = {
         dataPretendida: dataPretendidaStr,
         recorrente: recurrent,
-        estado: "PENDENTE",
+        estado: "PENDENTE" as const,
         agendaId: selectedAgendaId,
         areaId: selectedAreaId,
         especialidadeId: selectedSpecialtyId,

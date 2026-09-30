@@ -32,6 +32,9 @@ export async function LogInAction(
 
       rawCookies.forEach((cookieString) => {
         const [nameValue, ...parts] = cookieString.split(";");
+
+        if (!nameValue) return;
+
         const [name, value] = nameValue.split("=");
 
         if (name && value) {
@@ -44,16 +47,19 @@ export async function LogInAction(
 
           parts.forEach((part) => {
             const [key, val] = part.trim().split("=");
-            const lowerKey = key.toLowerCase();
 
-            if (lowerKey === "max-age") {
-              options.maxAge = parseInt(val);
-            } else if (lowerKey === "expires") {
-              options.expires = new Date(val);
-            } else if (lowerKey === "path") {
-              options.path = val;
-            } else if (lowerKey === "samesite") {
-              options.sameSite = val.toLowerCase();
+            if (key && val) {
+              const lowerKey = key.toLowerCase();
+
+              if (lowerKey === "max-age") {
+                options.maxAge = parseInt(val);
+              } else if (lowerKey === "expires") {
+                options.expires = new Date(val);
+              } else if (lowerKey === "path") {
+                options.path = val;
+              } else if (lowerKey === "samesite") {
+                options.sameSite = val.toLowerCase();
+              }
             }
           });
 
@@ -134,7 +140,6 @@ export async function RequestPasswordResetAction(
     };
   }
 }
-
 
 export async function PasswordResetAction(
   uid: string,

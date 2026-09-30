@@ -1,7 +1,7 @@
 "use client";
 
 import React, {useContext} from "react";
-import { StudentArea } from "@repo/services/userTypes";
+import { TutorArea } from "@repo/services/userTypes";
 import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { NotificationContext } from "../../contexts/NotificationContext/NotificationContext";
@@ -9,8 +9,8 @@ import { NotificationContext } from "../../contexts/NotificationContext/Notifica
 interface AddTutorAreaProps {
   isOpen: boolean;
   onClose: () => void;
-  areas: StudentArea[];
-  setAreas: React.Dispatch<React.SetStateAction<StudentArea[]>>;
+  areas: TutorArea[];
+  setAreas: React.Dispatch<React.SetStateAction<TutorArea[]>>;
 }
 
 export function AddTutorAreaModal({
@@ -31,10 +31,10 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
     if (!selectedArea) return;
 
-    const alreadyExists = areas.some(a => a.area === selectedArea);
+    const alreadyExists = areas.some(a => a.nomeArea === selectedArea);
     
     if (!alreadyExists) {
-      setAreas((prev) => [...prev, { area: selectedArea } as StudentArea]);
+      setAreas((prev) => [...prev, { nomeArea: selectedArea } as TutorArea]);
       
       onClose();
     } else {
