@@ -74,12 +74,12 @@ export function SendFirstMessageModal({
     } else {
       if (res.status != 500)
         showNotification(
-          "Ocorreu um erro na criação do chat. Tente novamente.",
+          "Ocorreu um erro no envio da mensagem. Tente novamente.",
           "error",
         );
       else
         showNotification(
-          "Ocorreu um erro no servidor. Não foi possível criar o chat.",
+          "Ocorreu um erro no servidor. Não foi possível enviar a mensagem.",
           "error",
         );
     }
@@ -110,12 +110,12 @@ export function SendFirstMessageModal({
               <strong className="text-slate-900 font-bold">{tutorName}</strong>,
               escreva no espaço abaixo e clique em{" "}
               <strong className="text-slate-900 font-bold">'Enviar'</strong>.
-              Isso vai iniciar um chat entre vocês.
+              Isso vai iniciar uma comunicação entre vocês.
             </p>
             <p className="text-slate-600 text-sm leading-relaxed">
               Para ver e enviar mensagens nessa e outras conversas, acesse a
-              página de chats através do botão{" "}
-              <strong className="text-slate-900 font-bold">'Chat'</strong> no
+              página de mensagens através do botão{" "}
+              <strong className="text-slate-900 font-bold">'Mensagens'</strong> no
               menu.
             </p>
 
