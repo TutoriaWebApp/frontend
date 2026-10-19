@@ -65,8 +65,6 @@ export function AddScheduleModal({
             : { dia: selectedDay }
       };
 
-      console.log(separateTimes[0], separateTimes[1])
-
       const updatedAvailabilities = [...availabilities, newAvailability];
 
       setAvailabilities(updatedAvailabilities);

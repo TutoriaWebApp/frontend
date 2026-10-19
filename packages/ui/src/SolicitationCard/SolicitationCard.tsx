@@ -332,7 +332,7 @@ export const SolicitationCard = ({
               active:scale-[0.98]
               "
             >
-              Confirmar
+              Aceitar
             </button>
             <button
               id={`btn-rejectSolicitation-${userId}`}
@@ -354,7 +354,7 @@ export const SolicitationCard = ({
             active:scale-[0.98]
             "
             >
-              Cancelar
+              Recusar
             </button>
           </div>
         )}

@@ -77,9 +77,7 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
   const playAudio = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
-      audioRef.current.play().catch((err) => {
-        console.warn("⚠️ [AchievementUnlockContext] Áudio bloqueado pelo navegador:", err);
-      });
+      audioRef.current.play().catch((err) => {});
     }
   };
 
@@ -114,7 +112,6 @@ export const AchievementProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const showAchievement = useCallback(
     (achievement: AchievementPopupData) => {
-      console.log("📢 [AchievementUnlockContext] Enfileirando conquista:", achievement.titulo);
       queueRef.current.push(achievement);
 
       if (!isProcessingRef.current) {
