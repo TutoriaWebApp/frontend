@@ -260,9 +260,6 @@ export default function EditProfilePage() {
         }
       }
 
-      console.log("Para Inserir: ", newSchedules);
-      console.log("Para Apagar: ", deletedSchedules);
-
       if (newSchedules.length >= 1) {
         newSchedules.forEach(async (availability) => {
           await InsertScheduleAction(availability, userData!.perfilTutor!.id);
@@ -271,7 +268,7 @@ export default function EditProfilePage() {
 
       if (deletedSchedules.length >= 1) {
         deletedSchedules.forEach(async (availability) => {
-          console.log(await DeleteScheduleAction(availability.id!));
+          await DeleteScheduleAction(availability.id!);
         });
       }
     } else {
@@ -415,15 +412,11 @@ export default function EditProfilePage() {
           unlockAchievement(becameTutorAchievementId);
         }
         specialties.forEach(async (specialty) => {
-          console.log(
-            await InsertSpecialtyAction(specialty.id, resultadoTutor.data!.id),
-          );
+          await InsertSpecialtyAction(specialty.id, resultadoTutor.data!.id);
         });
 
         availabilities.forEach(async (availability) => {
-          console.log(
-            await InsertScheduleAction(availability, resultadoTutor.data!.id),
-          );
+          await InsertScheduleAction(availability, resultadoTutor.data!.id);
         });
       }
     }
