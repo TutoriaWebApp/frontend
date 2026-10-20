@@ -4,7 +4,7 @@ const nextConfig = {
   env: {
     backendBaseURL: process.env.BACKEND_BASE_URL || 'http://localhost:8000/v1',
     internalBackendURL: process.env.INTERNAL_BACKEND_URL || process.env.BACKEND_BASE_URL || 'http://localhost:8000/v1',
-    NEXT_PUBLIC_backendAchivementsBaseImageURL: 'http://localhost:8000/media/conquistas/',
+    NEXT_PUBLIC_backendAchivementsBaseImageURL: process.env.BACKEND_ACHIEVEMENTS_IMAGES_URL,
   },
   images: {
     remotePatterns: [
@@ -16,6 +16,11 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '8000',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_BACKEND_HOSTNAME, 
         pathname: '/media/**',
       },
     ],
