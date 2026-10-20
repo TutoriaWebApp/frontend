@@ -5,7 +5,12 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "BACKEND_BASE_URL",
+        "BACKEND_ACHIEVEMENTS_IMAGES_URL",
+        "NEXT_PUBLIC_BACKEND_HOSTNAME"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
