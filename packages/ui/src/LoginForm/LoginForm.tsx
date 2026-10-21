@@ -83,7 +83,6 @@ export default function LoginForm({
       if (result.success) {
         router.push("/dashboard");
       } else {
-        setServerError(result.message);
       }
     });
   };
