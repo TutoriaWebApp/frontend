@@ -19,7 +19,6 @@ export async function LogIn(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      credentials: "include", // <--- ADICIONE ESTA LINHA (Instrui o navegador a salvar os cookies do Set-Cookie)
       body: JSON.stringify({ username, password }),
     });
 
@@ -29,10 +28,10 @@ export async function LogIn(
       success: response.ok,
       status: response.status,
       data: data as BackendResponse,
-      headers: response.headers,
+      headers: response.headers, // Headers para o Server Action ler o Set-Cookie
     };
   } catch (error) {
-    console.error("Login Service Error:", error);
+    console.error("Password Reset Request Service Error:", error);
     return {
       success: false,
       status: 500,

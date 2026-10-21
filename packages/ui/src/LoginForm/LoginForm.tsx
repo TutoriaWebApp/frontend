@@ -10,8 +10,7 @@ import { useSessionExpired } from "../contexts/SessionExpiredContext/SessionExpi
 import { useSearchParams } from "next/navigation";
 import { isTokenExpired } from "@repo/lib/jwtAux";
 
-// import { LogInAction } from "../../../services/src/actions/auth";
-import {LogIn} from "@repo/services/auth"
+import { LogInAction } from "../../../services/src/actions/auth";
 
 import { ClipLoader } from "react-spinners";
 
@@ -78,11 +77,12 @@ export default function LoginForm({
       formData.append("username", data.username);
       formData.append("password", data.password);
 
-      const result = await LogIn(data.username, data.password);
+      const result = await LogInAction(null, formData);
 
       if (result.success) {
         router.push("/dashboard");
       } else {
+        setServerError(result.message);
       }
     });
   };
