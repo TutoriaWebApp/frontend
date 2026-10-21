@@ -20,7 +20,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_BACKEND_HOSTNAME, 
+        hostname: process.env.BACKEND_HOSTNAME, 
         pathname: '/media/**',
       },
     ],

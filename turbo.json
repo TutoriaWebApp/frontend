@@ -9,7 +9,7 @@
       "env": [
         "BACKEND_BASE_URL",
         "BACKEND_ACHIEVEMENTS_IMAGES_URL",
-        "NEXT_PUBLIC_BACKEND_HOSTNAME"
+        "BACKEND_HOSTNAME"
       ]
     },
     "lint": {
