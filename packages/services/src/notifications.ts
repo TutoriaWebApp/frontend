@@ -3,7 +3,7 @@ import { getBackendUrl } from "@repo/lib/getBackendUrl";
 import {NotificationResult} from "./types/notification";
 
 export async function GetNotifications(): Promise<NotificationResult> {
-  const URL = `${getBackendUrl()}/notificacoes-resumo/`;
+  const URL = `${getBackendUrl()}/notificacoes-resumo`;
 
   try {
     const res = await authRequestWrapper(

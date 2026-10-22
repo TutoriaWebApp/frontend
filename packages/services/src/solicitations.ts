@@ -104,7 +104,7 @@ export async function GetSolicitations(
 }
 
 export async function GetAllSolicitations(): Promise<AllSolicitationsGetResult> {
-  const URL = `${getBackendUrl()}/todas-solicitacoes/`;
+  const URL = `${getBackendUrl()}/todas-solicitacoes`;
 
   try {
     const res = await authRequestWrapper(
@@ -138,7 +138,7 @@ export async function AcceptSolicitation(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
-  let URL = `${getBackendUrl()}/solicitacoes/aceitar/${id}/`;
+  let URL = `${getBackendUrl()}/solicitacoes/aceitar/${id}`;
 
   try {
     const res = await authRequestWrapper(
@@ -180,7 +180,7 @@ export async function RejectSolicitation(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
-  let URL = `${getBackendUrl()}/solicitacoes/recusar/${id}/`;
+  let URL = `${getBackendUrl()}/solicitacoes/recusar/${id}`;
 
   try {
     const res = await authRequestWrapper(

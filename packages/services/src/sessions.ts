@@ -15,7 +15,7 @@ export async function GetSessions(
   pageNumber: number = 1,
   page_size: number = 6,
 ): Promise<SessionsGetResult> {
-  let URL = `${getBackendUrl()}/sessoes/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/sessoes?page=${pageNumber}`;
 
   if (areaId) {
     URL += `&area=${areaId}`;
@@ -62,7 +62,7 @@ export async function GetSessions(
 export async function GetSpecificTutorSessions(
   tutorId: number,
 ): Promise<SpecificTutorSessionGetResult> {
-  let URL = `${getBackendUrl()}/sessoes-tutor/`;
+  let URL = `${getBackendUrl()}/sessoes-tutor`;
 
   URL += `?tutor_id=${tutorId}`;
 
@@ -95,7 +95,7 @@ export async function GetSpecificTutorSessions(
 
 export async function GetAllUserSessions(): Promise<AllUserSessionGetResult> {
   try {
-    const URL = `${getBackendUrl()}/todas-sessoes-usuario/`;
+    const URL = `${getBackendUrl()}/todas-sessoes-usuario`;
 
     const sessionRes = await authRequestWrapper(
       URL,

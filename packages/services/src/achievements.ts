@@ -3,7 +3,7 @@ import { authRequestWrapper } from "@repo/lib/authRequestWrapper"
 import { getBackendUrl } from "@repo/lib/getBackendUrl"
 
 export async function GetAllAchievements(): Promise<GetAllAchievementsResult> {
-  const URL = `${getBackendUrl()}/conquistas/`;
+  const URL = `${getBackendUrl()}/conquistas`;
 
   try {
     const res = await authRequestWrapper(
@@ -29,7 +29,7 @@ export async function GetAllAchievements(): Promise<GetAllAchievementsResult> {
 }
 
 export async function GetSpecificAchievement(achievementId: number): Promise<GetSpecificAchievementsResult> {
-  const URL = `${process.env.backendBaseURL}/conquistas/${achievementId}/`;
+  const URL = `${process.env.backendBaseURL}/conquistas/${achievementId}`;
 
   try {
     const res = await authRequestWrapper(
@@ -90,7 +90,7 @@ export async function UnlockAchievement(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<AchivementUnlockedResult> {
-  const URL = `${process.env.backendBaseURL}/consegue/`;
+  const URL = `${process.env.backendBaseURL}/consegue`;
 
   try {
     const res = await authRequestWrapper(

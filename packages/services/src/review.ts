@@ -15,7 +15,7 @@ export async function GetReviewsStudent(
   userId: number,
   page_size: number = 6,
 ): Promise<GetReviewsResult> {
-  let URL = `${getBackendUrl()}/avaliacoes/aprendiz/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/avaliacoes/aprendiz?page=${pageNumber}`;
 
   if (gradeOrder != "") {
     URL += `&ordering=${gradeOrder}`;
@@ -60,7 +60,7 @@ export async function GetReviewsTutor(
   specialtyId?: number,
   page_size: number = 6,
 ): Promise<GetReviewsResult> {
-  let URL = `${getBackendUrl()}/avaliacoes/tutor/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/avaliacoes/tutor?page=${pageNumber}`;
 
   if (areaId != 0) {
     URL += `&area=${areaId}`;
@@ -110,7 +110,7 @@ export async function PostUserReview(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SendReviewResult> {
-  const URL = `${getBackendUrl()}/avaliacoes/aprendiz/`;
+  const URL = `${getBackendUrl()}/avaliacoes/aprendiz`;
 
   try {
     const res = await authRequestWrapper(
@@ -154,7 +154,7 @@ export async function PostTutorReview(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SendReviewResult> {
-  const URL = `${getBackendUrl()}/avaliacoes/tutor/`;
+  const URL = `${getBackendUrl()}/avaliacoes/tutor`;
 
   try {
     const res = await authRequestWrapper(
@@ -228,7 +228,7 @@ export async function GetPendingReviews(): Promise<GetPendingReviewsResult> {
 }
 
 export async function GetAllUserReviews(): Promise<GetAllUserReviewsResult> {
-  const URL = `${getBackendUrl()}/avaliacoes/todas/`;
+  const URL = `${getBackendUrl()}/avaliacoes/todas`;
 
   try {
     const res = await authRequestWrapper(

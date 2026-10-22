@@ -80,7 +80,7 @@ export async function GetUserData(): Promise<
 }
 
 export async function GetAreaById(id: number): Promise<GetAreaResult> {
-  const URL = `${getBackendUrl()}/areas/${id}/`;
+  const URL = `${getBackendUrl()}/areas/${id}`;
   const cookieStore = await cookies();
 
   const accessToken = cookieStore.get("access_token")?.value;
@@ -115,7 +115,7 @@ export async function GetAreaById(id: number): Promise<GetAreaResult> {
 }
 
 export async function GetSchedule(tutorId?: number): Promise<GetScheduleResult> {
-  let URL = `${getBackendUrl()}/agendas/`;
+  let URL = `${getBackendUrl()}/agendas`;
 
   if (tutorId) {
     URL += `?tutor=${tutorId}`;

@@ -15,7 +15,7 @@ export async function PostMessage(
   csrfTokenString: string | undefined,
 ): Promise<PostMessageResult> {
   const baseURL = getBackendUrl();
-  const URL = `${baseURL}/mensagens/`;
+  const URL = `${baseURL}/mensagens`;
 
   try {
     const res = await authRequestWrapper(
@@ -54,7 +54,7 @@ export async function CreateChat(
   csrfTokenString: string | undefined,
 ): Promise<CreateChatResult> {
   const baseURL = getBackendUrl();
-  const URL = `${baseURL}/chats/`;
+  const URL = `${baseURL}/chats`;
 
   try {
     const res = await authRequestWrapper(
@@ -101,7 +101,7 @@ export async function CreateChat(
 }
 
 export async function GetChats(): Promise<GetChatResult> {
-  const URL = `${getBackendUrl()}/chats/`;
+  const URL = `${getBackendUrl()}/chats`;
 
   try {
     const res = await authRequestWrapper(
@@ -139,7 +139,7 @@ export async function GetChatMessages(
   chatId: number,
   page: number = 1,
 ): Promise<MessagesGetResult> {
-  const URL = `${getBackendUrl()}/mensagens/?chatId=${chatId}&page=${page}`;
+  const URL = `${getBackendUrl()}/mensagens?chatId=${chatId}&page=${page}`;
 
   try {
     const res = await authRequestWrapper(
@@ -167,7 +167,7 @@ export async function GetChatMessages(
 
 export async function MarkMessagesAsRead(chatId: number): Promise<ReadMessagesResult> {
   const baseURL = process.env.backendBaseURL;
-  const URL = `${baseURL}/mensagens/marcar-lidas/`;
+  const URL = `${baseURL}/mensagens/marcar-lidas`;
 
   try {
     const res = await authRequestWrapper(
