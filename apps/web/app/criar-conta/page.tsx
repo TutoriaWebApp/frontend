@@ -34,6 +34,7 @@ import { DeleteTutorAreaModal } from "@repo/ui/Modals/TutorAreas/DeleteTutorArea
 import { DeleteSpecialtyModal } from "@repo/ui/Modals/Specialty/DeleteSpecialtyModal";
 import { TimeSlot } from "@repo/services/availabilityTypes";
 import { CreateAccountAction } from "@repo/services/userAction";
+import { CreateAccount } from "@repo/services/userClient";
 
 const registerSchema = z
   .object({
@@ -269,13 +270,10 @@ export default function CreateAccountPage(): React.ReactNode {
 
     console.log(specialties, availabilities);
 
-    const result = await CreateAccountAction(formData);
+    const result = await CreateAccount(formData);
 
     if (result.success) {
-      showNotification(result.message, "success");
       router.push("/");
-    } else {
-      showNotification(result.message, "error");
     }
   };
 
