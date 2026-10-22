@@ -32,8 +32,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api-backend/:path*",
-        destination: "https://webtutoria.duckdns.org/v1/:path*",
+        source: "/v1/:path*",
+        destination: "https://webtutoria.duckdns.org/v1/:path*/",
       },
     ];
   },
