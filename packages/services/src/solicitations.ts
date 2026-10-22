@@ -13,7 +13,7 @@ export async function CreateSolicitation(
   cookieString: string,
   csrfTokenString: string | undefined,
 ): Promise<SolicitationPostResult> {
-  const URL = `${getBackendUrl()}/solicitacoes/`;
+  const URL = `${getBackendUrl()}/solicitacoes`;
 
   try {
     const res = await authRequestWrapper(
@@ -60,7 +60,7 @@ export async function GetSolicitations(
   pageNumber: number = 1,
   page_size: number = 6,
 ): Promise<SolicitationGetResult> {
-  let URL = `${getBackendUrl()}/solicitacoes/?page=${pageNumber}`;
+  let URL = `${getBackendUrl()}/solicitacoes?page=${pageNumber}`;
 
   if (areaId) {
     URL += `&area=${areaId}`;
