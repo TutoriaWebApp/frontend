@@ -33,7 +33,7 @@ const nextConfig = {
     return [
       {
         source: "/v1/:path*",
-        destination: "https://webtutoria.duckdns.org/v1/:path*/",
+        destination: "https://webtutoria.duckdns.org/v1/:path*",
       },
     ];
   },
