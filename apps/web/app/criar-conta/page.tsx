@@ -136,6 +136,8 @@ export default function CreateAccountPage(): React.ReactNode {
   const [loading, setLoading] = useState<boolean>(true);
   const [availabilities, setAvailabilities] = useState<TimeSlot[]>([]);
 
+  const [submit, setSubmit] = useState<boolean>(false);
+
   //Áreas de Estudante
   const [studentAreas, setStudentAreas] = useState<StudentArea[]>([]);
 
@@ -233,6 +235,8 @@ export default function CreateAccountPage(): React.ReactNode {
   const onSubmit = async (data: RegisterData) => {
     const { passwordConfirm, ...rest } = data;
 
+    setSubmit(true);
+
     const formData = new FormData();
 
     formData.append("nomePerfil", rest.nomePerfil);
@@ -255,6 +259,7 @@ export default function CreateAccountPage(): React.ReactNode {
         "É necessário ter área, especialidade e disponibilidade para ser tutor!",
         "error",
       );
+      setSubmit(false);
       return;
     }
 
@@ -267,9 +272,9 @@ export default function CreateAccountPage(): React.ReactNode {
       formData.append("agendas", JSON.stringify(availabilities));
     }
 
-    console.log(specialties, availabilities);
-
     const result = await CreateAccountAction(formData);
+
+    setSubmit(false);
 
     if (result.success) {
       showNotification(result.message, "success");
@@ -1449,6 +1454,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     <span>Voltar para o Passo 1</span>
                   </div>
                   <button
+                    disabled={submit}
                     id="btn-submitRegister"
                     className="
                     bg-brand-primary 
