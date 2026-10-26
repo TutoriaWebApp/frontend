@@ -55,7 +55,7 @@ export default function GetRecommendationsPage() {
 
       setLoading(false);
     }
-    fetchAreas();
+    void fetchAreas();
   }, []);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function GetRecommendationsPage() {
         setSpecialtiesList(res.data);
       }
     }
-    fetchSpecialties();
+    void fetchSpecialties();
   }, [queryAreaId]);
 
   const fetchRecommendationsPage = async (
@@ -195,7 +195,7 @@ export default function GetRecommendationsPage() {
               "
               >
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                       sm:text-xs
                       2xl:text-sm 
@@ -210,7 +210,7 @@ export default function GetRecommendationsPage() {
                   >
                     Área de Conhecimento
                     <span className="text-red-600 text-base">*</span>
-                  </label>
+                  </span>
                   <select
                     id="sel-area"
                     defaultValue={""}
@@ -241,7 +241,7 @@ export default function GetRecommendationsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                     sm:text-xs
                     2xl:text-sm 
@@ -253,7 +253,7 @@ export default function GetRecommendationsPage() {
                   "
                   >
                     Especialidade
-                  </label>
+                  </span>
                   <select
                     id="sel-specialty"
                     disabled={queryAreaId ? false : true}
@@ -285,7 +285,7 @@ export default function GetRecommendationsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                   sm:text-xs
                   2xl:text-sm 
@@ -297,7 +297,7 @@ export default function GetRecommendationsPage() {
               "
                   >
                     Localização (Raio em KM)
-                  </label>
+                  </span>
                   <input
                     id="inp-filterRadius"
                     type="number"
