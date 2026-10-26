@@ -79,7 +79,7 @@ export default function ChatPage() {
         setChats(res.data);
 
         if (isInitial && res.data.length > 0) {
-          selectChat(res.data[0]!.id);
+          void selectChat(res.data[0]!.id);
         }
       } else if (isInitial) {
         if (res.status !== 500) {
