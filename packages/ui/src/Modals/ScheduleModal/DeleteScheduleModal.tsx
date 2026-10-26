@@ -41,7 +41,15 @@ export function DeleteScheduleModal({
 
   const deleteAvailability = () => {
     const filteredAvailabilities = availabilities.filter((availability) => {
-      return availability.id != availabilityToDelete?.id;
+      if (availability.id && availabilityToDelete?.id) {
+        return availability.id !== availabilityToDelete.id;
+      }
+      
+      return (
+        availability.dia !== availabilityToDelete.dia ||
+        availability.horarioInicio !== availabilityToDelete.horarioInicio ||
+        availability.horarioFim !== availabilityToDelete.horarioFim
+      );
     });
 
     setAvailabilities(filteredAvailabilities);

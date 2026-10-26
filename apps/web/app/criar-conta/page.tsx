@@ -224,6 +224,7 @@ export default function CreateAccountPage(): React.ReactNode {
 
     if (isValid) {
       setStep(3);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       showNotification(
         "Preencha todos os campos obrigatórios corretamente.",
