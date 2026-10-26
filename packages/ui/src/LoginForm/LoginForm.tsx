@@ -57,7 +57,7 @@ export default function LoginForm({
       }
     };
 
-    checkToken(access_token, refresh_token);
+    void checkToken(access_token, refresh_token);
   }, []);
 
   const {
@@ -230,6 +230,7 @@ export default function LoginForm({
 
               <button
                 id="btn-submitLogin"
+                type="submit"
                 className="
               bg-indigo-600 
               hover:bg-indigo-800
@@ -288,6 +289,7 @@ export default function LoginForm({
               >
                 <button
                   id="btn-createNewAccount"
+                  type="button"
                   className="
             bg-emerald-600 
             hover:bg-emerald-800 
