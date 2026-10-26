@@ -162,8 +162,9 @@ export default function ForgotPassword(): React.ReactNode {
                   placeholder="Digite a nova senha"
                 />
               </label>
-              <div
+              <button
                 id="div-showPassword"
+                type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="
                   flex 
@@ -181,7 +182,7 @@ export default function ForgotPassword(): React.ReactNode {
               ">
                 <VisibilityIcon className="mr-1" />
                   Mostrar
-              </div>
+              </button>
             </div>
             <div className="
               mb-6 
@@ -230,8 +231,9 @@ export default function ForgotPassword(): React.ReactNode {
                   placeholder="Digite a nova senha novamente"
                 />
               </label>
-              <div
+              <button
                 id="div-showPasswordConfirm"
+                type="button"
                 onClick={() =>
                   setShowConfirmNewPassword(!showConfirmNewPassword)
                 }
@@ -251,7 +253,7 @@ export default function ForgotPassword(): React.ReactNode {
               ">
                 <VisibilityIcon className="mr-1" />
                 Mostrar
-              </div>
+              </button>
             </div>
             <div className="pl-6 mt-4 flex flex-col">
               {errors.passwordConfirm && (
@@ -261,6 +263,7 @@ export default function ForgotPassword(): React.ReactNode {
               )}
             </div>
             <button
+              type="submit"
               id="btn-submitResetPassword"
               className="
               bg-indigo-600
