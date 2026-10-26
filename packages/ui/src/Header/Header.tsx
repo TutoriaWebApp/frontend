@@ -84,7 +84,7 @@ const useHeaderNotifications = (loggedIn: boolean) => {
       }
     };
 
-    checkNotifications();
+    void checkNotifications();
     const intervalId = setInterval(checkNotifications, 2000);
 
     return () => clearInterval(intervalId);
@@ -444,7 +444,7 @@ export default function Header({ onLogout }: HeaderProps) {
                   </Link>
                 ))}
 
-                <div
+                <button
                   className="
                     p-4 
                     rounded-xl 
@@ -457,7 +457,7 @@ export default function Header({ onLogout }: HeaderProps) {
                   onClick={handleLogout}
                 >
                   Sair da Conta
-                </div>
+                </button>
               </nav>
             </div>
           )}
