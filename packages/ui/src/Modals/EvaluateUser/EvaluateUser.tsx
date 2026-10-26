@@ -300,7 +300,7 @@ export function EvaluateUserModal({
 
             {/* Campo de Comentário */}
             <div className="space-y-1.5">
-              <label
+              <span
                 className="
                 text-xs 
                 font-black 
@@ -311,7 +311,7 @@ export function EvaluateUserModal({
               "
               >
                 Comentário (Opcional)
-              </label>
+              </span>
               <textarea
                 id="txt-reviewSession"
                 value={comment}

@@ -181,13 +181,14 @@ export function ChangePasswordModal({
                   maxLength={35}
                 />
               </label>
-              <div
+              <button
+               type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
               >
                 <VisibilityIcon className="mr-1" />
                 Mostrar
-              </div>
+              </button>
             </div>
             <div className="flex items-center">
               <label className="flex flex-col pl-6 w-full">
@@ -210,13 +211,14 @@ export function ChangePasswordModal({
                   maxLength={35}
                 />
               </label>
-              <div
+              <button
+                type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="flex items-center border-2 border-slate-300 bg-white rounded-md h-[2rem] pr-2 pl-2 mr-6 mt-8 cursor-pointer"
               >
                 <VisibilityIcon className="mr-1" />
                 Mostrar
-              </div>
+              </button>
             </div>
             <div className="mb-6 pl-6 mt-4 flex flex-col">
               {errors.newPassword && (
@@ -248,7 +250,8 @@ export function ChangePasswordModal({
                   maxLength={35}
                 />
               </label>
-              <div
+              <button
+                type="button"
                 onClick={() =>
                   setShowConfirmNewPassword(!showConfirmNewPassword)
                 }
@@ -256,7 +259,7 @@ export function ChangePasswordModal({
               >
                 <VisibilityIcon className="mr-1" />
                 Mostrar
-              </div>
+              </button>
             </div>
             <div className="pl-6 pb-6 mt-4 flex flex-col">
               {errors.newPasswordConfirm && (
@@ -282,7 +285,8 @@ export function ChangePasswordModal({
             border-slate-100
         "
             >
-              <div
+              <button
+                type="button"
                 id="btn-cancelChangePasswordModal"
                 onClick={onClose}
                 className="
@@ -299,7 +303,7 @@ export function ChangePasswordModal({
             "
               >
                 Cancelar
-              </div>
+              </button>
               <button
                 id="btn-saveChangePasswordModal"
                 type="submit"

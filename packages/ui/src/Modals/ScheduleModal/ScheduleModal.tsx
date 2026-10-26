@@ -143,7 +143,7 @@ export function ScheduleModal({
         }
       };
 
-      awaitFetches();
+      void awaitFetches();
     }
   }, [tutorId]);
 
@@ -623,7 +623,7 @@ export function ScheduleModal({
 		"
             >
               <div className="space-y-1.5">
-                <label
+                <span
                   className="
 			  	text-xs 
 				2xl:text-sm
@@ -635,7 +635,7 @@ export function ScheduleModal({
 			  "
                 >
                   Área de Conhecimento<span className="text-red-500">*</span>
-                </label>
+                </span>
                 <select
                   id='sel-area'
                   value={selectedAreaId || ""}
@@ -665,7 +665,7 @@ export function ScheduleModal({
               </div>
 
               <div className="space-y-1.5">
-                <label
+                <span
                   className="
 			  	text-xs 
 				2xl:text-sm
@@ -677,7 +677,7 @@ export function ScheduleModal({
 			  "
                 >
                   Especialidade<span className="text-red-500">*</span>
-                </label>
+                </span>
                 <select
                   id='sel-specialty'
                   disabled={!selectedAreaId}

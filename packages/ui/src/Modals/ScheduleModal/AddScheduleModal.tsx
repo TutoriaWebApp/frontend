@@ -156,7 +156,7 @@ export function AddScheduleModal({
           >
             {/* Select 1: Dia da Semana */}
             <div className="space-y-2">
-              <label
+              <span
                 className="
                 text-xs 
                 font-black 
@@ -166,7 +166,7 @@ export function AddScheduleModal({
                "
               >
                 Escolha o dia
-              </label>
+              </span>
               <div
                 className="
                 relative 
@@ -222,7 +222,7 @@ export function AddScheduleModal({
 
             {/* Select 2: Horário */}
             <div className="space-y-2">
-              <label
+              <span
                 className="
                 text-xs 
                 font-black 
@@ -232,7 +232,7 @@ export function AddScheduleModal({
             "
               >
                 Horário da Sessão
-              </label>
+              </span>
               <div className="relative group">
                 <select
                   id="sel-timeSlot"

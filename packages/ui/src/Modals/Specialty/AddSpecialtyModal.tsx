@@ -60,7 +60,7 @@ export function AddSpecialtyModal({
     setLoading(false);
 
     if (isOpen) {
-      fetchAreas();
+      void fetchAreas();
     }
   }, [isOpen]);
 
@@ -77,7 +77,7 @@ export function AddSpecialtyModal({
       }
     }
 
-    fetchSpecialties();
+    void fetchSpecialties();
   }, [selectedArea]);
 
   if (!isOpen) return null;
@@ -216,7 +216,7 @@ export function AddSpecialtyModal({
               >
                 {/* Select 1: Área de Tutoria */}
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                 text-xs 
                 font-black 
@@ -226,7 +226,7 @@ export function AddSpecialtyModal({
                 "
                   >
                     Selecione a Área de Tutoria
-                  </label>
+                  </span>
                   <div className="relative">
                     <select
                       id="sel-area"
@@ -263,7 +263,7 @@ export function AddSpecialtyModal({
 
                 {/* Select 2: Especialidade */}
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                 text-xs 
                 font-black 
@@ -273,7 +273,7 @@ export function AddSpecialtyModal({
                 "
                   >
                     Selecione a Especialidade
-                  </label>
+                  </span>
 
                   <div className="relative">
                     <select
