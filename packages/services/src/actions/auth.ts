@@ -52,7 +52,7 @@ export async function LogInAction(
               const lowerKey = key.toLowerCase();
 
               if (lowerKey === "max-age") {
-                options.maxAge = parseInt(val);
+                options.maxAge = Number.parseInt(val);
               } else if (lowerKey === "expires") {
                 options.expires = new Date(val);
               } else if (lowerKey === "path") {

@@ -55,7 +55,7 @@ export async function GetSpecificAchievement(achievementId: number): Promise<Get
 }
 
 export async function GetUserAchievements(userId: number): Promise<GetUserAchievementsResult> {
-  if (!userId || isNaN(Number(userId))) {
+  if (!userId || Number.isNaN(Number(userId))) {
     return { success: false, status: 400 };
   }
 

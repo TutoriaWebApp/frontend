@@ -98,7 +98,7 @@ export function AvailabilityManager({
 
   const currentDaySlots = useMemo(() => {
     return availabilities.filter((slot) => {
-      const diaStr = typeof slot.dia === "string" ? slot.dia : slot.dia;
+      const diaStr = slot.dia;
       return diaStr === selectedDayKey;
     });
   }, [availabilities, selectedDayKey]);

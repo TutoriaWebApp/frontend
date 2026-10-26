@@ -27,7 +27,7 @@ export const AddStudentArea = ({ areas, setAreas }: AddStudentAreaProps) => {
         setSelectArea(res.data);
       }
     }
-    fetchAreas();
+    void fetchAreas();
   }, []);
 
   return (
