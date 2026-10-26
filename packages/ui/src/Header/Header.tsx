@@ -113,7 +113,7 @@ export default function Header({ onLogout }: HeaderProps) {
     { name: "Perfil", href: "/meu-perfil" },
     { name: "Conquistas", href: "/conquistas" },
     { name: "Buscar Tutores", href: "/buscar-tutores" },
-    { name: "Solicitações", href: "/solicitacoes" },
+    { name: "Gerenciar Solicitações", href: "/solicitacoes" },
     { name: "Mensagens", href: "/mensagens" },
   ];
 
@@ -258,7 +258,7 @@ export default function Header({ onLogout }: HeaderProps) {
                     )}
 
                     {/* Badges de Solicitações Desktop */}
-                    {link.name === "Solicitações" && (
+                    {link.name === "Gerenciar Solicitações" && (
                       <div className="absolute top-2 right-2 flex items-center gap-1">
                         {pendingTutorCount > 0 && (
                           <span
@@ -394,7 +394,7 @@ export default function Header({ onLogout }: HeaderProps) {
                       )}
 
                       {/* Badges de Solicitações Mobile */}
-                      {link.name === "Solicitações" && (
+                      {link.name === "Gerenciar Solicitações" && (
                         <div className="flex items-center gap-1.5">
                           {pendingTutorCount > 0 && (
                             <span

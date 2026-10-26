@@ -599,8 +599,7 @@ export function ScheduleModal({
             hover:border-indigo-500
             ${item.status === "busy" && "bg-red-500 text-white cursor-not-allowed font-semibold shadow-sm hover:border-none"}
 						${item.status === "disabled" && "bg-gray-400 border-slate-100 text-slate-800 cursor-not-allowed opacity-60 hover:border-none"}
-            ${isSelected ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100 scale-105" : item.status !== "busy" ? "bg-white border-slate-200 text-slate-700" : ""}
-				    `}
+            ${isSelected ? "bg-indigo-600 border-indigo-700 text-white shadow-md shadow-indigo-100 scale-105" : item.status === "free" ? "bg-emerald-500 border-emerald-600 text-white hover:bg-emerald-600" : ""}`}
                     >
                       {item.dayNumber}
                     </button>
@@ -807,9 +806,9 @@ export function ScheduleModal({
                   Disponibilidade
                 </p>
                 <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
-                  <div className="w-3 h-3 rounded-md bg-white border-2 border-slate-200" />
-                  <span>Livre</span>
-                </div>
+                <div className="w-3 h-3 rounded-md bg-emerald-500 border-2 border-emerald-600" />
+                <span>Livre</span>
+              </div>
                 <div className="flex items-center gap-2.5 text-xs font-bold text-slate-600">
                   <div className="w-3 h-3 rounded-md bg-gray-400 border border-slate-100 opacity-60" />
                   <span>Sem Horários</span>

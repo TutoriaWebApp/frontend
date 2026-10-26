@@ -39,7 +39,8 @@
     "./deleteTutorAreasModal": "./src/Modals/TutorAreas/DeleteTutorAreas.tsx",
     "./evaluateUserModal": "./src/Modals/EvaluateUser/EvaluateUser.tsx",
     "./acceptSolicitationModal": "./src/Modals/AcceptSolicitationModal/AcceptSolicitationModal.tsx",
-    "./rejectSolicitationModal": "./src/Modals/RejectSolicitationModal/RejectSolicitationModal.tsx"
+    "./rejectSolicitationModal": "./src/Modals/RejectSolicitationModal/RejectSolicitationModal.tsx",
+    "./tourModal": "./src/Modals/TourModal/TourModal.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

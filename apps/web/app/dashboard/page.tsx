@@ -20,6 +20,8 @@ import { GetAllUserSessions } from "@repo/services/sessions";
 import { GetHolidays } from "@repo/services/holidays";
 import { GetAllUserReviews } from "@repo/services/reviews";
 
+import TourModal from "@repo/ui/tourModal";
+
 export default function Dashboard(): React.ReactNode {
   const helloWorldAchievementId = 1;
   const becameTutorAchievementId = 23;
@@ -629,6 +631,7 @@ export default function Dashboard(): React.ReactNode {
 
   return (
     <div className="h-fit bg-slate-50 p-6 md:p-12">
+      <TourModal />
       <div className="max-w-5xl mx-auto bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
         <section className="pt-12 pb-8 px-8 text-center">
           <h1 className="text-3xl font-black text-slate-800 mb-4">
