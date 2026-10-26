@@ -140,7 +140,7 @@ export const UserAchievementsProvider: React.FC<{ children: ReactNode }> = ({
                 (typeof item.conquista === "object" ? item.conquista.id : item.conquista);
 
               const numId = Number(id);
-              if (!isNaN(numId) && numId > 0 && numId < TOTAL_SLOTS) {
+              if (!Number.isNaN(numId) && numId > 0 && numId < TOTAL_SLOTS) {
                 novoArrayStatus[numId] = true;
               }
             });

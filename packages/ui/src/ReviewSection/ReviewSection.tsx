@@ -97,7 +97,7 @@ export function ReviewSection({
 
   useEffect(() => {
     setCurrentPage(1);
-    fetchReviews(1, pageSize);
+    void fetchReviews(1, pageSize);
   }, [activeTab, queryAreaId, querySpecialtyId, gradeOrder]);
 
   const handleNextPage = async () => {
@@ -198,7 +198,7 @@ export function ReviewSection({
         "
             >
               <div className="space-y-2">
-                <label
+                <span
                   className="
                 sm:text-xs
                 2xl:text-sm 
@@ -210,7 +210,7 @@ export function ReviewSection({
               "
                 >
                   Ordenar por Notas
-                </label>
+                </span>
                 <select
                   className="
                 w-full 
@@ -236,7 +236,7 @@ export function ReviewSection({
               </div>
               {activeTab == "tutor" && (
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                 sm:text-xs
                 2xl:text-sm 
@@ -248,7 +248,7 @@ export function ReviewSection({
               "
                   >
                     Filtrar por Área
-                  </label>
+                  </span>
                   <select
                     value={queryAreaId}
                     onChange={(e) => {
@@ -283,7 +283,7 @@ export function ReviewSection({
               )}
               {activeTab == "tutor" && (
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                 sm:text-xs
                 2xl:text-sm 
@@ -295,7 +295,7 @@ export function ReviewSection({
               "
                   >
                     Filtrar por Especialidade
-                  </label>
+                  </span>
                   <select
                     disabled={queryAreaId == 0}
                     value={querySpecialtyId}

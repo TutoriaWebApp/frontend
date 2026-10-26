@@ -163,7 +163,7 @@ export const TutorCard = ({
       ))}
     </div>
 
-    {bio && bio.length && (
+    {bio && bio.length > 0 && (
       <div
         className="
         h-[75px]

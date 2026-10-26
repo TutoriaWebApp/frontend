@@ -64,7 +64,7 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
           );
         };
       };
-      reader.onerror = (err) => reject(err);
+      reader.onerror = () => reject(new Error("Falha ao ler o arquivo de imagem."));
     });
   };
 
@@ -83,9 +83,9 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
         {label}
         {required && <span className="text-red-500">*</span>}{" "}
       </label>
-      <div
-        className="relative w-40 h-40 group cursor-pointer"
-        onClick={() => document.getElementById(name)?.click()}
+      <label
+        htmlFor={name}
+        className="relative w-40 h-40 group cursor-pointer block"
       >
         <div className="w-full h-full rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50 group-hover:border-indigo-500 transition-all">
           {preview ? (
@@ -100,7 +100,7 @@ export function ImageUpload({ name, label, required }: ImageUploadProps) {
             </span>
           )}
         </div>
-      </div>
+      </label>
 
       <input
         id={name}
