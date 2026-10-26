@@ -12,7 +12,7 @@ COPY packages/ui/package.json ./packages/ui/
 COPY packages/config/package.json ./packages/config/
 COPY packages/lib/package.json ./packages/lib/
 COPY packages/services/package.json ./packages/services/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
