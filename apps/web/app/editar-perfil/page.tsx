@@ -96,7 +96,7 @@ const registerSchema = z.object({
       { message: "A data não pode ser futura." },
     )
     .nullable(),
-  sobreMim: z
+  sobremim: z
     .string()
     .max(500, "O texto só pode conter até 500 caracteres.")
     .nullable(),
@@ -358,6 +358,8 @@ export default function EditProfilePage() {
 
   useEffect(() => {
     async function fetchCities() {
+      if (!selectedEstado) return;
+
       const res = await GetCities(selectedEstado);
 
       if (typeof res === "string") {
@@ -366,17 +368,20 @@ export default function EditProfilePage() {
       }
 
       setCities(res);
-
       setLoading(false);
     }
     void fetchCities();
   }, [selectedEstado]);
 
   useEffect(() => {
-    if (userData?.cidade && cities.length > 0) {
+    if (
+      userData?.cidade &&
+      cities.length > 0 &&
+      selectedEstado === userData.estado
+    ) {
       setValue("cidade", userData.cidade);
     }
-  }, [cities, userData, setValue]);
+  }, [cities, userData, selectedEstado, setValue]);
 
   useEffect(() => {
     if (
@@ -434,8 +439,8 @@ export default function EditProfilePage() {
 
     if (data.foto) formData.append("foto", data.foto);
 
-    if (data.sobreMim) {
-      formData.append("sobremim", data.sobreMim);
+    if (data.sobremim) {
+      formData.append("sobremim", data.sobremim);
     } else {
       formData.append("sobremim", "");
     }
@@ -626,8 +631,8 @@ export default function EditProfilePage() {
                             )
                               ? userData.perfilTutor.notaAvaliacao.toFixed(1)
                               : userData.perfilTutor.notaAvaliacao.toFixed(
-                                2,
-                              )}{" "}
+                                  2,
+                                )}{" "}
                             como{" "}
                             <em className="text-slate-800 not-italic font-bold">
                               Tutor
@@ -796,16 +801,12 @@ export default function EditProfilePage() {
                       <select
                         id="sel-city"
                         {...register("cidade")}
-                        className="
-                        bg-white  
-                        w-full
-                        text-slate-900
-                          rounded-md
-                          py-1
-                          border-2
-                        border-slate-300
-                        "
+                        className="bg-white w-full text-slate-900 rounded-md py-1 border-2 border-slate-300"
+                        defaultValue={""}
                       >
+                        <option value="" disabled hidden>
+                          Selecione uma opção
+                        </option>
                         {cities.map((city) => (
                           <option key={city.id} value={city.nome}>
                             {city.nome}
@@ -844,7 +845,7 @@ export default function EditProfilePage() {
                       <span className="font-semibold">Sobre Mim</span>
                       <textarea
                         id="txt-about"
-                        {...register("sobreMim")}
+                        {...register("sobremim")}
                         rows={6}
                         className="
                       bg-white  

@@ -155,6 +155,7 @@ export default function ForgotPassword(): React.ReactNode {
             )}
             <button
               id="btn-submitReset"
+              type="submit"
               className="
               bg-indigo-600
               hover:bg-indigo-800
