@@ -335,11 +335,15 @@ export default function Dashboard(): React.ReactNode {
           // Conquista 16: Incansável (participou de tutorias por 5 dias seguidos)
           if (!hasAchievement(fiveDayStreakAchievementId)) {
             // Extraindo datas únicas e remove duplicatas do mesmo dia
-            const uniqueDates = Array.from(
-              new Set(
-                completedSessions.map((s: any) => s.dataSessao).filter(Boolean),
-              ),
-            ).sort() as string[];
+            const uniqueDates = (
+              Array.from(
+                new Set(
+                  completedSessions
+                    .map((s: any) => s.dataSessao)
+                    .filter(Boolean),
+                ),
+              ) as string[]
+            ).sort((a, b) => a.localeCompare(b));
 
             let currentStreak = 1;
             let hasFiveDayStreak = false;
@@ -608,7 +612,10 @@ export default function Dashboard(): React.ReactNode {
               for (const review of res.data!.comoAprendiz) {
                 gradeSumStudent += review.nota;
               }
-              if (gradeSumStudent / res.data!.comoAprendiz.length >= 4.7 && !hasAchievement(legacyAchievementId)) {
+              if (
+                gradeSumStudent / res.data!.comoAprendiz.length >= 4.7 &&
+                !hasAchievement(legacyAchievementId)
+              ) {
                 unlockAchievement(legacyAchievementId);
               }
             }

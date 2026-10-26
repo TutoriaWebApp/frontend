@@ -49,7 +49,7 @@ export default function BuscaTutores() {
 
       setLoading(false);
     }
-    fetchAreas();
+    void fetchAreas();
   }, []);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function BuscaTutores() {
         setSpecialtiesList(res.data);
       }
     }
-    fetchSpecialties();
+    void fetchSpecialties();
   }, [queryAreaId]);
 
   const fetchTutorsPage = async (
@@ -185,7 +185,7 @@ export default function BuscaTutores() {
               "
               >
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                       sm:text-xs
                       2xl:text-sm 
@@ -197,7 +197,7 @@ export default function BuscaTutores() {
                   "
                   >
                     Área de Conhecimento
-                  </label>
+                  </span>
                   <select
                     id="sel-area"
                     defaultValue={""}
@@ -226,7 +226,7 @@ export default function BuscaTutores() {
                 </div>
 
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                     sm:text-xs
                     2xl:text-sm 
@@ -238,7 +238,7 @@ export default function BuscaTutores() {
                   "
                   >
                     Especialidade
-                  </label>
+                  </span>
                   <select
                     id="sel-specialty"
                     disabled={queryAreaId ? false : true}
@@ -270,7 +270,7 @@ export default function BuscaTutores() {
                 </div>
 
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                   sm:text-xs
                   2xl:text-sm 
@@ -282,7 +282,7 @@ export default function BuscaTutores() {
               "
                   >
                     Localização (Raio em KM)
-                  </label>
+                  </span>
                   <input
                     id="inp-filterRadius"
                     type="number"
@@ -309,7 +309,7 @@ export default function BuscaTutores() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                   sm:text-xs
                 2xl:text-sm 
@@ -321,7 +321,7 @@ export default function BuscaTutores() {
                 "
                   >
                     Ordenar por Nota de Avaliação
-                  </label>
+                  </span>
                   <select
                     id="sel-filterGradeOrder"
                     className="
@@ -347,7 +347,7 @@ export default function BuscaTutores() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label
+                  <span
                     className="
                   sm:text-xs
                 2xl:text-sm 
@@ -358,7 +358,7 @@ export default function BuscaTutores() {
                 "
                   >
                     Ordenar por Total de Tutorias
-                  </label>
+                  </span>
                   <select
                     id="sel-filterSessionsOrder"
                     className="
