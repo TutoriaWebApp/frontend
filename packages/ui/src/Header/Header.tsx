@@ -453,6 +453,7 @@ export default function Header({ onLogout }: HeaderProps) {
                     active:bg-rose-50 
                     cursor-pointer
                     text-slate-600
+                    self-baseline
                   "
                   onClick={handleLogout}
                 >
