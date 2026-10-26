@@ -99,7 +99,7 @@ export default function Dashboard(): React.ReactNode {
       }
     }
 
-    fetchSessions();
+    void fetchSessions();
   }, [triggerEvaluation]);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export default function Dashboard(): React.ReactNode {
       setLoading(false);
     }
 
-    fetchStatistics();
+    void fetchStatistics();
   }, [carregarDadosConquistas, setUserId, showNotification]);
 
   useEffect(() => {
@@ -231,7 +231,7 @@ export default function Dashboard(): React.ReactNode {
               `${session.dataSessao}T${session.horarioFim}`,
             );
             return (
-              !isNaN(sessionEndDateTime.getTime()) && sessionEndDateTime <= now
+              !Number.isNaN(sessionEndDateTime.getTime()) && sessionEndDateTime <= now
             );
           });
 
@@ -420,7 +420,7 @@ export default function Dashboard(): React.ReactNode {
               new Set(
                 completedSessions
                   .map((s: any) => Number(s.dataSessao?.split("-")[0]))
-                  .filter((year: number) => !isNaN(year) && year > 0),
+                  .filter((year: number) => !Number.isNaN(year) && year > 0),
               ),
             );
 
@@ -624,7 +624,7 @@ export default function Dashboard(): React.ReactNode {
       }
     };
 
-    checkAchievements();
+    void checkAchievements();
   }, [userId, inicializado]);
 
   return (
