@@ -39,7 +39,7 @@ export default function AchievementsPage() {
       setLoading(false);
     };
 
-    fetchAll();
+    void fetchAll();
   }, [showNotification]);
 
   const achievements: AchievementCardItem[] = rawAchievements.map((achievement) => ({

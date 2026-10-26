@@ -65,7 +65,7 @@ const registerSchema = z
         (stringDate) => {
           const date = new Date(stringDate);
 
-          return !isNaN(date.getTime());
+          return !Number.isNaN(date.getTime());
         },
         { message: "Data inválida." },
       )
@@ -193,7 +193,7 @@ export default function CreateAccountPage(): React.ReactNode {
 
       setLoading(false);
     }
-    fetchStates();
+    void fetchStates();
   }, []);
 
   useEffect(() => {
@@ -207,7 +207,7 @@ export default function CreateAccountPage(): React.ReactNode {
 
       setCities(res);
     }
-    fetchCities();
+    void fetchCities();
   }, [selectedEstado]);
 
   const handleAdvanceStep = async () => {
@@ -677,8 +677,9 @@ export default function CreateAccountPage(): React.ReactNode {
                         maxLength={35}
                       />
                     </label>
-                    <div
+                    <button
                       id="div-showPassword"
+                      type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="
                       flex 
@@ -700,7 +701,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     "
                       />
                       Mostrar
-                    </div>
+                    </button>
                   </div>
                   <div
                     className="
@@ -750,8 +751,9 @@ export default function CreateAccountPage(): React.ReactNode {
                         maxLength={35}
                       />
                     </label>
-                    <div
+                    <button
                       id="div-showPasswordConfirm"
+                      type="button"
                       onClick={() =>
                         setShowConfirmNewPassword(!showConfirmNewPassword)
                       }
@@ -772,7 +774,7 @@ export default function CreateAccountPage(): React.ReactNode {
                     >
                       <VisibilityIcon className="mr-1" />
                       Mostrar
-                    </div>
+                    </button>
                   </div>
                   <div
                     className="
@@ -1197,8 +1199,9 @@ export default function CreateAccountPage(): React.ReactNode {
                   p-4
                   "
                 >
-                  <div
+                  <button
                     id="div-backPersonalInfo"
+                    type="button"
                     onClick={() => setStep(1)}
                     className="
                     p-4 
@@ -1213,7 +1216,7 @@ export default function CreateAccountPage(): React.ReactNode {
                   >
                     <ArrowBackIcon className="mr-1" />
                     <span>Voltar para o Passo 1</span>
-                  </div>
+                  </button>
                   <button
                     id="btn-continueInterests"
                     className="
@@ -1436,8 +1439,9 @@ export default function CreateAccountPage(): React.ReactNode {
                   p-4
                   "
                 >
-                  <div
+                  <button
                     id="div-backInterests"
+                    type="button"
                     onClick={() => setStep(1)}
                     className="
                     p-4 
@@ -1452,7 +1456,7 @@ export default function CreateAccountPage(): React.ReactNode {
                   >
                     <ArrowBackIcon className="mr-1" />
                     <span>Voltar para o Passo 1</span>
-                  </div>
+                  </button>
                   <button
                     disabled={submit}
                     id="btn-submitRegister"
