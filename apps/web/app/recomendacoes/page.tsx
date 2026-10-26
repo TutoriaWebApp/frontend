@@ -195,7 +195,7 @@ export default function GetRecommendationsPage() {
               "
               >
                 <div className="space-y-2">
-                  <span
+                  <p
                     className="
                       sm:text-xs
                       2xl:text-sm 
@@ -210,7 +210,7 @@ export default function GetRecommendationsPage() {
                   >
                     Área de Conhecimento
                     <span className="text-red-600 text-base">*</span>
-                  </span>
+                  </p>
                   <select
                     id="sel-area"
                     defaultValue={""}
@@ -241,7 +241,7 @@ export default function GetRecommendationsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <span
+                  <p
                     className="
                     sm:text-xs
                     2xl:text-sm 
@@ -253,7 +253,7 @@ export default function GetRecommendationsPage() {
                   "
                   >
                     Especialidade
-                  </span>
+                  </p>
                   <select
                     id="sel-specialty"
                     disabled={queryAreaId ? false : true}
@@ -285,7 +285,7 @@ export default function GetRecommendationsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <span
+                  <p
                     className="
                   sm:text-xs
                   2xl:text-sm 
@@ -297,7 +297,7 @@ export default function GetRecommendationsPage() {
               "
                   >
                     Localização (Raio em KM)
-                  </span>
+                  </p>
                   <input
                     id="inp-filterRadius"
                     type="number"
