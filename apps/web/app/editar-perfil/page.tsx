@@ -78,7 +78,7 @@ const registerSchema = z.object({
 
         const date = new Date(stringDate);
 
-        return !isNaN(date.getTime());
+        return !Number.isNaN(date.getTime());
       },
       { message: "Data inválida." },
     )
@@ -335,7 +335,7 @@ export default function EditProfilePage() {
       setLoading(false);
     };
 
-    fetchUserData();
+    void fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -353,7 +353,7 @@ export default function EditProfilePage() {
 
       setLoading(false);
     }
-    fetchStates();
+    void fetchStates();
   }, []);
 
   useEffect(() => {
@@ -369,7 +369,7 @@ export default function EditProfilePage() {
 
       setLoading(false);
     }
-    fetchCities();
+    void fetchCities();
   }, [selectedEstado]);
 
   useEffect(() => {
@@ -422,8 +422,8 @@ export default function EditProfilePage() {
     }
 
     if (userData?.perfilTutor) {
-      updateSpecialties();
-      updateAvailabilities();
+      void updateSpecialties();
+      void updateAvailabilities();
     }
 
     const formData = new FormData();
