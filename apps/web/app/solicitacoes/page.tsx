@@ -76,7 +76,7 @@ export default function GerenciadorSolicitacoes() {
         setGlobalSpecialties(resSpecs.data);
       }
     }
-    fetchFormBases();
+    void fetchFormBases();
   }, []);
 
   const filteredSelectAreas = useMemo(() => {
@@ -216,12 +216,12 @@ export default function GerenciadorSolicitacoes() {
     setQueryAreaId(undefined);
     setQuerySpecialtyId(undefined);
     if (activeTab == "sessoes_aprendiz" || activeTab == "sessoes_tutor") {
-      fetchSessions(1, pageSize, activeTab);
+      void fetchSessions(1, pageSize, activeTab);
     } else if (
       activeTab == "solicitacoes_aprendiz" ||
       activeTab == "solicitacoes_tutor"
     ) {
-      fetchSolicitations(1, pageSize, activeTab);
+      void fetchSolicitations(1, pageSize, activeTab);
     }
   }, [activeTab]);
 
@@ -232,7 +232,7 @@ export default function GerenciadorSolicitacoes() {
       activeTab == "solicitacoes_aprendiz" ||
       activeTab == "solicitacoes_tutor"
     ) {
-      fetchSolicitations(1, pageSize, activeTab);
+      void fetchSolicitations(1, pageSize, activeTab);
     }
   };
 
@@ -468,7 +468,7 @@ export default function GerenciadorSolicitacoes() {
 			"
             >
               <div className="space-y-2">
-                <label
+                <span
                   className="
 					text-xs
 					2xl:text-sm 
@@ -480,7 +480,7 @@ export default function GerenciadorSolicitacoes() {
 				"
                 >
                   Área de Conhecimento
-                </label>
+                </span>
                 <select
                   value={queryAreaId || ""}
                   onChange={(e) => {
@@ -515,7 +515,7 @@ export default function GerenciadorSolicitacoes() {
               </div>
 
               <div className="space-y-2">
-                <label
+                <span
                   className="
 					text-xs
 					2xl:text-sm
@@ -527,7 +527,7 @@ export default function GerenciadorSolicitacoes() {
 				"
                 >
                   Especialidade
-                </label>
+                </span>
                 <select
                   value={querySpecialtyId || ""}
                   onChange={(e) =>
@@ -561,7 +561,7 @@ export default function GerenciadorSolicitacoes() {
               </div>
 
               <div className="space-y-2">
-                <label
+                <span
                   className="
 					text-xs
 					2xl:text-sm 
@@ -573,7 +573,7 @@ export default function GerenciadorSolicitacoes() {
 				"
                 >
                   Ordenar Por
-                </label>
+                </span>
                 <select
                   value={queryOrder}
                   onChange={(e) => setQueryOrder(e.target.value)}
